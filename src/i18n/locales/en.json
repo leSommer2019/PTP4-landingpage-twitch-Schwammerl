@@ -43,7 +43,7 @@
   "links": {
     "streamplan": { "title": "Stream Schedule", "desc": "Live dates" },
     "streamelements": { "title": "StreamElements", "desc": "Donations + List" },
-    "clipdesmonats": { "title": "Clip of the Month", "desc": "Vote for the top 10 clips of last month" },
+    "clipdesmonats": { "title": "Clip of the Month", "desc": "Vote for the top clips" },
     "youtube": { "title": "YouTube", "desc": "Main channel" },
     "tiktok": { "title": "TikTok", "desc": "Main channel" },
     "instagram": { "title": "Instagram", "desc": "Main channel" },
