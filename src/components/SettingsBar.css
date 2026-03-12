@@ -7,6 +7,16 @@
   z-index: 1000;
 }
 
+@media (max-width: 720px) {
+  .settings-bar {
+    position: relative;
+    top: auto;
+    right: auto;
+    justify-content: flex-end;
+    padding: 0.5rem 1rem 0;
+  }
+}
+
 .settings-btn {
   padding: 0.4em 0.8em;
   font-size: 0.85rem;
