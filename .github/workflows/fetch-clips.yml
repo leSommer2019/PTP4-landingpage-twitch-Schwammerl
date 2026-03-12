@@ -1,0 +1,26 @@
+name: Fetch Twitch Clips & Start Round 1
+
+on:
+  schedule:
+    - cron: '0 23 21 * *'        # 21st of every month at 23:00 UTC
+  workflow_dispatch:               # manual trigger
+
+jobs:
+  fetch-clips:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Fetch clips and create voting round
+        env:
+          TWITCH_CLIENT_ID: ${{ secrets.TWITCH_CLIENT_ID }}
+          TWITCH_CLIENT_SECRET: ${{ secrets.TWITCH_CLIENT_SECRET }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          TWITCH_CHANNEL: hd1920x1080
+        run: node .github/scripts/fetch-clips.mjs
+

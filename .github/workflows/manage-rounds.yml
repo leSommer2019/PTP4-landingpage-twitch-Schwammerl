@@ -1,0 +1,36 @@
+name: Manage Voting Rounds
+
+on:
+  schedule:
+    - cron: '0 6 * * *'           # daily at 06:00 UTC
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'Manual action'
+        required: false
+        type: choice
+        default: 'auto'
+        options:
+          - auto
+          - start_round2
+          - end_round2
+          - start_yearly
+          - end_yearly
+
+jobs:
+  manage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Run round management
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          ACTION: ${{ github.event.inputs.action || 'auto' }}
+        run: node .github/scripts/manage-rounds.mjs
+

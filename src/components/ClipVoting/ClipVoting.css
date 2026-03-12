@@ -1,0 +1,217 @@
+/* ═══════════════════════════════════════════════════════
+   Clip-Voting shared styles
+   ═══════════════════════════════════════════════════════ */
+
+/* ── ClipEmbed ── */
+.clip-embed {
+  position: relative;
+  width: 100%;
+  padding-top: 56.25%; /* 16 : 9 */
+  background: #000;
+  border-radius: 10px;
+  overflow: hidden;
+}
+.clip-embed iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+/* ── ClipCard ── */
+.clip-card {
+  background: var(--box-gradient);
+  border: 1px solid var(--box-border);
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: border-color 0.25s, box-shadow 0.25s;
+}
+.clip-card:hover {
+  border-color: rgba(124, 77, 255, 0.25);
+}
+.clip-card--voted {
+  border-color: var(--accent) !important;
+  box-shadow: 0 0 0 2px rgba(124, 77, 255, 0.35);
+}
+.clip-card__body {
+  padding: 12px 14px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.clip-card__title {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--color-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.clip-card__creator {
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+.clip-card__meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: auto;
+  padding-top: 6px;
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+.clip-card__votes {
+  font-weight: 700;
+  color: var(--accent);
+}
+.clip-card__rank {
+  font-weight: 800;
+  font-size: 1.1rem;
+  color: var(--accent);
+  min-width: 22px;
+}
+.clip-card__vote-btn {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-top: 1px solid var(--box-border);
+  background: transparent;
+  color: var(--accent);
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.clip-card__vote-btn:hover:not(:disabled) {
+  background: rgba(124, 77, 255, 0.12);
+}
+.clip-card__vote-btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+.clip-card__vote-btn--active {
+  background: var(--accent);
+  color: #fff;
+}
+.clip-card__vote-btn--active:hover {
+  background: var(--accent);
+}
+
+/* ── ClipGrid ── */
+.clip-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 16px;
+  margin: 20px 0;
+}
+
+/* ── VotingStatus ── */
+.voting-status {
+  background: var(--box-gradient);
+  border: 1px solid var(--box-border);
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-bottom: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+.voting-status__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.voting-status__badge--active {
+  background: rgba(76, 175, 80, 0.18);
+  color: #4caf50;
+}
+.voting-status__badge--pending {
+  background: rgba(255, 193, 7, 0.18);
+  color: #ffc107;
+}
+.voting-status__badge--completed {
+  background: rgba(124, 77, 255, 0.18);
+  color: var(--accent);
+}
+.voting-status__info {
+  flex: 1;
+  font-size: 0.92rem;
+  color: var(--color-text);
+}
+.voting-status__countdown {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+/* ── WinnerDisplay ── */
+.winner-display {
+  background: var(--box-gradient);
+  border: 1px solid var(--box-border);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+.winner-display__label {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+.winner-display__title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--accent);
+  margin-bottom: 12px;
+}
+.winner-display .clip-embed {
+  max-width: 560px;
+  margin: 0 auto;
+}
+
+/* ── Login hint ── */
+.clip-voting__login {
+  text-align: center;
+  margin: 16px 0;
+  color: var(--muted);
+}
+.clip-voting__login p {
+  margin-bottom: 10px;
+}
+.clip-voting__user {
+  text-align: center;
+  color: var(--accent);
+  font-size: 0.9rem;
+  margin: 8px 0 0;
+}
+.clip-voting__hint {
+  text-align: center;
+  color: var(--muted);
+  margin: 24px 0;
+}
+
+/* ── Responsive ── */
+@media (max-width: 720px) {
+  .clip-grid {
+    grid-template-columns: 1fr;
+  }
+  .voting-status {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
