@@ -27,6 +27,19 @@
     "seeSchedule": "View full schedule →",
     "chatFallback": "Open chat in new tab"
   },
+  "currentGame": {
+    "label": "Currently playing game",
+    "nowPlaying": "Now Playing",
+    "storesLabel": "Find on stores",
+    "opensInNewTab": "opens in new tab",
+    "stores": {
+      "twitch": "Twitch",
+      "epic": "Epic Games",
+      "nintendo": "Nintendo",
+      "psstore": "PlayStation",
+      "xbox": "Xbox"
+    }
+  },
   "links": {
     "streamplan": { "title": "Stream Schedule", "desc": "Live dates" },
     "streamelements": { "title": "StreamElements", "desc": "Donations + List" },

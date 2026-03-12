@@ -1,0 +1,110 @@
+.current-game {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-top: 12px;
+  padding: 10px 12px;
+  background: var(--box-gradient);
+  border: 1px solid var(--box-border);
+  border-radius: 10px;
+}
+
+.current-game__art {
+  width: 69px;
+  height: 95px;
+  object-fit: cover;
+  border-radius: 6px;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.current-game__info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.current-game__label {
+  font-size: 0.75rem;
+  color: var(--text-secondary, #aaa);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+
+.current-game__name {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text, #fff);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.current-game__stores {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+/* ── Store badges ── */
+.store-badge {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-decoration: none;
+  letter-spacing: 0.02em;
+  transition: opacity 0.15s ease;
+  white-space: nowrap;
+}
+
+.store-badge:hover {
+  opacity: 0.8;
+}
+
+.store-badge--twitch {
+  background: #9146ff;
+  color: #fff;
+}
+
+.store-badge--epic {
+  background: #2a2a2a;
+  color: #fff;
+  border: 1px solid #444;
+}
+
+.store-badge--nintendo {
+  background: #e4000f;
+  color: #fff;
+}
+
+.store-badge--psstore {
+  background: #003087;
+  color: #fff;
+}
+
+.store-badge--xbox {
+  background: #107c10;
+  color: #fff;
+}
+
+/* ── Responsive ── */
+@media (max-width: 480px) {
+  .current-game {
+    gap: 10px;
+    padding: 8px 10px;
+  }
+
+  .current-game__art {
+    width: 52px;
+    height: 72px;
+  }
+
+  .current-game__name {
+    font-size: 0.9rem;
+  }
+}

@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import siteConfig from '../../config/siteConfig'
 import NextStream from '../NextStream/NextStream'
+import CurrentGame from '../CurrentGame/CurrentGame'
 import './LiveSection.css'
 
 /* ── Twitch Player SDK types ── */
@@ -107,6 +108,9 @@ export default function LiveSection() {
 
         {/* ── Offline → nächster Termin ── */}
         {!showStream && <NextStream />}
+
+        {/* ── Current Game (only while live) ── */}
+        <CurrentGame isLive={showStream} />
 
         {/* ── Player + Chat (immer im DOM für Erkennung, versteckt wenn offline) ── */}
         <div

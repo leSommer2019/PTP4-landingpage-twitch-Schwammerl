@@ -27,6 +27,19 @@
     "seeSchedule": "Zum Streamplan →",
     "chatFallback": "Chat im neuen Tab öffnen"
   },
+  "currentGame": {
+    "label": "Aktuell gespieltes Spiel",
+    "nowPlaying": "Jetzt gespielt",
+    "storesLabel": "In Stores finden",
+    "opensInNewTab": "öffnet in neuem Tab",
+    "stores": {
+      "twitch": "Twitch",
+      "epic": "Epic Games",
+      "nintendo": "Nintendo",
+      "psstore": "PlayStation",
+      "xbox": "Xbox"
+    }
+  },
   "links": {
     "streamplan": { "title": "Streamplan", "desc": "Live-Termine" },
     "streamelements": { "title": "StreamElements", "desc": "Donation + Liste" },
