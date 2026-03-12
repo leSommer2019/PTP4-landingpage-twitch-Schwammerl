@@ -54,7 +54,8 @@
   },
   "footer": {
     "impressum": "Impressum",
-    "datenschutz": "Datenschutz"
+    "datenschutz": "Datenschutz",
+    "moderate": "Moderation"
   },
   "downloadModal": {
     "title": "Download bestätigen",
