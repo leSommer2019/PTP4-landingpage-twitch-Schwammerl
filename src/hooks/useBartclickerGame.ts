@@ -93,6 +93,7 @@ export function useBartclickerGame() {
   const [lastSaveTime, setLastSaveTime] = useState(0);
   const gameLoopRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
+  const isLoadingRef = useRef(false);
 
   // Calculate CPS based on shop items, relics, and multipliers
   const calculateCps = useCallback((): number => {
@@ -169,6 +170,14 @@ export function useBartclickerGame() {
       return;
     }
 
+    // Verhindere mehrfache simultane Loads
+    if (isLoadingRef.current) {
+      console.log('Load already in progress, skipping duplicate request');
+      return;
+    }
+
+    isLoadingRef.current = true;
+
     // Abbrechen von alten Requests bei schnellem Reload
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
@@ -187,6 +196,7 @@ export function useBartclickerGame() {
       // Prüfe ob dieser Request abgebrochen wurde
       if (signal.aborted) {
         console.log('Load request was cancelled');
+        isLoadingRef.current = false;
         return;
       }
 
@@ -250,8 +260,8 @@ export function useBartclickerGame() {
           }
         }
       } else if (data) {
-        // Existing data found
-        if (!signal.aborted) {
+        // Existing data found - NIEMALS State mit leerem Data überschreiben
+        if (!signal.aborted && data && Object.keys(data).length > 0) {
           setGameState({
             id: data.id,
             user_id: data.user_id,
@@ -283,6 +293,7 @@ export function useBartclickerGame() {
       if (!signal.aborted) {
         setIsLoading(false);
       }
+      isLoadingRef.current = false;
     }
   }, [user?.id]);
 
@@ -293,8 +304,19 @@ export function useBartclickerGame() {
       return;
     }
 
+    // Verhindere Speichern während eines Load läuft - das löscht die Daten!
+    if (isLoadingRef.current) {
+      console.log('Load in progress, deferring save');
+      return;
+    }
+
     try {
-      // Direkt UPSERT verwenden - RLS Policy sollte onConflict: 'user_id' verarbeiten
+      // Vermeide Speichern von leeren/unvollständigen Daten
+      if (!gameState.user_id) {
+        console.log('Game state incomplete, skipping save');
+        return;
+      }
+
       const { error } = await supabase
         .from('bartclicker_scores')
         .upsert({

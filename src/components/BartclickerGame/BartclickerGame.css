@@ -68,8 +68,8 @@
 }
 
 .click-button {
-    width: 180px;
-    height: 180px;
+    width: 240px;
+    height: 240px;
     border-radius: 0;
     background: transparent;
     border: none;
@@ -730,8 +730,8 @@
 
     .click-button {
         margin: 15px 0;
-        width: 160px;
-        height: 160px;
+        width: 200px;
+        height: 200px;
     }
 
     .click-button:hover:not(:disabled) .beard-svg {
@@ -807,8 +807,8 @@
     }
 
     .click-button {
-        width: 90px;
-        height: 90px;
+        width: 360px;
+        height: 360px;
         margin-top: 10px;
     }
 
