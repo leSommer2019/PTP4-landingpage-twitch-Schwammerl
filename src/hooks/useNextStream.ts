@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 
 export interface NextStreamEvent {
   summary: string
+  description?: string
   start: Date
   end?: Date
 }
@@ -35,6 +36,7 @@ function parseIcs(text: string): NextStreamEvent[] {
     const lines = unfolded.split(/\r?\n/)
 
     let summary = ''
+    let description = ''
     let dtstart: Date | null = null
     let dtend: Date | null = null
 
@@ -43,6 +45,9 @@ function parseIcs(text: string): NextStreamEvent[] {
       if (trimmed.startsWith('SUMMARY')) {
         const idx = trimmed.indexOf(':')
         if (idx !== -1) summary = trimmed.substring(idx + 1).trim()
+      } else if (trimmed.startsWith('DESCRIPTION')) {
+        const idx = trimmed.indexOf(':')
+        if (idx !== -1) description = trimmed.substring(idx + 1).trim()
       } else if (trimmed.startsWith('DTSTART')) {
         const idx = trimmed.indexOf(':')
         if (idx !== -1) dtstart = parseIcsDate(trimmed.substring(idx + 1))
@@ -53,7 +58,7 @@ function parseIcs(text: string): NextStreamEvent[] {
     }
 
     if (summary && dtstart) {
-      events.push({ summary, start: dtstart, end: dtend ?? undefined })
+      events.push({ summary, description: description || undefined, start: dtstart, end: dtend ?? undefined })
     }
   }
 
@@ -81,7 +86,12 @@ export function useNextStream(icsUrl: string) {
 
         const events = parseIcs(text)
         const now = new Date()
-        const upcoming = events.find((e) => e.start > now)
+        const feiertagRegex = /feiertag/i
+        const upcoming = events.find((e) => {
+          if (e.start <= now) return false
+          const isHoliday = feiertagRegex.test(e.summary) || feiertagRegex.test(e.description || '')
+          return !isHoliday
+        })
         setNextEvent(upcoming ?? null)
         setError(null)
       } catch (err) {
