@@ -4,15 +4,23 @@ interface BeardProps {
 }
 
 export function BeardSVG({ bartLength, clickCount = 0 }: BeardProps) {
-  // Bartgröße basierend auf Klicks (max 150% größer)
+  // Bartgröße basierend auf Rebirths (bartLength von 50 bis 100)
+  // Normalisiere bartLength auf eine Prozentquote (50-100 → 0-1)
+  const bartGrowth = (bartLength - 50) / 50; // 0 bis 1
+  
+  // Dynamische Bart-Höhe: von Basis bis zu extremem Wachstum
+  const beardHeight = Math.min(200, 20 + bartGrowth * 150);
+  
+  // Skalierung basierend auf Klicks
   const clickScale = Math.min(1.5, 1 + clickCount * 0.01);
-  const svgWidth = 100 * clickScale;
-  const svgHeight = 120 * clickScale;
+  const svgWidth = 120 * clickScale;
+  const svgHeight = 240 * clickScale;
 
   return (
     <svg 
-      viewBox="0 0 100 120" 
-      xmlns="http://www.w3.org/2000/svg" 
+      id="avatar-svg" 
+      viewBox="0 0 100 200" 
+      xmlns="http://www.w3.org/2000/svg"
       className="beard-svg"
       style={{ 
         width: svgWidth, 
@@ -20,39 +28,80 @@ export function BeardSVG({ bartLength, clickCount = 0 }: BeardProps) {
         transition: 'all 0.2s ease'
       }}
     >
-      <defs>
-        <linearGradient id="beardGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" style={{ stopColor: '#2a1f15', stopOpacity: 1 }} />
-          <stop offset="50%" style={{ stopColor: '#3d2b1f', stopOpacity: 1 }} />
-          <stop offset="100%" style={{ stopColor: '#1a0f0a', stopOpacity: 1 }} />
-        </linearGradient>
-      </defs>
-      
-      {/* Oberteil des Barts */}
-      <path
-        d={`M 20 30 Q 50 35 80 30 Q 85 40 80 ${50 + bartLength * 0.15} Q 50 ${55 + bartLength * 0.15} 20 ${50 + bartLength * 0.15} Q 15 40 20 30 Z`}
-        fill="url(#beardGrad)"
-        style={{ transition: 'all 0.2s ease' }}
-      />
-      
-      {/* Bart-Feinstruktur - einzelne Haare */}
-      <g stroke="#2a1f15" strokeWidth="1.2" opacity="0.5" strokeLinecap="round">
-        <path d={`M 30 35 Q 28 ${55 + bartLength * 0.1} 32 ${65 + bartLength * 0.12}`} />
-        <path d={`M 45 32 Q 44 ${60 + bartLength * 0.12} 46 ${72 + bartLength * 0.15}`} />
-        <path d={`M 50 30 Q 50 ${62 + bartLength * 0.15} 50 ${76 + bartLength * 0.18}`} />
-        <path d={`M 55 32 Q 56 ${60 + bartLength * 0.12} 54 ${72 + bartLength * 0.15}`} />
-        <path d={`M 70 35 Q 72 ${55 + bartLength * 0.1} 68 ${65 + bartLength * 0.12}`} />
+      {/* Kopf */}
+      <rect x="30" y="30" width="40" height="35" rx="6" fill="#d4a373"/>
+
+      {/* CAP (SNAPBACK) */}
+      <g id="cap">
+        {/* Schirm */}
+        <rect x="25" y="32" width="50" height="5" rx="2" fill="#7C4DFF"/>
+        {/* Amulett */}
+        <path d="M30 32 L70 32 L70 25 Q 50 15 30 25 Z" fill="#7C4DFF"/>
+        {/* Kleiner Knopf oben */}
+        <circle cx="50" cy="18" r="2" fill="#5c38cc"/>
+        {/* Rebirth Badge (hidden by default) */}
+        <g id="rebirth-badge" style={{ display: 'none' }}>
+          <circle cx="65" cy="20" r="6" fill="#FFD700" stroke="#FFA500" strokeWidth="1"/>
+          <text x="65" y="23" fontSize="8" fontWeight="bold" fill="#000" textAnchor="middle" fontFamily="Arial">
+            ♻
+          </text>
+        </g>
       </g>
-      
-      {/* Ganz unten - wirkt lockig/buschig */}
-      <ellipse
-        cx="50"
-        cy={`${75 + bartLength * 0.18}`}
-        rx={`${25 + bartLength * 0.05}`}
-        ry={`${10 + bartLength * 0.08}`}
-        fill="#2a1f15"
-        opacity="0.7"
-      />
+
+      {/* Brille */}
+      <g stroke="#111" strokeWidth="1.2" fill="none">
+        <rect x="34" y="42" width="10" height="7" rx="1"/>
+        <rect x="56" y="42" width="10" height="7" rx="1"/>
+        <path d="M44 46 h12"/>
+      </g>
+
+      {/* Augen */}
+      <circle cx="39" cy="45" r="1" fill="#000"/>
+      <circle cx="61" cy="45" r="1" fill="#000"/>
+
+      {/* DYNAMISCHER BART */}
+      <g id="beard-group" style={{ transition: 'all 0.2s ease' }}>
+        {/* Basis-Beard (dynamisch wachsend) */}
+        <path 
+          id="beard-path" 
+          d={`M30 60 Q 50 60 70 60 L 70 ${60 + beardHeight * 0.3} Q 50 ${60 + beardHeight * 0.4} 30 ${60 + beardHeight * 0.3} Z`}
+          fill="#3d2b1f"
+          fillRule="evenodd"
+          style={{ transition: 'all 0.2s ease' }}
+        />
+
+        {/* Haarstruktur: stroke-only Kopie des Pfades */}
+        <path 
+          id="beard-hair" 
+          d={`M30 60 Q 50 60 70 60 L 70 ${60 + beardHeight * 0.3} Q 50 ${60 + beardHeight * 0.4} 30 ${60 + beardHeight * 0.3} Z`}
+          fill="none" 
+          stroke="#22160f"
+          strokeWidth="0.9" 
+          strokeLinecap="round" 
+          strokeLinejoin="round" 
+          strokeDasharray="2 4"
+          opacity="0.85" 
+          pointerEvents="none"
+          style={{ transition: 'all 0.2s ease' }}
+        />
+
+        {/* Subtiler Outline für Tiefe */}
+        <path 
+          id="beard-outline" 
+          d={`M30 60 Q 50 60 70 60 L 70 ${60 + beardHeight * 0.3} Q 50 ${60 + beardHeight * 0.4} 30 ${60 + beardHeight * 0.3} Z`}
+          fill="none" 
+          stroke="#000"
+          strokeWidth="0.6" 
+          opacity="0.12" 
+          pointerEvents="none"
+          style={{ transition: 'all 0.2s ease' }}
+        />
+      </g>
+
+      {/* Event decorations (hidden by default) */}
+      <g id="beard-clover" style={{ display: 'none' }}>
+        <text x="50" y="70" fontSize="12" fill="#00FF00" textAnchor="middle" fontFamily="Arial">🍀</text>
+      </g>
     </svg>
   );
 }
