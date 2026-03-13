@@ -672,6 +672,8 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql STABLE;
 
-GRANT SELECT ON bartclicker_scores TO anon, authenticated;
+-- Grants für bartclicker_scores
+GRANT SELECT, INSERT, UPDATE ON bartclicker_scores TO anon, authenticated;
+
 GRANT EXECUTE ON FUNCTION get_bartclicker_leaderboard(integer) TO anon, authenticated;
 GRANT EXECUTE ON FUNCTION get_bartclicker_leaderboard_with_names(integer) TO anon, authenticated;
