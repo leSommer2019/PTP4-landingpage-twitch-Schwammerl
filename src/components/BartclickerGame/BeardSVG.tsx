@@ -60,16 +60,16 @@ export function BeardSVG({ bartLength, clickCount = 0 }: BeardProps) {
 
         {/* DYNAMISCHER BART - Wächst nur nach UNTEN */}
         <g id="beard-group" style={{ transition: 'all 0.2s ease' }}>
-          {/* Startet bei y=140 und wächst von dort nach UNTEN */}
+          {/* Startet bei y=130 (überlappt Kopf um 10 Einheiten) und wächst von dort nach UNTEN */}
           <path
               id="beard-path"
-              d={`M40 140 L160 140 L160 ${140 + beardHeight * 2} Q 100 ${140 + beardHeight * 2 + 10} 40 ${140 + beardHeight * 2} Z`}
+              d={`M40 130 L160 130 L160 ${130 + beardHeight * 2} Q 100 ${130 + beardHeight * 2 + 10} 40 ${130 + beardHeight * 2} Z`}
               fill="#3d2b1f"
               style={{ transition: 'all 0.2s ease' }}
           />
           <path
               id="beard-hair"
-              d={`M40 140 L160 140 L160 ${140 + beardHeight * 2} Q 100 ${140 + beardHeight * 2 + 10} 40 ${140 + beardHeight * 2} Z`}
+              d={`M40 130 L160 130 L160 ${130 + beardHeight * 2} Q 100 ${130 + beardHeight * 2 + 10} 40 ${130 + beardHeight * 2} Z`}
               fill="none" stroke="#22160f" strokeWidth="1.8" strokeDasharray="4 8" opacity="0.85"
               style={{ transition: 'all 0.2s ease' }}
           />
