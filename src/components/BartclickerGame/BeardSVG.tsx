@@ -79,10 +79,15 @@ export function BeardSVG({ bartLength, clickCount = 0 }: BeardProps) {
           transformBox: 'fill-box'
         }}
       >
-        {/* Basis-Beard (oben gerade, unten gerundet) */}
+        {/* Basis-Beard: 
+            - Oben: M20 65 L80 65 (gerade Linie, gleich breit wie Gesicht)
+            - Seiten: L80 dann L20 (gerade Linien nach unten)
+            - Unten: gerundete Kurve (nur unten)
+            - Überlagert Gesicht oben (y=65 ist über y=70)
+        */}
         <path 
           id="beard-path" 
-          d={`M30 70 L70 70 L70 ${70 + beardHeight * 0.3} Q 50 ${70 + beardHeight * 0.4} 30 ${70 + beardHeight * 0.3} Z`}
+          d={`M20 65 L80 65 L80 ${65 + beardHeight} Q 50 ${65 + beardHeight + 5} 20 ${65 + beardHeight} Z`}
           fill="#3d2b1f"
           fillRule="evenodd"
           style={{ transition: 'all 0.2s ease' }}
@@ -91,7 +96,7 @@ export function BeardSVG({ bartLength, clickCount = 0 }: BeardProps) {
         {/* Haarstruktur: stroke-only Kopie des Pfades */}
         <path 
           id="beard-hair" 
-          d={`M30 70 L70 70 L70 ${70 + beardHeight * 0.3} Q 50 ${70 + beardHeight * 0.4} 30 ${70 + beardHeight * 0.3} Z`}
+          d={`M20 65 L80 65 L80 ${65 + beardHeight} Q 50 ${65 + beardHeight + 5} 20 ${65 + beardHeight} Z`}
           fill="none" 
           stroke="#22160f"
           strokeWidth="0.9" 
@@ -106,7 +111,7 @@ export function BeardSVG({ bartLength, clickCount = 0 }: BeardProps) {
         {/* Subtiler Outline für Tiefe */}
         <path 
           id="beard-outline" 
-          d={`M30 70 L70 70 L70 ${70 + beardHeight * 0.3} Q 50 ${70 + beardHeight * 0.4} 30 ${70 + beardHeight * 0.3} Z`}
+          d={`M20 65 L80 65 L80 ${65 + beardHeight} Q 50 ${65 + beardHeight + 5} 20 ${65 + beardHeight} Z`}
           fill="none" 
           stroke="#000"
           strokeWidth="0.6" 
