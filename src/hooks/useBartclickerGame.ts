@@ -489,13 +489,13 @@ export function useBartclickerGame() {
     return true;
   }, [gameState.rebirth_count]);
 
-  // Buy Auto-Upgrade Käufer (kostet 15 Rebirths)
+  // Buy Auto-Upgrade Käufer (kostet 10 Rebirths)
   const buyUpgradeAutobuyer = useCallback(() => {
-    if (gameState.rebirth_count < 15) return false;
+    if (gameState.rebirth_count < 10) return false;
 
     setGameState((prev) => ({
       ...prev,
-      rebirth_count: prev.rebirth_count - 15,
+      rebirth_count: prev.rebirth_count - 10,
       click_upgrade_buyer_enabled: !prev.click_upgrade_buyer_enabled,
     }));
 

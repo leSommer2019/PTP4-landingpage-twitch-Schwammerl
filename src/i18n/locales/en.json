@@ -329,7 +329,7 @@
       "autoClickerEnable": "✅ Enable",
       "autoClickerDisable": "❌ Disable",
       "upgradebuyer": "📈 Auto Upgrade Buyer",
-      "upgradebuyerDesc": "Costs: 15 Rebirths",
+      "upgradebuyerDesc": "Costs: 10 Rebirths",
       "youHave": "You have: {count} Rebirths"
     },
     "leaderboard": {

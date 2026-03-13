@@ -787,24 +787,36 @@
 
   .bartclicker-header {
     grid-template-columns: 1fr;
-    gap: 8px;
+    background: rgba(124, 77, 255, 0.1);
+    border: 1px solid #7c4dff;
+    border-radius: 8px;
+    padding: 8px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: space-around;
   }
 
   .stat-box {
-    padding: 8px;
+    padding: 0;
+    background: transparent;
+    border: none;
+    flex: 1;
+    text-align: center;
   }
 
   .stat-value {
-    font-size: 1.2rem;
+    font-size: 0.9rem;
   }
 
   .stat-cps,
   .stat-rebirth {
-    font-size: 0.85rem;
+    font-size: 0.7rem;
   }
 
   .stat-label {
-    font-size: 0.65rem;
+    font-size: 0.55rem;
+    margin: 2px 0 0 0;
   }
 
   .click-button {
