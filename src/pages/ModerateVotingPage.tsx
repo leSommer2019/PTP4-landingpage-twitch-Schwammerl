@@ -1,4 +1,5 @@
 import {useState, useEffect} from 'react'
+import {useNavigate} from 'react-router-dom'
 import {useTranslation} from 'react-i18next'
 import {supabase} from '../lib/supabase'
 import {useAuth} from '../context/useAuth'
@@ -9,6 +10,7 @@ import type {VotingRound} from '../types/clipVoting'
 /* ═════════════════════════════════════════════════════════ */
 
 export default function ModerateVotingPage() {
+    const navigate = useNavigate()
     const {t} = useTranslation()
     const {user} = useAuth()
     const {showToast} = useToast()
@@ -57,7 +59,12 @@ export default function ModerateVotingPage() {
 
     return (
         <SubPage>
-            <h1>🛡️ {t('moderate.votingTitle')}</h1>
+            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20}}>
+                <h1>🛡️ {t('moderate.votingTitle')}</h1>
+                <button className="btn btn-secondary" onClick={() => navigate('/moderate')} title="Go back to Moderation">
+                    ← {t('back')}
+                </button>
+            </div>
             <p style={{color: 'var(--muted)', marginBottom: 4}}>
                 {t('moderate.loggedInAs', {name: userName})}
             </p>

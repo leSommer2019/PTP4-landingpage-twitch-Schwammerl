@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next'
+import { useNavigate } from 'react-router-dom'
 import SubPage from '../components/SubPage/SubPage'
 import { useModerateStatistics } from '../hooks/useModerateStatistics'
 import type { StatisticsRangeDays, TrendPoint } from '../types/moderateStatistics'
@@ -40,12 +41,18 @@ function TrendBars({ points }: { points: TrendPoint[] }) {
 }
 
 export default function ModerateStatisticsPage() {
+  const navigate = useNavigate()
   const { t } = useTranslation()
   const { data, loading, error, rangeDays, setRangeDays, refresh } = useModerateStatistics()
 
   return (
     <SubPage>
-      <h1>{t('moderate.statisticsTitle')}</h1>
+      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20}}>
+        <h1>{t('moderate.statisticsTitle')}</h1>
+        <button className="btn btn-secondary" onClick={() => navigate('/moderate')} title="Go back to Moderation">
+          ← {t('back')}
+        </button>
+      </div>
       <p className="moderate-stats-intro">{t('moderate.statisticsDescription')}</p>
 
       <div className="moderate-stats-toolbar">

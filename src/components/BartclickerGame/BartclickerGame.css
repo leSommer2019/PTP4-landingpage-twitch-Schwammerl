@@ -56,7 +56,7 @@
   letter-spacing: 1px;
 }
 
-/* Click Area */
+/* Click Area - Animierter Bart SVG */
 .click-area {
   display: flex;
   justify-content: center;
@@ -64,8 +64,8 @@
 }
 
 .click-button {
-  width: 180px;
-  height: 180px;
+  width: 200px;
+  height: 200px;
   border-radius: 50%;
   background: radial-gradient(circle at 30% 30%, #9c27b0, #7c4dff);
   border: 3px solid #ffd700;
@@ -73,19 +73,32 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.1s;
+  transition: all 0.2s;
   box-shadow: 0 0 30px rgba(124, 77, 255, 0.5);
-  font-size: 0;
-  overflow: hidden;
+  padding: 0;
+  overflow: visible;
+  position: relative;
 }
 
 .click-button:hover:not(:disabled) {
   transform: scale(1.05);
-  box-shadow: 0 0 50px rgba(255, 215, 0, 0.7);
+  box-shadow: 0 0 50px rgba(255, 215, 0, 0.7), inset 0 0 20px rgba(255, 215, 0, 0.3);
 }
 
-.click-button:active:not(:disabled) {
-  transform: scale(0.95);
+.click-button.pulse {
+  animation: clickPulse 0.3s ease-out;
+}
+
+@keyframes clickPulse {
+  0% {
+    box-shadow: 0 0 30px rgba(124, 77, 255, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 60px rgba(255, 215, 0, 0.8), inset 0 0 30px rgba(255, 215, 0, 0.4);
+  }
+  100% {
+    box-shadow: 0 0 30px rgba(124, 77, 255, 0.5);
+  }
 }
 
 .click-button:disabled {
@@ -93,21 +106,10 @@
   cursor: not-allowed;
 }
 
-.click-button-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-}
-
-.click-icon {
-  font-size: 3rem;
-}
-
-.click-power {
-  font-size: 0.9rem;
-  font-weight: bold;
-  color: #ffd700;
+.beard-svg {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.4));
 }
 
 /* Tabs */
@@ -115,6 +117,8 @@
   display: flex;
   gap: 10px;
   border-bottom: 1px solid #333;
+  overflow-x: auto;
+  padding-bottom: 0;
 }
 
 .tab-button {
@@ -126,6 +130,8 @@
   cursor: pointer;
   font-weight: 600;
   transition: all 0.2s;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .tab-button:hover {
@@ -137,8 +143,45 @@
   border-bottom-color: #ffd700;
 }
 
-/* Shop Content */
+/* Shop Sub-Tabs */
+.shop-subtabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+  border-bottom: 1px solid #444;
+  padding-bottom: 10px;
+}
+
+.shop-subtab {
+  padding: 8px 16px;
+  background: rgba(124, 77, 255, 0.1);
+  color: #b0b0b0;
+  border: 1px solid #333;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+}
+
+.shop-subtab:hover {
+  background: rgba(124, 77, 255, 0.2);
+  border-color: #7c4dff;
+  color: #7c4dff;
+}
+
+.shop-subtab.active {
+  background: #7c4dff;
+  border-color: #7c4dff;
+  color: white;
+  box-shadow: 0 0 10px rgba(124, 77, 255, 0.5);
+}
+
+/* Content Areas */
 .shop-content,
+.booster-content,
+.relics-content,
+.autobuyer-content,
 .stats-content,
 .leaderboard-content {
   max-height: 500px;
@@ -146,30 +189,30 @@
   padding-right: 10px;
 }
 
-.shop-content::-webkit-scrollbar {
+.shop-content::-webkit-scrollbar,
+.booster-content::-webkit-scrollbar,
+.relics-content::-webkit-scrollbar,
+.autobuyer-content::-webkit-scrollbar,
+.stats-content::-webkit-scrollbar {
   width: 6px;
 }
 
-.shop-content::-webkit-scrollbar-track {
+.shop-content::-webkit-scrollbar-track,
+.booster-content::-webkit-scrollbar-track,
+.relics-content::-webkit-scrollbar-track,
+.autobuyer-content::-webkit-scrollbar-track,
+.stats-content::-webkit-scrollbar-track {
   background: rgba(124, 77, 255, 0.1);
   border-radius: 10px;
 }
 
-.shop-content::-webkit-scrollbar-thumb {
+.shop-content::-webkit-scrollbar-thumb,
+.booster-content::-webkit-scrollbar-thumb,
+.relics-content::-webkit-scrollbar-thumb,
+.autobuyer-content::-webkit-scrollbar-thumb,
+.stats-content::-webkit-scrollbar-thumb {
   background: #7c4dff;
   border-radius: 10px;
-}
-
-.shop-section {
-  margin-bottom: 20px;
-}
-
-.shop-section h3 {
-  font-size: 1rem;
-  color: #7c4dff;
-  margin: 0 0 12px 0;
-  text-transform: uppercase;
-  letter-spacing: 1px;
 }
 
 .item-list {
@@ -248,6 +291,7 @@
   font-size: 0.8rem;
   transition: all 0.2s;
   white-space: nowrap;
+  min-width: 70px;
 }
 
 .buy-button:hover:not(:disabled) {
@@ -297,7 +341,121 @@
   margin: 0;
 }
 
-/* Stats Content */
+/* Booster Grid */
+.booster-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+}
+
+.booster-card {
+  background: rgba(124, 77, 255, 0.15);
+  border: 1px solid #7c4dff;
+  border-radius: 8px;
+  padding: 15px;
+  text-align: center;
+  transition: all 0.2s;
+}
+
+.booster-card:hover {
+  background: rgba(124, 77, 255, 0.25);
+  transform: translateY(-2px);
+  box-shadow: 0 0 15px rgba(124, 77, 255, 0.4);
+}
+
+.booster-icon {
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+}
+
+.booster-card h3 {
+  font-size: 1rem;
+  margin: 8px 0;
+  color: #ffd700;
+}
+
+.booster-effect {
+  font-size: 0.85rem;
+  color: #b0b0b0;
+  margin: 8px 0;
+}
+
+/* Relics Grid */
+.relics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+}
+
+.relic-card {
+  background: rgba(50, 50, 70, 0.5);
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 15px;
+  text-align: center;
+  transition: all 0.2s;
+}
+
+.relic-card.unlocked {
+  background: rgba(76, 175, 80, 0.15);
+  border-color: #4caf50;
+  box-shadow: 0 0 10px rgba(76, 175, 80, 0.3);
+}
+
+.relic-card:hover:not(.unlocked) {
+  background: rgba(124, 77, 255, 0.15);
+  border-color: #7c4dff;
+  transform: translateY(-2px);
+}
+
+.relic-icon {
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+}
+
+.relic-card h3 {
+  font-size: 1rem;
+  margin: 8px 0;
+  color: #ffd700;
+}
+
+.relic-effect {
+  font-size: 0.85rem;
+  color: #b0b0b0;
+  margin: 8px 0;
+}
+
+.relic-unlocked {
+  padding: 8px;
+  background: rgba(76, 175, 80, 0.2);
+  border-radius: 6px;
+  color: #4caf50;
+  font-weight: 600;
+  margin-top: 10px;
+}
+
+/* Auto-Buyer */
+.autobuyer-card {
+  background: rgba(50, 50, 70, 0.5);
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 12px;
+}
+
+.autobuyer-card h3 {
+  margin: 0 0 8px 0;
+  color: #7c4dff;
+  font-size: 1rem;
+}
+
+.autobuyer-card p {
+  margin: 8px 0;
+  color: #b0b0b0;
+  font-size: 0.9rem;
+}
+
+/* Stats */
 .stat-row {
   display: flex;
   justify-content: space-between;
@@ -315,27 +473,60 @@
   font-weight: bold;
 }
 
-/* Leaderboard */
+/* Toggle Switch */
+.toggle-switch {
+  position: relative;
+  width: 50px;
+  height: 28px;
+  display: inline-block;
+  margin-top: 10px;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #333;
+  transition: 0.3s;
+  border-radius: 28px;
+}
+
+.toggle-slider:before {
+  position: absolute;
+  content: "";
+  height: 20px;
+  width: 20px;
+  left: 4px;
+  bottom: 4px;
+  background-color: #b0b0b0;
+  transition: 0.3s;
+  border-radius: 50%;
+}
+
+.toggle-switch input:checked + .toggle-slider {
+  background-color: #7c4dff;
+}
+
+.toggle-switch input:checked + .toggle-slider:before {
+  transform: translateX(22px);
+  background-color: white;
+}
+
+/* Coming Soon */
 .coming-soon {
   text-align: center;
   color: #7c4dff;
   padding: 30px;
   font-style: italic;
-}
-
-/* Compact Mode */
-.bartclicker-game.compact {
-  padding: 15px;
-  gap: 15px;
-}
-
-.bartclicker-game.compact .bartclicker-header {
-  grid-template-columns: 1fr;
-}
-
-.bartclicker-game.compact .click-button {
-  width: 140px;
-  height: 140px;
 }
 
 /* Responsive */
@@ -349,22 +540,21 @@
   }
 
   .click-button {
-    width: 150px;
-    height: 150px;
-  }
-
-  .click-icon {
-    font-size: 2.5rem;
-  }
-
-  .tabs {
-    flex-wrap: wrap;
+    width: 160px;
+    height: 160px;
   }
 
   .shop-content,
-  .stats-content,
-  .leaderboard-content {
+  .booster-content,
+  .relics-content,
+  .autobuyer-content,
+  .stats-content {
     max-height: 400px;
+  }
+
+  .booster-grid,
+  .relics-grid {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
   }
 }
 
@@ -376,15 +566,21 @@
 
   .bartclicker-header {
     grid-template-columns: 1fr;
+    gap: 10px;
   }
 
   .click-button {
-    width: 130px;
-    height: 130px;
+    width: 140px;
+    height: 140px;
   }
 
-  .click-icon {
-    font-size: 2rem;
+  .tabs {
+    gap: 5px;
+  }
+
+  .tab-button {
+    padding: 8px 12px;
+    font-size: 0.85rem;
   }
 
   .shop-item {
@@ -398,6 +594,12 @@
 
   .buy-button {
     width: 100%;
+    min-width: unset;
+  }
+
+  .booster-grid,
+  .relics-grid {
+    grid-template-columns: 1fr;
   }
 }
 
