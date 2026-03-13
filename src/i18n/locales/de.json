@@ -178,7 +178,7 @@
     "forbiddenHint": "Dieser Bereich ist nur für Moderatoren und den Streamer zugänglich.",
     "landingTitle": "Moderations-Bereich",
     "welcome": "Willkommen, {{name}}!",
-    "landingHome": "Startseite",
+    "setting": "Einstellungen",
     "unknownUser": "Moderator",
     "loggedInAs": "Eingeloggt als {{name}}",
     "votingTitle": "Voting-Verwaltung",

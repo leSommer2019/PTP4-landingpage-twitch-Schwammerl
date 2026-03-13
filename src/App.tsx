@@ -14,6 +14,7 @@ import ClipVotingPage from './pages/ClipVotingPage'
 import ModeratePage from './pages/ModeratePage'
 import ModerateVotingPage from './pages/ModerateVotingPage'
 import ModerateStatisticsPage from './pages/ModerateStatisticsPage'
+import ModerateSettingsPage from './pages/ModerateSettingsPage'
 import NotFoundPage from './pages/NotFoundPage'
 import './App.css'
 
@@ -40,6 +41,8 @@ function App() {
                 <Route path="/moderate/voting" element={<ModeratorRoute><ModerateVotingPage/></ModeratorRoute>}/>
                 <Route path="/moderate/statistics"
                        element={<ModeratorRoute><ModerateStatisticsPage/></ModeratorRoute>}/>
+                <Route path="/moderate/settings"
+                       element={<ModeratorRoute><ModerateSettingsPage/></ModeratorRoute>}/>
 
                 {/* ── Alternative Pfade → Redirect ── */}
                 <Route path="/actuator/data" element={<Navigate to="/moderate/statistics" replace/>}/>
