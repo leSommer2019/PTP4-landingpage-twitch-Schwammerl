@@ -170,8 +170,8 @@
     "logout": "Sign out"
   },
   "bartclickerPage": {
-    "title": "🧔‍♂️ Bartclicker – Incremental Game",
-    "intro": "Welcome to Bart's Empire! Click on Bart's beard to collect score and buy upgrades for passive income. Every click counts!"
+    "title": "Bartclicker",
+    "comingSoon": "The Bartclicker migration is being prepared… 🧔"
   },
   "moderate": {
     "forbidden": "Access Denied",
