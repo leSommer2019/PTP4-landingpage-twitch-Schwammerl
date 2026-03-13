@@ -113,7 +113,8 @@ export default function ModerateVotingPage() {
       options: {
         // Standard-Scopes von Supabase + moderation:read + channel:manage:moderators für Mod-Liste
         scopes: 'user:read:email moderation:read channel:manage:moderators',
-        redirectTo: window.location.origin + '/moderate/voting',
+        redirectTo: window.location.origin + '/moderate/settings',
+        queryParams: { force_verify: 'true' },
       },
     })
   }
@@ -181,9 +182,14 @@ export default function ModerateVotingPage() {
       </p>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginBottom: 16 }}>
         {providerToken ? (
-          <button className="btn btn-primary" disabled={busy} onClick={syncMods}>
-            🔄 {t('moderate.syncNow')}
-          </button>
+          <>
+            <button className="btn btn-primary" disabled={busy} onClick={syncMods}>
+              🔄 {t('moderate.syncNow')}
+            </button>
+            <button className="btn btn-secondary" onClick={loginForSync}>
+              🔑 {t('moderate.loginForSync')}
+            </button>
+          </>
         ) : (
           <button className="btn btn-primary" onClick={loginForSync}>
             🔑 {t('moderate.loginForSync')}
