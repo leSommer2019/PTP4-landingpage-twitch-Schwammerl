@@ -27,17 +27,22 @@ export function useBartclickerLeaderboard() {
         }
 
         if (data) {
-          // Get user profiles for display names
+          // Get user profiles for display names - aber mit Error Handling
           const leaderboardEntries: BartclickerLeaderboardEntry[] = await Promise.all(
             data.map(async (entry, index) => {
               try {
-                const { data: profile } = await supabase
+                // Versuche Username zu laden
+                const { data: profile, error: profileError } = await supabase
                   .from('profiles')
-                  .select('username, display_name')
+                  .select('username')
                   .eq('id', entry.user_id)
                   .single();
 
-                const displayName = profile?.display_name || profile?.username || `Player ${index + 1}`;
+                let displayName = `Player ${index + 1}`;
+                
+                if (!profileError && profile?.username) {
+                  displayName = profile.username;
+                }
 
                 return {
                   rank: index + 1,
@@ -48,7 +53,8 @@ export function useBartclickerLeaderboard() {
                   display_name: displayName,
                 };
               } catch (profileErr) {
-                console.log('Profile not found for user, using default name');
+                // Fallback bei Fehler
+                console.debug('Error loading profile for user_id:', entry.user_id, profileErr);
                 return {
                   rank: index + 1,
                   user_id: entry.user_id,

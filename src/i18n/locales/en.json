@@ -274,5 +274,78 @@
       "clip_not_in_round": "This clip is not in the current round.",
       "round_not_found": "Round not found."
     }
+  },
+  "bartclicker": {
+    "stats": {
+      "beards": "Beard Hairs",
+      "perSecond": "Per Second",
+      "rebirth": "Rebirth",
+      "totalEver": "Total Ever",
+      "currentEnergy": "Current Energy",
+      "cps": "CPS",
+      "activeBuffs": "Active Buffs",
+      "relicsUnlocked": "Relics Unlocked",
+      "rebirthMultiplier": "Rebirth Multiplier"
+    },
+    "tabs": {
+      "shop": "🛒 Shop",
+      "leaderboard": "🏆 Leaderboard",
+      "stats": "📊 Statistics"
+    },
+    "shopTabs": {
+      "passive": "💧 Passive",
+      "click": "💪 Click",
+      "booster": "⚡ Booster",
+      "relics": "💎 Relics",
+      "autobuyer": "🤖 Auto"
+    },
+    "rebirth": {
+      "button": "🔄 Rebirth",
+      "description": "Double your multiplier and start fresh! Your beard will grow longer!",
+      "multiplierBoost": "Multiplier ×{multiplier}"
+    },
+    "booster": {
+      "turboBoost": "Turbo Boost",
+      "turboEffect": "2x CPS for 1 min",
+      "clickMadness": "Click Madness",
+      "clickEffect": "3x Clicks for 45s",
+      "luckyBonus": "Lucky Bonus",
+      "luckyEffect": "+50% for 30s"
+    },
+    "relics": {
+      "ancientComb": "Ancient Comb",
+      "ancientEffect": "+10% CPS",
+      "magicalOil": "Magical Beard Oil",
+      "oilEffect": "+15% Click Power",
+      "goldenBeard": "Golden Beard",
+      "goldenEffect": "+25% All",
+      "timeOil": "Time-Traveling Beard Oil",
+      "timeEffect": "+50% Offline",
+      "unlocked": "✅ Unlocked"
+    },
+    "autobuyer": {
+      "autoClicker": "🤖 Auto Clicker",
+      "autoClickerDesc": "Costs: 10 Rebirths",
+      "autoClickerEnable": "✅ Enable",
+      "autoClickerDisable": "❌ Disable",
+      "upgradebuyer": "📈 Auto Upgrade Buyer",
+      "upgradebuyerDesc": "Costs: 15 Rebirths",
+      "youHave": "You have: {count} Rebirths"
+    },
+    "leaderboard": {
+      "title": "🏆 Top Players",
+      "subtitle": "Best Bartclicker Players (All Time)",
+      "rank": "Rank",
+      "player": "Player",
+      "score": "Total Ever",
+      "rebirths": "Rebirths",
+      "loading": "📊 Loading leaderboard...",
+      "empty": "📊 No players on the leaderboard yet"
+    },
+    "buttons": {
+      "buy": "Buy",
+      "max": "Max",
+      "cost": "Cost: {cost}"
+    }
   }
 }

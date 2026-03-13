@@ -81,8 +81,8 @@
 }
 
 .beard-svg {
-  width: 200px;
-  height: 240px;
+  width: 220px;
+  height: 280px;
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
 }
 
@@ -664,12 +664,14 @@
   color: #cd7f32;
 }
 
-.name-col {
-  font-weight: 600;
-  color: #ffffff;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.name-col,
+.rank-col{
+  text-align: left;
+}
+
+.rank-col {
+  color: #b0b0b0;
+  font-size: 0.95rem;
 }
 
 .score-col,
@@ -754,8 +756,8 @@
   }
 
   .beard-svg {
-    width: 180px;
-    height: 220px;
+    width: 200px;
+    height: 240px;
   }
 
   .click-button:hover:not(:disabled) .beard-svg {
@@ -810,8 +812,8 @@
   }
 
   .beard-svg {
-    width: 200px;
-    height: 240px;
+    width: 180px;
+    height: 220px;
   }
 
   .click-button:hover:not(:disabled) .beard-svg {

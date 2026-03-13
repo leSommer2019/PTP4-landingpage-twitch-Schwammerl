@@ -274,5 +274,78 @@
       "clip_not_in_round": "Dieser Clip gehört nicht zur aktuellen Runde.",
       "round_not_found": "Runde nicht gefunden."
     }
+  },
+  "bartclicker": {
+    "stats": {
+      "beards": "Barthaare",
+      "perSecond": "Pro Sekunde",
+      "rebirth": "Rebirth",
+      "totalEver": "Insgesamt",
+      "currentEnergy": "Aktuelle Energie",
+      "cps": "CPS",
+      "activeBuffs": "Aktive Buffs",
+      "relicsUnlocked": "Relikte freigeschaltet",
+      "rebirthMultiplier": "Rebirth Multiplikator"
+    },
+    "tabs": {
+      "shop": "🛒 Shop",
+      "leaderboard": "🏆 Leaderboard",
+      "stats": "📊 Statistiken"
+    },
+    "shopTabs": {
+      "passive": "💧 Passiv",
+      "click": "💪 Klick",
+      "booster": "⚡ Booster",
+      "relics": "💎 Relikte",
+      "autobuyer": "🤖 Automatisch"
+    },
+    "rebirth": {
+      "button": "🔄 Rebirth",
+      "description": "Verdopple deinen Multiplikator und starte von vorne! Dein Bart wird länger!",
+      "multiplierBoost": "Multiplikator ×{multiplier}"
+    },
+    "booster": {
+      "turboBoost": "Turbo-Boost",
+      "turboEffect": "2x CPS für 1 Min",
+      "clickMadness": "Klick-Wahnsinn",
+      "clickEffect": "3x Klicks für 45s",
+      "luckyBonus": "Glücksbonus",
+      "luckyEffect": "+50% für 30s"
+    },
+    "relics": {
+      "ancientComb": "Antiker Kamm",
+      "ancientEffect": "+10% CPS",
+      "magicalOil": "Magisches Bartöl",
+      "oilEffect": "+15% Klick-Power",
+      "goldenBeard": "Goldener Bart",
+      "goldenEffect": "+25% alles",
+      "timeOil": "Zeitreisendes Bartöl",
+      "timeEffect": "+50% Offline",
+      "unlocked": "✅ Freigeschaltet"
+    },
+    "autobuyer": {
+      "autoClicker": "🤖 Auto-Klicker",
+      "autoClickerDesc": "Kostet: 10 Rebirths",
+      "autoClickerEnable": "✅ Aktivieren",
+      "autoClickerDisable": "❌ Deaktivieren",
+      "upgradebuyer": "📈 Auto-Upgrade Käufer",
+      "upgradebuyerDesc": "Kostet: 15 Rebirths",
+      "youHave": "Du hast: {count} Rebirths"
+    },
+    "leaderboard": {
+      "title": "🏆 Top Spieler",
+      "subtitle": "Beste Bartclicker Spieler (Gesamt)",
+      "rank": "Rang",
+      "player": "Spieler",
+      "score": "Gesamt",
+      "rebirths": "Rebirths",
+      "loading": "📊 Leaderboard wird geladen...",
+      "empty": "📊 Noch keine Spieler auf der Rangliste"
+    },
+    "buttons": {
+      "buy": "Kaufen",
+      "max": "Max",
+      "cost": "Kosten: {cost}"
+    }
   }
 }
