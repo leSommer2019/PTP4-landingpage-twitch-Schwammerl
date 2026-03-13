@@ -335,10 +335,10 @@
     "leaderboard": {
       "title": "🏆 Top Players",
       "subtitle": "Best Bartclicker Players (All Time)",
-      "rank": "Rank",
+      "rank": "\uD83D\uDCCA",
       "player": "Player",
       "score": "Total Ever",
-      "rebirths": "Rebirths",
+      "rebirths": "Rebirth",
       "loading": "📊 Loading leaderboard...",
       "empty": "📊 No players on the leaderboard yet"
     },

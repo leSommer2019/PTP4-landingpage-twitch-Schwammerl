@@ -289,8 +289,6 @@ export function useBartclickerGame() {
 
       if (error) {
         console.error('Error saving game state:', error);
-      } else {
-        console.log('Game state saved successfully');
       }
     } catch (err) {
       console.error('Failed to save game state:', err);

@@ -335,10 +335,10 @@
     "leaderboard": {
       "title": "🏆 Top Spieler",
       "subtitle": "Beste Bartclicker Spieler (Gesamt)",
-      "rank": "Rang",
+      "rank": "\uD83D\uDCCA",
       "player": "Spieler",
       "score": "Gesamt",
-      "rebirths": "Rebirths",
+      "rebirths": "Rebirth",
       "loading": "📊 Leaderboard wird geladen...",
       "empty": "📊 Noch keine Spieler auf der Rangliste"
     },
