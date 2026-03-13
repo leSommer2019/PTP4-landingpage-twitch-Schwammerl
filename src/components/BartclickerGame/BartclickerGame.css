@@ -68,8 +68,8 @@
 }
 
 .click-button {
-    width: auto;
-    height: auto;
+    width: 180px;
+    height: 180px;
     border-radius: 0;
     background: transparent;
     border: none;
@@ -86,8 +86,9 @@
 }
 
 .beard-svg {
-    width: 180px;
-    height: auto;
+    width: 100%;
+    height: 100%;
+    display: block;
     filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.4));
     flex-shrink: 0;
 }
@@ -700,35 +701,8 @@
 /* Responsive */
 @media (max-width: 768px) {
     .bartclicker-game {
-        padding: 15px;
-    }
-
-    .bartclicker-header {
-        grid-template-columns: 1fr 1fr;
-    }
-
-    .click-button {
-        width: 160px;
-        height: 160px;
-    }
-
-    .shop-content,
-    .booster-content,
-    .relics-content,
-    .autobuyer-content,
-    .stats-content {
-        max-height: 400px;
-    }
-
-    .booster-grid,
-    .relics-grid {
-        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-    }
-}
-
-@media (max-width: 768px) {
-    .bartclicker-game {
         padding: 12px;
+        gap: 15px;
     }
 
     .bartclicker-header {
@@ -755,15 +729,25 @@
 
     .click-button {
         margin: 15px 0;
-    }
-
-    .beard-svg {
         width: 160px;
-        height: auto;
+        height: 160px;
     }
 
     .click-button:hover:not(:disabled) .beard-svg {
         filter: drop-shadow(0 0 20px rgba(124, 77, 255, 0.6));
+    }
+
+    .shop-content,
+    .booster-content,
+    .relics-content,
+    .autobuyer-content,
+    .stats-content {
+        max-height: 400px;
+    }
+
+    .booster-grid,
+    .relics-grid {
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
     }
 
     .shop-subtabs {
@@ -822,13 +806,8 @@
     }
 
     .click-button {
-        margin: 10px 0;
-    }
-
-    .beard-svg {
         width: 90px;
-        height: 120px;
-        object-fit: contain;
+        height: 90px;
         margin-top: 10px;
     }
 
@@ -836,10 +815,6 @@
         min-height: 60px;
         align-items: flex-start;
         padding: 20px 0 0 0;
-    }
-
-    .click-button:hover:not(:disabled) .beard-svg {
-        filter: drop-shadow(0 0 15px rgba(124, 77, 255, 0.6));
     }
 
     .tabs {
