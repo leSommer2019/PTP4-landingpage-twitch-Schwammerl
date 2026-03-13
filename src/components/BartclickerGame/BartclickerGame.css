@@ -58,42 +58,51 @@
     letter-spacing: 1px;
 }
 
-/* Click Area - Animierter Bart SVG */
+/* Suche diese Stellen in deinem CSS und ersetze sie: */
+
 .click-area {
     display: flex;
     justify-content: center;
-    padding: 30px 0 5px 0;
-    min-height: 20px;
-    align-items: flex-start;
+    padding: 20px 0;
+    min-height: 250px; /* Genug Platz für den Avatar */
+    align-items: center;
 }
 
 .click-button {
-    width: 240px;
-    height: 240px;
-    border-radius: 0;
+    width: 280px;  /* Etwas größer für bessere Klickbarkeit */
+    height: 280px;
     background: transparent;
     border: none;
     cursor: pointer;
-    display: inline-flex;
-    align-items: flex-end;
+    display: flex;
+    align-items: center;
     justify-content: center;
-    transition: all 0.2s;
-    box-shadow: none;
-    padding: 0;
+    transition: transform 0.1s ease-out; /* Hier nur Dauer und Kurve */    padding: 0;
     overflow: visible;
     position: relative;
-    z-index: 0;
 }
+
+.click-button:active {
+    transform: scale(0.92); /* Schrumpft beim Klick leicht */}
 
 .beard-svg {
-    width: 200%;
-    height: 200%;
+    width: 100%;    /* Nutzt jetzt die 280px des Buttons voll aus */
+    height: 100%;
     display: block;
     filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.4));
-    flex-shrink: 0;
-    padding: 290px 0 5px 0;
+    /* ENTFERNE das padding: 290px 0 5px 0; <- Das war der Übeltäter! */
 }
 
+/* Fix für Mobile */
+@media (max-width: 480px) {
+    .click-button {
+        width: 220px;
+        height: 220px;
+    }
+    .click-area {
+        min-height: 240px;
+    }
+}
 .click-button:hover:not(:disabled) .beard-svg {
     filter: drop-shadow(0 0 20px rgba(124, 77, 255, 0.6));
 }

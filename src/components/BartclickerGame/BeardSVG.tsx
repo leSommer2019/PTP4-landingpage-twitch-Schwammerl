@@ -22,12 +22,12 @@ export function BeardSVG({ bartLength, clickCount = 0 }: BeardProps) {
   // So bleibt der Kopf immer oben und der Bart wächst nur nach unten
 
   return (
-      <svg id="avatar-svg" viewBox="0 0 200 270" xmlns="http://www.w3.org/2000/svg" className="beard-svg"
+      <svg id="avatar-svg" viewBox="0 0 200 350" xmlns="http://www.w3.org/2000/svg" className="beard-svg"
            style={{
              transition: 'all 0.2s ease',
              width: '100%',
-             height: 'auto',
-             maxHeight: '400px'
+             height: '100%',
+             display: 'block'
            }}>
         <rect x="40" y="40" width="120" height="100" rx="16" fill="#d4a373"></rect>
 
