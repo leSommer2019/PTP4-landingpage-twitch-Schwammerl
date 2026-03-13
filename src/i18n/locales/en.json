@@ -330,7 +330,7 @@
       "autoClickerDisable": "❌ Disable",
       "upgradebuyer": "📈 Auto Upgrade Buyer",
       "upgradebuyerDesc": "Costs: 10 Rebirths",
-      "youHave": "You have: {count} Rebirths"
+      "youHave": "You have: {{count}} Rebirths"
     },
     "leaderboard": {
       "title": "🏆 Top Players",

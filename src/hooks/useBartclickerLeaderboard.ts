@@ -27,45 +27,30 @@ export function useBartclickerLeaderboard() {
         }
 
         if (data) {
-          // Get user profiles for display names - aber mit Error Handling
-          const leaderboardEntries: BartclickerLeaderboardEntry[] = await Promise.all(
-            data.map(async (entry, index) => {
-              try {
-                // Versuche Username zu laden
-                const { data: profile, error: profileError } = await supabase
-                  .from('profiles')
-                  .select('username')
-                  .eq('id', entry.user_id)
-                  .single();
+          // Sammle alle user_ids
+          const userIds = data.map(entry => entry.user_id);
+          
+          // Lade alle Profile in einer Abfrage
+          const { data: profiles} = await supabase
+            .from('profiles')
+            .select('id, username')
+            .in('id', userIds);
 
-                let displayName = `Player ${index + 1}`;
-                
-                if (!profileError && profile?.username) {
-                  displayName = profile.username;
-                }
+          // Erstelle eine Map für schnelle Lookups
+          const profileMap = new Map(profiles?.map(p => [p.id, p.username]) ?? []);
 
-                return {
-                  rank: index + 1,
-                  user_id: entry.user_id,
-                  total_ever: parseFloat(entry.total_ever.toString()) || 0,
-                  rebirth_count: entry.rebirth_count || 0,
-                  last_updated: entry.last_updated || new Date().toISOString(),
-                  display_name: displayName,
-                };
-              } catch (profileErr) {
-                // Fallback bei Fehler
-                console.debug('Error loading profile for user_id:', entry.user_id, profileErr);
-                return {
-                  rank: index + 1,
-                  user_id: entry.user_id,
-                  total_ever: parseFloat(entry.total_ever.toString()) || 0,
-                  rebirth_count: entry.rebirth_count || 0,
-                  last_updated: entry.last_updated || new Date().toISOString(),
-                  display_name: `Player ${index + 1}`,
-                };
-              }
-            })
-          );
+          const leaderboardEntries: BartclickerLeaderboardEntry[] = data.map((entry, index) => {
+            const displayName = profileMap.get(entry.user_id) || `Player ${index + 1}`;
+            
+            return {
+              rank: index + 1,
+              user_id: entry.user_id,
+              total_ever: parseFloat(entry.total_ever.toString()) || 0,
+              rebirth_count: entry.rebirth_count || 0,
+              last_updated: entry.last_updated || new Date().toISOString(),
+              display_name: displayName,
+            };
+          });
 
           setEntries(leaderboardEntries);
         }

@@ -290,7 +290,7 @@
     "tabs": {
       "shop": "🛒 Shop",
       "leaderboard": "🏆 Leaderboard",
-      "stats": "📊 Statistiken"
+      "stats": "📊 Statistik"
     },
     "shopTabs": {
       "passive": "💧 Passiv",
@@ -330,7 +330,7 @@
       "autoClickerDisable": "❌ Deaktivieren",
       "upgradebuyer": "📈 Auto-Upgrade Käufer",
       "upgradebuyerDesc": "Kostet: 10 Rebirths",
-      "youHave": "Du hast: {count} Rebirths"
+      "youHave": "Du hast: {{count}} Rebirths"
     },
     "leaderboard": {
       "title": "🏆 Top Spieler",

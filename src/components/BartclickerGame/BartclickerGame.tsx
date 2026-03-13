@@ -35,6 +35,13 @@ export default function BartclickerGame({ compact = false }: BartclickerGameProp
     return Math.floor(num).toString();
   };
 
+  const formatCPS = (num: number) => {
+    if (num >= 1e9) return (num / 1e9).toFixed(2) + 'b';
+    if (num >= 1e6) return (num / 1e6).toFixed(2) + 'm';
+    if (num >= 1e3) return (num / 1e3).toFixed(2) + 'k';
+    return num.toFixed(2);
+  };
+
   const handleBartClick = () => {
     handleClick();
     setClickPulse(true);
@@ -79,7 +86,7 @@ export default function BartclickerGame({ compact = false }: BartclickerGameProp
         </div>
 
         <div className="stat-box">
-          <h3 className="stat-cps">{formatNumber(cps)}/s</h3>
+          <h3 className="stat-cps">{formatCPS(cps)}/s</h3>
           <p className="stat-label">{t('bartclicker.stats.perSecond')}</p>
         </div>
 
