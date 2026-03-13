@@ -8,20 +8,21 @@ export function BeardSVG({ bartLength, clickCount = 0 }: BeardProps) {
   // Normalisiere bartLength auf eine Prozentquote (50-100 → 0-1)
   const bartGrowth = (bartLength - 50) / 50; // 0 bis 1
   
-  // Dynamische Bart-Höhe: 
+  // Dynamische Bart-Höhe: VIEL KÜRZER
   // - Basis: 20px
-  // - Rebirths: +250px max
-  // - Klicks: +0.5px pro Klick, max 200px
-  const rebirthHeight = bartGrowth * 250;
-  const clickHeight = Math.min(200, clickCount * 0.5);
+  // - Rebirths: +100px max (statt 250)
+  // - Klicks: +50px max (statt 200)
+  // - Total max: 170px (statt 470px)
+  const rebirthHeight = bartGrowth * 100;
+  const clickHeight = Math.min(50, clickCount * 0.3);
   const beardHeight = 20 + rebirthHeight + clickHeight;
   
-  // viewBox Height dynamisch basierend auf Bartgröße
-  const viewBoxHeight = 350 + Math.max(0, beardHeight - 20) * 0.5;
+  // viewBox Height - simplified für bessere Performance
+  const viewBoxHeight = Math.min(450, 350 + beardHeight);
   
   // SVG width/height mit korrektem Verhältnis zur viewBox
   const svgWidth = 180;
-  const svgHeight = svgWidth * (viewBoxHeight / 100);
+  const svgHeight = Math.round(svgWidth * (viewBoxHeight / 100));
 
   return (
     <svg 
