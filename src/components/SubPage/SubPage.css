@@ -46,6 +46,10 @@
   margin-top: 24px;
 }
 
+.subpage-back .btn + .btn {
+  margin-left: 12px;
+}
+
 /* ── Responsive Embed (Kalender etc.) ── */
 .subpage-embed {
   width: 100%;
