@@ -49,8 +49,9 @@ export default function BartclickerGame({ compact = false }: BartclickerGameProp
     setTimeout(() => setClickPulse(false), 300);
   };
 
-  // Berechne Bart-Länge basierend auf Rebirth-Count
-  const bartLength = Math.min(100, 50 + gameState.rebirth_count * 5);
+  // Berechne Bart-Länge basierend auf vorhandener Energie (Barthaare)
+  // Bei 0: Basis 50, bei 1M Barthaare: Maximum 100
+  const bartLength = Math.min(100, 50 + Math.log10(gameState.energy + 1) * 10);
 
   const passiveItems = gameState.shop_items.filter((item) => item.type === 'passive');
   const clickItems = gameState.shop_items.filter((item) => item.type === 'click');

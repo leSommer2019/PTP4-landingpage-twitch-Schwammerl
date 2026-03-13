@@ -62,8 +62,8 @@
 .click-area {
   display: flex;
   justify-content: center;
-  padding: 10px 0;
-  min-height: 350px;
+  padding: 5px 0;
+  min-height: 300px;
   align-items: center;
 }
 
