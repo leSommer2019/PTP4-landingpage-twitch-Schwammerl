@@ -828,8 +828,12 @@
   }
 
   .beard-svg {
-    width: 180px;
-    height: 220px;
+    width: 200px;
+    height: 280px;
+  }
+
+  .click-area {
+    min-height: 300px;
   }
 
   .click-button:hover:not(:disabled) .beard-svg {
