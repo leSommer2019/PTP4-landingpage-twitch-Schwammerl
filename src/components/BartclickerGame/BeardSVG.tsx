@@ -16,9 +16,6 @@ export function BeardSVG({ bartLength, clickCount = 0 }: BeardProps) {
   const clickHeight = Math.min(200, clickCount * 0.5);
   const beardHeight = 20 + rebirthHeight + clickHeight;
   
-  // Skalierung basierend auf Klicks - NUR für Bart, nicht für Kopf
-  const clickScale = Math.min(1.5, 1 + clickCount * 0.01);
-  
   // viewBox Height dynamisch basierend auf Bartgröße
   const viewBoxHeight = 350 + Math.max(0, beardHeight - 20) * 0.5;
   
@@ -69,14 +66,11 @@ export function BeardSVG({ bartLength, clickCount = 0 }: BeardProps) {
       <circle cx="35" cy="43" r="1.5" fill="#000"/>
       <circle cx="65" cy="43" r="1.5" fill="#000"/>
 
-      {/* DYNAMISCHER BART - WIRD MIT KLICKS SKALIERT */}
+      {/* DYNAMISCHER BART - WÄCHST NUR IN TIEFE */}
       <g 
         id="beard-group" 
         style={{ 
-          transition: 'all 0.2s ease',
-          transform: `scale(${clickScale})`,
-          transformOrigin: 'center bottom',
-          transformBox: 'fill-box'
+          transition: 'all 0.2s ease'
         }}
       >
         {/* Basis-Beard: 
