@@ -563,3 +563,58 @@ BEGIN
 END;
 $$;
 
+-- ============================================================
+--  Bartclicker Game Schema  –  Incremental Clicker Game
+-- ============================================================
+
+CREATE TABLE IF NOT EXISTS bartclicker_scores (
+  user_id         uuid PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+  clicks          integer NOT NULL DEFAULT 0,
+  total_score     bigint NOT NULL DEFAULT 0,
+  owned_power_ups jsonb NOT NULL DEFAULT '{}',  -- { "powerUpId": level, ... }
+  last_updated    timestamptz NOT NULL DEFAULT now(),
+  created_at      timestamptz NOT NULL DEFAULT now()
+);
+
+-- Enable RLS for scores
+ALTER TABLE bartclicker_scores ENABLE ROW LEVEL SECURITY;
+
+-- RLS Policy: Users can only view their own score
+CREATE POLICY "bartclicker_scores_view_own"
+  ON bartclicker_scores FOR SELECT
+  USING (auth.uid() = user_id);
+
+-- RLS Policy: Users can only update their own score
+CREATE POLICY "bartclicker_scores_update_own"
+  ON bartclicker_scores FOR UPDATE
+  USING (auth.uid() = user_id)
+  WITH CHECK (auth.uid() = user_id);
+
+-- RLS Policy: Users can insert their own score
+CREATE POLICY "bartclicker_scores_insert_own"
+  ON bartclicker_scores FOR INSERT
+  WITH CHECK (auth.uid() = user_id);
+
+-- Create index for faster queries
+CREATE INDEX IF NOT EXISTS idx_bartclicker_scores_user_id ON bartclicker_scores(user_id);
+
+-- Leaderboard view (top 100 players, public read)
+CREATE OR REPLACE VIEW bartclicker_leaderboard AS
+SELECT
+  ROW_NUMBER() OVER (ORDER BY total_score DESC) as rank,
+  user_id,
+  total_score,
+  clicks,
+  last_updated,
+  CASE
+    WHEN total_score >= 1000000000 THEN ROUND(total_score::numeric / 1000000000, 2) || 'B'
+    WHEN total_score >= 1000000 THEN ROUND(total_score::numeric / 1000000, 2) || 'M'
+    WHEN total_score >= 1000 THEN ROUND(total_score::numeric / 1000, 2) || 'K'
+    ELSE total_score::text
+  END as formatted_score
+FROM bartclicker_scores
+ORDER BY total_score DESC
+LIMIT 100;
+
+-- Allow public read access to leaderboard
+GRANT SELECT ON bartclicker_leaderboard TO anon, authenticated;
