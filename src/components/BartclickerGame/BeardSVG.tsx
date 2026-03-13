@@ -31,8 +31,6 @@ export function BeardSVG({ bartLength, clickCount = 0 }: BeardProps) {
       xmlns="http://www.w3.org/2000/svg"
       className="beard-svg"
       style={{ 
-        width: svgWidth, 
-        height: svgHeight,
         transition: 'all 0.2s ease'
       }}
     >

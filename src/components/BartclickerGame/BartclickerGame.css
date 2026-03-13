@@ -85,9 +85,9 @@
 }
 
 .beard-svg {
-  width: 220px;
-  height: 280px;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+  width: 180px;
+  height: auto;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.4));
   flex-shrink: 0;
 }
 
@@ -114,12 +114,6 @@
 .click-button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
-}
-
-.beard-svg {
-  width: 100%;
-  height: 100%;
-  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.4));
 }
 
 /* Tabs */
@@ -760,8 +754,8 @@
   }
 
   .beard-svg {
-    width: 200px;
-    height: 240px;
+    width: 160px;
+    height: auto;
   }
 
   .click-button:hover:not(:disabled) .beard-svg {
@@ -828,14 +822,14 @@
   }
 
   .beard-svg {
-    width: 200px;
-    height: 280px;
+    width: 90px;
+    height: auto;
   }
 
   .click-area {
     min-height: 60px;
     align-items: flex-start;
-    padding: 5px 0 0 0;
+    padding: 20px 0 0 0;
   }
 
   .click-button:hover:not(:disabled) .beard-svg {
