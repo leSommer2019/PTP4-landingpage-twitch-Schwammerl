@@ -176,6 +176,10 @@
   "moderate": {
     "forbidden": "Access Denied",
     "forbiddenHint": "This area is only accessible to moderators and the streamer.",
+    "landingTitle": "Moderation Area",
+    "welcome": "Welcome, {{name}}!",
+    "landingHome": "Homepage",
+    "unknownUser": "Moderator",
     "loggedInAs": "Logged in as {{name}}",
     "votingTitle": "Voting Management",
     "actions": "Actions",

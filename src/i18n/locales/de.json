@@ -176,6 +176,10 @@
   "moderate": {
     "forbidden": "Kein Zugriff",
     "forbiddenHint": "Dieser Bereich ist nur für Moderatoren und den Streamer zugänglich.",
+    "landingTitle": "Moderations-Bereich",
+    "welcome": "Willkommen, {{name}}!",
+    "landingHome": "Startseite",
+    "unknownUser": "Moderator",
     "loggedInAs": "Eingeloggt als {{name}}",
     "votingTitle": "Voting-Verwaltung",
     "actions": "Aktionen",

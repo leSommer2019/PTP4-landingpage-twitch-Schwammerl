@@ -11,6 +11,7 @@ import StreamplanPage from './pages/StreamplanPage'
 import StreamelementsPage from './pages/StreamelementsPage'
 import BartclickerPage from './pages/BartclickerPage'
 import ClipVotingPage from './pages/ClipVotingPage'
+import ModeratePage from './pages/ModeratePage'
 import ModerateVotingPage from './pages/ModerateVotingPage'
 import ModerateStatisticsPage from './pages/ModerateStatisticsPage'
 import NotFoundPage from './pages/NotFoundPage'
@@ -35,6 +36,7 @@ function App() {
                 <Route path="/clipdesmonats" element={<ClipVotingPage/>}/>
 
                 {/* ── Moderatoren-Bereich (Twitch-Mods + Streamer) ── */}
+                <Route path="/moderate" element={<ModeratorRoute><ModeratePage/></ModeratorRoute>}/>
                 <Route path="/moderate/voting" element={<ModeratorRoute><ModerateVotingPage/></ModeratorRoute>}/>
                 <Route path="/moderate/statistics"
                        element={<ModeratorRoute><ModerateStatisticsPage/></ModeratorRoute>}/>
