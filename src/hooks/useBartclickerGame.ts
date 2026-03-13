@@ -5,7 +5,6 @@ import type {
   BartclickerGameState,
   ShopItem,
   Buff,
-  Debuff,
 } from '../types/bartclicker';
 
 // Initial shop items definition
@@ -73,6 +72,7 @@ export function useBartclickerGame() {
 
   const [cps, setCps] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [lastSaveTime, setLastSaveTime] = useState(0);
   const gameLoopRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // Calculate CPS based on shop items, relics, and multipliers
@@ -145,10 +145,13 @@ export function useBartclickerGame() {
 
   // Load game state from database
   const loadGameState = useCallback(async () => {
-    if (!user?.id) return;
+    if (!user?.id) {
+      setIsLoading(false);
+      return;
+    }
 
-    setIsLoading(true);
     try {
+      setIsLoading(true);
       const { data, error } = await supabase
         .from('bartclicker_scores')
         .select('*')
@@ -156,21 +159,23 @@ export function useBartclickerGame() {
         .single();
 
       if (error && error.code !== 'PGRST116') {
+        // PGRST116 = no rows found (expected for new users)
         console.error('Error loading game state:', error);
-        return;
-      }
-
-      if (data) {
+      } else if (data) {
+        // Existing data found
         setGameState({
           id: data.id,
           user_id: data.user_id,
-          energy: data.energy,
-          total_ever: data.total_ever,
-          rebirth_count: data.rebirth_count,
-          rebirth_multiplier: data.rebirth_multiplier,
-          shop_items: data.shop_items || INITIAL_SHOP_ITEMS,
-          active_buffs: data.active_buffs?.filter((buff: Buff) => buff.endTime && buff.endTime > Date.now()) || [],
-          active_debuffs: data.active_debuffs?.filter((debuff: Debuff) => debuff.endTime && debuff.endTime > Date.now()) || [],
+          energy: parseFloat(data.energy) || 0,
+          total_ever: parseFloat(data.total_ever) || 0,
+          rebirth_count: data.rebirth_count || 0,
+          rebirth_multiplier: parseFloat(data.rebirth_multiplier) || 1,
+          shop_items: (data.shop_items || []).map((item: any) => ({
+            ...item,
+            cost: item.cost || INITIAL_SHOP_ITEMS.find(i => i.id === item.id)?.cost || 0,
+          })),
+          active_buffs: (data.active_buffs || []).filter((buff: any) => buff.endTime && buff.endTime > Date.now()),
+          active_debuffs: (data.active_debuffs || []).filter((debuff: any) => debuff.endTime && debuff.endTime > Date.now()),
           relics: data.relics || [],
           offline_earning_upgrades: data.offline_earning_upgrades || 0,
           auto_click_buyer_enabled: data.auto_click_buyer_enabled || false,
@@ -180,6 +185,25 @@ export function useBartclickerGame() {
           last_updated: data.last_updated,
           created_at: data.created_at,
         });
+      } else {
+        // New user - create initial entry
+        const initialState: BartclickerGameState = {
+          user_id: user.id,
+          energy: 0,
+          total_ever: 0,
+          rebirth_count: 0,
+          rebirth_multiplier: 1,
+          shop_items: INITIAL_SHOP_ITEMS,
+          active_buffs: [],
+          active_debuffs: [],
+          relics: [],
+          offline_earning_upgrades: 0,
+          auto_click_buyer_enabled: false,
+          click_upgrade_buyer_enabled: false,
+          auto_click_buyer_items: [],
+          click_upgrade_buyer_items: [],
+        };
+        setGameState(initialState);
       }
     } catch (err) {
       console.error('Failed to load game state:', err);
@@ -193,14 +217,28 @@ export function useBartclickerGame() {
     if (!user?.id) return;
 
     try {
-      const { error } = await supabase.from('bartclicker_scores').upsert(
-        {
-          user_id: user.id,
-          ...gameState,
-          last_updated: new Date().toISOString(),
-        },
-        { onConflict: 'user_id' }
-      );
+      const { error } = await supabase
+        .from('bartclicker_scores')
+        .upsert(
+          {
+            user_id: user.id,
+            energy: gameState.energy.toString(),
+            total_ever: gameState.total_ever.toString(),
+            rebirth_count: gameState.rebirth_count,
+            rebirth_multiplier: gameState.rebirth_multiplier.toString(),
+            shop_items: gameState.shop_items,
+            active_buffs: gameState.active_buffs,
+            active_debuffs: gameState.active_debuffs,
+            relics: gameState.relics,
+            offline_earning_upgrades: gameState.offline_earning_upgrades,
+            auto_click_buyer_enabled: gameState.auto_click_buyer_enabled,
+            click_upgrade_buyer_enabled: gameState.click_upgrade_buyer_enabled,
+            auto_click_buyer_items: gameState.auto_click_buyer_items,
+            click_upgrade_buyer_items: gameState.click_upgrade_buyer_items,
+            last_updated: new Date().toISOString(),
+          },
+          { onConflict: 'user_id' }
+        );
 
       if (error) {
         console.error('Error saving game state:', error);
@@ -213,15 +251,13 @@ export function useBartclickerGame() {
   // Handle click
   const handleClick = useCallback(() => {
     const power = calculateClickPower();
-    const newEnergy = gameState.energy + power;
-    const newTotal = gameState.total_ever + power;
 
     setGameState((prev) => ({
       ...prev,
-      energy: newEnergy,
-      total_ever: newTotal,
+      energy: prev.energy + power,
+      total_ever: prev.total_ever + power,
     }));
-  }, [gameState.energy, gameState.total_ever, calculateClickPower]);
+  }, [calculateClickPower]);
 
   // Buy shop item
   const buyItem = useCallback(
@@ -313,14 +349,24 @@ export function useBartclickerGame() {
     loadGameState();
   }, [loadGameState]);
 
-  // Auto-save periodically
+  // Auto-save periodically (every 10 seconds)
   useEffect(() => {
     const saveInterval = setInterval(() => {
       saveGameState();
-    }, 30000); // Save every 30 seconds
+    }, 10000); // Save every 10 seconds
 
     return () => clearInterval(saveInterval);
   }, [saveGameState]);
+
+  // Also save on important state changes (rebirth, shop item count changes)
+  useEffect(() => {
+    const now = Date.now();
+    if (now - lastSaveTime > 5000) {
+      // Don't save too frequently - at least 5 seconds between saves
+      saveGameState();
+      setLastSaveTime(now);
+    }
+  }, [gameState.rebirth_count, gameState.shop_items.length, saveGameState, lastSaveTime]);
 
   return {
     gameState,

@@ -12,8 +12,8 @@ export default function BartclickerGame({ compact = false }: BartclickerGameProp
   const { gameState, isLoading, cps, handleClick, buyItem, activateBuff, performRebirth } =
     useBartclickerGame();
 
-  const [activeTab, setActiveTab] = useState<'shop' | 'booster' | 'relics' | 'autobuyer' | 'stats'>('shop');
-  const [shopTab, setShopTab] = useState<'passive' | 'click'>('passive');
+  const [activeTab, setActiveTab] = useState<'shop' | 'leaderboard' | 'stats'>('shop');
+  const [shopTab, setShopTab] = useState<'passive' | 'click' | 'booster' | 'relics' | 'autobuyer'>('passive');
   const [clickPulse, setClickPulse] = useState(false);
   const [bartScale, setBartScale] = useState(1);
 
@@ -133,22 +133,10 @@ export default function BartclickerGame({ compact = false }: BartclickerGameProp
           🛒 Shop
         </button>
         <button
-          className={`tab-button ${activeTab === 'booster' ? 'active' : ''}`}
-          onClick={() => setActiveTab('booster')}
+          className={`tab-button ${activeTab === 'leaderboard' ? 'active' : ''}`}
+          onClick={() => setActiveTab('leaderboard')}
         >
-          ⚡ Booster
-        </button>
-        <button
-          className={`tab-button ${activeTab === 'relics' ? 'active' : ''}`}
-          onClick={() => setActiveTab('relics')}
-        >
-          💎 Relics
-        </button>
-        <button
-          className={`tab-button ${activeTab === 'autobuyer' ? 'active' : ''}`}
-          onClick={() => setActiveTab('autobuyer')}
-        >
-          🤖 Auto-Buyer
+          🏆 Leaderboard
         </button>
         <button
           className={`tab-button ${activeTab === 'stats' ? 'active' : ''}`}
@@ -166,13 +154,31 @@ export default function BartclickerGame({ compact = false }: BartclickerGameProp
               className={`shop-subtab ${shopTab === 'passive' ? 'active' : ''}`}
               onClick={() => setShopTab('passive')}
             >
-              💧 Passive Items
+              💧 Passive
             </button>
             <button
               className={`shop-subtab ${shopTab === 'click' ? 'active' : ''}`}
               onClick={() => setShopTab('click')}
             >
-              💪 Click Items
+              💪 Click
+            </button>
+            <button
+              className={`shop-subtab ${shopTab === 'booster' ? 'active' : ''}`}
+              onClick={() => setShopTab('booster')}
+            >
+              ⚡ Booster
+            </button>
+            <button
+              className={`shop-subtab ${shopTab === 'relics' ? 'active' : ''}`}
+              onClick={() => setShopTab('relics')}
+            >
+              💎 Relics
+            </button>
+            <button
+              className={`shop-subtab ${shopTab === 'autobuyer' ? 'active' : ''}`}
+              onClick={() => setShopTab('autobuyer')}
+            >
+              🤖 Auto
             </button>
           </div>
 
@@ -236,77 +242,95 @@ export default function BartclickerGame({ compact = false }: BartclickerGameProp
               </p>
             </div>
           )}
-        </div>
-      )}
 
-      {/* Booster Tab */}
-      {activeTab === 'booster' && (
-        <div className="booster-content">
-          <div className="booster-grid">
-            {BOOSTERS.map((booster) => (
-              <div key={booster.id} className="booster-card">
-                <div className="booster-icon">{booster.icon}</div>
-                <h3>{booster.name}</h3>
-                <p className="booster-effect">{booster.effect}</p>
-                <button
-                  className="buy-button"
-                  onClick={() => activateBuff(booster.id)}
-                  disabled={gameState.energy < booster.cost}
-                >
-                  {formatNumber(booster.cost)}
-                </button>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Relics Tab */}
-      {activeTab === 'relics' && (
-        <div className="relics-content">
-          <div className="relics-grid">
-            {RELICS.map((relic) => {
-              const isUnlocked = gameState.relics.some((r) => r.id === relic.id);
-              return (
-                <div key={relic.id} className={`relic-card ${isUnlocked ? 'unlocked' : ''}`}>
-                  <div className="relic-icon">{relic.icon}</div>
-                  <h3>{relic.name}</h3>
-                  <p className="relic-effect">{relic.effect}</p>
-                  {isUnlocked ? (
-                    <div className="relic-unlocked">✅ Freigeschaltet</div>
-                  ) : (
-                    <button
-                      className="buy-button"
-                      disabled={gameState.energy < relic.cost}
-                      title={`Kosten: ${formatNumber(relic.cost)}`}
-                    >
-                      {formatNumber(relic.cost)}
-                    </button>
-                  )}
+          {shopTab === 'booster' && (
+            <div className="booster-grid">
+              {BOOSTERS.map((booster) => (
+                <div key={booster.id} className="booster-card">
+                  <div className="booster-icon">{booster.icon}</div>
+                  <h3>{booster.name}</h3>
+                  <p className="booster-effect">{booster.effect}</p>
+                  <button
+                    className="buy-button"
+                    onClick={() => activateBuff(booster.id)}
+                    disabled={gameState.energy < booster.cost}
+                  >
+                    {formatNumber(booster.cost)}
+                  </button>
                 </div>
-              );
-            })}
-          </div>
+              ))}
+            </div>
+          )}
+
+          {shopTab === 'relics' && (
+            <div className="relics-grid">
+              {RELICS.map((relic) => {
+                const isUnlocked = gameState.relics.some((r) => r.id === relic.id);
+                return (
+                  <div key={relic.id} className={`relic-card ${isUnlocked ? 'unlocked' : ''}`}>
+                    <div className="relic-icon">{relic.icon}</div>
+                    <h3>{relic.name}</h3>
+                    <p className="relic-effect">{relic.effect}</p>
+                    {isUnlocked ? (
+                      <div className="relic-unlocked">✅ Freigeschaltet</div>
+                    ) : (
+                      <button
+                        className="buy-button"
+                        disabled={gameState.energy < relic.cost}
+                        title={`Kosten: ${formatNumber(relic.cost)}`}
+                      >
+                        {formatNumber(relic.cost)}
+                      </button>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+          {shopTab === 'autobuyer' && (
+            <div className="autobuyer-content">
+              <div className="autobuyer-card">
+                <h3>🤖 Auto-Klicker</h3>
+                <p>Automatisches Klicken aktivieren (Coming Soon)</p>
+                <div className="toggle-switch">
+                  <input type="checkbox" disabled />
+                  <span className="toggle-slider"></span>
+                </div>
+              </div>
+              <div className="autobuyer-card">
+                <h3>📈 Auto-Upgrade Käufer</h3>
+                <p>Automatische Kauf von Upgrades (Coming Soon)</p>
+                <div className="toggle-switch">
+                  <input type="checkbox" disabled />
+                  <span className="toggle-slider"></span>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       )}
 
-      {/* Auto-Buyer Tab */}
-      {activeTab === 'autobuyer' && (
-        <div className="autobuyer-content">
-          <div className="autobuyer-card">
-            <h3>🤖 Auto-Klicker</h3>
-            <p>Automatisches Klicken aktivieren (Coming Soon)</p>
-            <div className="toggle-switch">
-              <input type="checkbox" disabled />
-              <span className="toggle-slider"></span>
-            </div>
+      {/* Leaderboard Tab */}
+      {activeTab === 'leaderboard' && (
+        <div className="leaderboard-content">
+          <div className="leaderboard-header">
+            <h3>🏆 Top Players</h3>
+            <p className="leaderboard-subtitle">Best Bartclicker Players (All Time)</p>
           </div>
-          <div className="autobuyer-card">
-            <h3>📈 Auto-Upgrade Käufer</h3>
-            <p>Automatische Kauf von Upgrades (Coming Soon)</p>
-            <div className="toggle-switch">
-              <input type="checkbox" disabled />
-              <span className="toggle-slider"></span>
+          <div className="leaderboard-list">
+            <div className="leaderboard-item-header">
+              <span className="rank-col">Rank</span>
+              <span className="name-col">Player</span>
+              <span className="score-col">Total Ever</span>
+              <span className="rebirth-col">Rebirths</span>
+            </div>
+            {/* Leaderboard items will be loaded from Supabase */}
+            <div className="leaderboard-placeholder">
+              <p>📊 Loading leaderboard... (Coming Soon)</p>
+              <p style={{fontSize: '0.9rem', color: '#888', marginTop: '10px'}}>
+                Top players will appear here once data is available
+              </p>
             </div>
           </div>
         </div>
