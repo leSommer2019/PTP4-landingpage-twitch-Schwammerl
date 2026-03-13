@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/useAuth'
@@ -62,7 +61,6 @@ interface ModRow { twitch_user_id: string; display_name: string | null }
 /* ═════════════════════════════════════════════════════════ */
 
 export default function ModerateVotingPage() {
-  const navigate = useNavigate()
   const { t } = useTranslation()
   const { user, session } = useAuth()
   const { showToast } = useToast()
@@ -229,13 +227,6 @@ export default function ModerateVotingPage() {
           </table>
         </div>
       )}
-
-      {/* ── Zurück Button ── */}
-      <div style={{ display: 'flex', gap: 10, marginTop: 20 }}>
-        <button className="btn btn-primary" onClick={() => navigate('/moderate')}>
-          {t('back')}
-        </button>
-      </div>
     </SubPage>
   )
 }
