@@ -41,6 +41,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [user, session])
 
+  // Auto-create profile on login
+  useEffect(() => {
+    if (user) {
+      const createProfile = async () => {
+        const username = user.user_metadata?.user_login || user.user_metadata?.full_name || user.email
+        if (username) {
+          try {
+            await supabase
+              .from('profiles')
+              .upsert({
+                id: user.id,
+                username: username,
+                updated_at: new Date().toISOString(),
+              }, {
+                onConflict: 'id'
+              })
+          } catch (err) {
+            console.error('Failed to create profile:', err)
+          }
+        }
+      }
+      createProfile()
+    }
+  }, [user])
+
   const signInWithTwitch = useCallback(async () => {
     // Speichere den aktuellen Pfad vor der Anmeldung
     sessionStorage.setItem(REDIRECT_PATH_KEY, window.location.pathname + window.location.search)
