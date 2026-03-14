@@ -64,7 +64,7 @@
   "partners": {
     "yvolve": { "title": "Yvolve", "desc": "10% Rabatt auf die gesamte Bestellung" },
     "nclip": { "title": "NClip" },
-    "frugends": { "title": "Frugends" }
+    "frugends": { "title": "Frugends", "desc": "10% Rabatt mit Code FullHD" }
   },
   "footer": {
     "impressum": "Impressum",
@@ -193,9 +193,10 @@
     "roundOverview": "Runden-Übersicht",
     "noRounds": "Noch keine Voting-Runden vorhanden.",
     "modSync": "Moderatoren synchronisieren",
-    "modSyncHint": "Holt Broadcaster + Mods direkt aus der Twitch API. Benötigt einen frischen Login mit moderation:read-Berechtigung.",
+    "modSyncHint": "Holt Broadcaster + Mods direkt aus der Twitch API. Benötigt einen frischen Login mit moderation:read- und channel:manage:moderators-Berechtigung.",
     "syncNow": "Jetzt synchronisieren",
     "loginForSync": "Neu anmelden für Sync",
+    "syncMissingScope": "Fehlende Berechtigung – bitte über \"Neu anmelden für Sync\" erneut einloggen, damit das Token die neuen Scopes (channel:manage:moderators) erhält.",
     "currentMods": "{{count}} Moderator(en)",
     "noMods": "Noch keine Moderatoren eingetragen. Nutze den Sync oder füge manuell hinzu.",
     "manualAdd": "Manuell hinzufügen",

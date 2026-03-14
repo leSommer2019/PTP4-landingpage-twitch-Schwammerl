@@ -3,8 +3,19 @@
   top: 1rem;
   right: 1rem;
   display: flex;
+  align-items: center;
   gap: 0.5rem;
   z-index: 1000;
+}
+
+.settings-right {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.settings-lang-btn--mobile {
+  display: none;
 }
 
 @media (max-width: 720px) {
@@ -15,6 +26,20 @@
     right: auto;
     justify-content: space-between;
     padding: 0.5rem 1rem 0;
+  }
+
+  .settings-btn-text {
+    display: none;
+  }
+
+  .settings-select--desktop {
+    display: none;
+  }
+
+  .settings-lang-btn--mobile {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
   }
 }
 

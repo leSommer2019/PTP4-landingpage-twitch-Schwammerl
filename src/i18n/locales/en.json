@@ -64,7 +64,7 @@
   "partners": {
     "yvolve": { "title": "Yvolve", "desc": "10% off your entire order" },
     "nclip": { "title": "NClip" },
-    "frugends": { "title": "Frugends" }
+    "frugends": { "title": "Frugends", "desc": "10% off with code FullHD" }
   },
   "footer": {
     "impressum": "Imprint",
@@ -193,9 +193,10 @@
     "roundOverview": "Round Overview",
     "noRounds": "No voting rounds yet.",
     "modSync": "Sync Moderators",
-    "modSyncHint": "Fetches broadcaster + mods directly from the Twitch API. Requires a fresh login with moderation:read permission.",
+    "modSyncHint": "Fetches broadcaster + mods directly from the Twitch API. Requires a fresh login with moderation:read and channel:manage:moderators permissions.",
     "syncNow": "Sync now",
     "loginForSync": "Re-login for sync",
+    "syncMissingScope": "Missing permission – please re-login via \"Re-login for sync\" to get a token with the required scopes (channel:manage:moderators).",
     "currentMods": "{{count}} moderator(s)",
     "noMods": "No moderators yet. Use sync or add manually.",
     "manualAdd": "Add manually",

@@ -11,6 +11,11 @@ const themeIcons: Record<string, string> = {
 
 const themeOrder = ['system', 'light', 'dark'] as const
 
+const languageFlags: Record<string, string> = {
+  de: '🇩🇪',
+  en: '🇬🇧',
+}
+
 export default function SettingsBar() {
   const { mode, setMode } = useTheme()
   const { t, i18n } = useTranslation()
@@ -24,23 +29,36 @@ export default function SettingsBar() {
     i18n.changeLanguage(lng)
   }
 
+  const currentLang = i18n.language?.startsWith('de') ? 'de' : 'en'
+  const nextLang = currentLang === 'de' ? 'en' : 'de'
+
   return (
     <div className="settings-bar">
       <ProfileButton />
 
-      <button className="settings-btn" onClick={cycleTheme} title={t('settings.theme')}>
-        {themeIcons[mode]} {t(`settings.${mode}`)}
-      </button>
+      <div className="settings-right">
+        <button className="settings-btn" onClick={cycleTheme} title={t('settings.theme')}>
+          {themeIcons[mode]} <span className="settings-btn-text">{t(`settings.${mode}`)}</span>
+        </button>
 
-      <select
-        className="settings-select"
-        value={i18n.language?.startsWith('de') ? 'de' : 'en'}
-        onChange={(e) => changeLanguage(e.target.value)}
-        title={t('settings.language')}
-      >
-        <option value="de">🇩🇪 Deutsch</option>
-        <option value="en">🇬🇧 English</option>
-      </select>
+        <select
+          className="settings-select settings-select--desktop"
+          value={currentLang}
+          onChange={(e) => changeLanguage(e.target.value)}
+          title={t('settings.language')}
+        >
+          <option value="de">🇩🇪 Deutsch</option>
+          <option value="en">🇬🇧 English</option>
+        </select>
+
+        <button
+          className="settings-btn settings-lang-btn--mobile"
+          onClick={() => changeLanguage(nextLang)}
+          title={t('settings.language')}
+        >
+          {languageFlags[currentLang]}
+        </button>
+      </div>
     </div>
   )
 }

@@ -48,6 +48,7 @@ jobs:
         env:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          VITE_TWITCH_CLIENT_ID: ${{ secrets.VITE_TWITCH_CLIENT_ID }}
 
       # SPA Fallback: kopiere index.html → 404.html
       # GitHub Pages liefert 404.html bei unbekannten Pfaden aus,
