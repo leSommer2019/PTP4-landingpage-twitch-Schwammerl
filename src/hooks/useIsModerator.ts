@@ -9,6 +9,7 @@ import { useAuth } from '../context/useAuth'
 export function useIsModerator() {
   const { user, loading: authLoading } = useAuth()
   const [isMod, setIsMod] = useState(false)
+  const [isBroadcaster, setIsBroadcaster] = useState(false)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -18,6 +19,7 @@ export function useIsModerator() {
       // Use a microtask to avoid synchronous setState in effect
       queueMicrotask(() => {
         setIsMod(false)
+        setIsBroadcaster(false)
         setLoading(false)
       })
       return
@@ -25,9 +27,15 @@ export function useIsModerator() {
 
     let cancelled = false
     ;(async () => {
-      const { data, error } = await supabase.rpc('is_moderator')
+      // Fetch both roles in parallel
+      const [modRes, broadcasterRes] = await Promise.all([
+        supabase.rpc('is_moderator'),
+        supabase.rpc('is_broadcaster'),
+      ])
+
       if (!cancelled) {
-        setIsMod(!error && data === true)
+        setIsMod(!modRes.error && modRes.data === true)
+        setIsBroadcaster(!broadcasterRes.error && broadcasterRes.data === true)
         setLoading(false)
       }
     })()
@@ -35,6 +43,5 @@ export function useIsModerator() {
     return () => { cancelled = true }
   }, [user, authLoading])
 
-  return { isMod, loading }
+  return { isMod, isBroadcaster, loading }
 }
-

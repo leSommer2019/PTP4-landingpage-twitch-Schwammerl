@@ -5,6 +5,7 @@ import CookieBanner from './components/CookieBanner/CookieBanner'
 import PageTracker from './components/PageTracker'
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute'
 import ModeratorRoute from './components/ModeratorRoute/ModeratorRoute'
+import BroadcasterRoute from './components/BroadcasterRoute/BroadcasterRoute'
 import HomePage from './pages/HomePage'
 import ImpressumPage from './pages/ImpressumPage'
 import DatenschutzPage from './pages/DatenschutzPage'
@@ -55,7 +56,7 @@ function App() {
                 <Route path="/moderate/statistics"
                        element={<ModeratorRoute><ModerateStatisticsPage/></ModeratorRoute>}/>
                 <Route path="/moderate/settings"
-                       element={<ModeratorRoute><ModerateSettingsPage/></ModeratorRoute>}/>
+                       element={<BroadcasterRoute><ModerateSettingsPage/></BroadcasterRoute>}/>
 
                 {/* ── Alternative Pfade → Redirect ── */}
                 <Route path="/actuator/data" element={<Navigate to="/moderate/statistics" replace/>}/>

@@ -185,15 +185,11 @@ export default function ModerateVotingPage() {
     setBusy(false)
   }
 
-  const userName = user?.user_metadata?.full_name ?? user?.email ?? ''
   const myTwitchId: string = user?.user_metadata?.sub ?? user?.user_metadata?.provider_id ?? ''
 
   return (
     <SubPage>
       <h1>🛡️ {t('moderate.settingsTitle')}</h1>
-      <p style={{ color: 'var(--muted)', marginBottom: 4 }}>
-        {t('moderate.loggedInAs', { name: userName })}
-      </p>
 
       {/* ── Mod-Sync ── */}
       <h2>{t('moderate.modSync')}</h2>
