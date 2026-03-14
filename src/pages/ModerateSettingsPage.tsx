@@ -43,10 +43,13 @@ async function fetchTwitchMods(providerToken: string, channel: string) {
     cursor = page.pagination?.cursor ?? ''
   } while (cursor)
 
-  return [
-    { user_id: broadcaster.id, user_name: broadcaster.display_name },
-    ...mods,
-  ]
+  return {
+    mods: [
+      { user_id: broadcaster.id, user_name: broadcaster.display_name },
+      ...mods,
+    ],
+    broadcaster_id: broadcaster.id,
+  }
 }
 
 async function lookupTwitchUser(providerToken: string, login: string): Promise<TwitchUser | null> {
@@ -89,11 +92,23 @@ export default function ModerateVotingPage() {
     if (!TWITCH_CLIENT_ID) { showToast('❌ VITE_TWITCH_CLIENT_ID nicht gesetzt'); return }
     setBusy(true)
     try {
-      const modsArr = await fetchTwitchMods(providerToken, siteConfig.twitch.channel)
-      const { data, error } = await supabase.rpc('sync_moderators', { p_mods: modsArr })
-      const result = data as { error?: string; count?: number } | null
-      if (error || result?.error) showToast(`❌ ${error?.message ?? result?.error}`)
-      else showToast(`✅ ${result?.count ?? 0} Mods synchronisiert`)
+      const { mods: modsArr, broadcaster_id } = await fetchTwitchMods(providerToken, siteConfig.twitch.channel)
+      const { data, error } = await supabase.rpc('sync_moderators', { 
+        p_mods: modsArr,
+        p_broadcaster_twitch_id: broadcaster_id,
+      })
+      const result = data as { error?: string; message?: string; count?: number; caller_is_broadcaster?: boolean } | null
+      if (error || result?.error) {
+        const errorMsg = result?.message ?? error?.message ?? result?.error ?? 'Unbekannter Fehler'
+        if (result?.error === 'forbidden') {
+          showToast(`❌ ${errorMsg}`)
+        } else {
+          showToast(`❌ ${errorMsg}`)
+        }
+      } else {
+        const isBroadcaster = result?.caller_is_broadcaster ? ' (als Broadcaster)' : ''
+        showToast(`✅ ${result?.count ?? 0} Mods synchronisiert${isBroadcaster}`)
+      }
       setRefreshKey((k) => k + 1)
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'Sync fehlgeschlagen'
