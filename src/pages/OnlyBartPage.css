@@ -303,6 +303,10 @@
   color: #213547;
 }
 
+[data-theme="light"] .onlybart-intro {
+  background-color: #ffffff;
+}
+
 [data-theme="light"] .filter-btn {
   background: #e8e8ec;
   border: 1px solid #ccc;
