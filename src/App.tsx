@@ -72,7 +72,8 @@ function App() {
                 <Route path="/cdm" element={<Navigate to="/clipdesmonats" replace/>}/>
 
                 {/* ── Externe Links → Redirect ── */}
-                <Route path="/twitch" element={<Navigate to={`https://www.twitch.tv/${channel}`} replace/>}/>                <Route path="/insta" element={<Navigate to="https://www.instagram.com/hd1920x1080/" replace/>}/>
+                <Route path="/twitch" element={<Navigate to={`https://www.twitch.tv/${channel}`} replace/>}/>
+                <Route path="/insta" element={<Navigate to={`${instagram.url}`} replace/>}/>
                 <Route path="/instagram" element={<Navigate to={`${instagram.url}`} replace/>}/>
                 <Route path="/yt" element={<Navigate to={`${youtube.url}`} replace/>}/>
                 <Route path="/youtube" element={<Navigate to={`${youtube.url}`} replace/>}/>
