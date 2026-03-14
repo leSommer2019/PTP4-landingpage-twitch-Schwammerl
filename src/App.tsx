@@ -85,11 +85,11 @@ function App() {
                 <Route path="/onlybart/posts" element={<RedirectToHtml to="/ob/posts.html"/>}/>
                 <Route path="/onlybart/videos" element={<RedirectToHtml to="/ob/videos.html"/>}/>
 
-                <Route path="/rp" element={<Navigate to="https://github.com/HD1920x1080Media/Minecraft-Ressource-Pack/archive/refs/tags/latest.zip" replace/>}/>
-                <Route path="/ressourcepack" element={<Navigate to="https://github.com/HD1920x1080Media/Minecraft-Ressource-Pack/archive/refs/tags/latest.zip" replace/>}/>
-                <Route path="/tanggle" element={<Navigate to="http://tng.gl/c/hd1920x1080" replace/>}/>
-                <Route path="/puzzle" element={<Navigate to="http://tng.gl/c/hd1920x1080" replace/>}/>
-                <Route path="/nclip" element={<Navigate to="https://nclip.io/page/hd1920x1080" replace/>}/>
+                <Route path="/rp" element={<RedirectToHtml to="https://github.com/HD1920x1080Media/Minecraft-Ressource-Pack/archive/refs/tags/latest.zip"/>}/>
+                <Route path="/ressourcepack" element={<RedirectToHtml to="https://github.com/HD1920x1080Media/Minecraft-Ressource-Pack/archive/refs/tags/latest.zip"/>}/>
+                <Route path="/tanggle" element={<RedirectToHtml to="http://tng.gl/c/hd1920x1080"/>}/>
+                <Route path="/puzzle" element={<RedirectToHtml to="http://tng.gl/c/hd1920x1080"/>}/>
+                <Route path="/nclip" element={<RedirectToHtml to="https://nclip.io/page/hd1920x1080"/>}/>
 
                 <Route path="*" element={<NotFoundPage/>}/>
             </Routes>
