@@ -48,8 +48,13 @@ export interface DonationTrigger {
    */
   amountValue?: number
   descKey: string
-  textKey: string
-  audio?: string
+  textKey?: string // Added textKey to fix TS errors
+  audio?: string // Added audio to fix TS errors
+}
+
+export interface OnlyBartConfig { // New interface for OnlyBart settings
+    title: string;
+    logoUrl: string;
 }
 
 export interface ImpressumConfig {
@@ -89,6 +94,8 @@ export interface SiteConfig {
   partners: LinkItem[]
   footerLinks: FooterLink[]
   copyrightHolder: string
+  donationTriggers: DonationTrigger[]
+  onlyBart: OnlyBartConfig  // Should contain the default "OnlyBart" for this project
 }
 
 const siteConfig: SiteConfig = {
@@ -349,7 +356,16 @@ const siteConfig: SiteConfig = {
     { labelKey: 'footer.moderate', url: '/moderate' },
   ],
   copyrightHolder: 'FullHD Media',
+  donationTriggers: [
+    { id: 'trigger1', price: '4.20 €', amountValue: 4.20, descKey: 'donations.trigger1' }, // 420
+    { id: 'trigger2', price: '13.37 €', amountValue: 13.37, descKey: 'donations.trigger2' }, // Leet
+    { id: 'trigger3', price: '69.69 €', amountValue: 69.69, descKey: 'donations.trigger3' }, // nice
+  ],
+  
+  onlyBart: {
+    title: 'OnlyBart',
+    logoUrl: '/img/logos/OB.png'
+  }
 }
 
 export default siteConfig
-

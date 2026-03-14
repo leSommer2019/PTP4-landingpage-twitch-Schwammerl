@@ -1,11 +1,13 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
+import { Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/useAuth'
 import { useOnlyBartAccess, type OnlyBartAccess } from '../hooks/useOnlyBartAccess'
 import { FaHeart, FaRegHeart, FaComment, FaTrash, FaYoutube, FaImage, FaLock, FaStar } from 'react-icons/fa'
 import './OnlyBartPage.css'
+import siteConfig from '../config/siteConfig'
 
 // Types based on DB schema
 interface Post {
@@ -253,10 +255,10 @@ function PostCard({ post, access, onDelete }: { post: Post, access: OnlyBartAcce
     <div className="post-card">
       <div className="post-header">
         <div className="post-avatar">
-            <img src="/img/logos/OB.png" alt="Avatar" style={{width:'100%', height:'100%', borderRadius:'50%'}} />
+            <img src={siteConfig.onlyBart?.logoUrl || "/img/logo128.png"} alt="Avatar" style={{width:'100%', height:'100%', borderRadius:'50%'}} />
         </div>
         <div className="post-meta">
-          <span className="post-author">OnlyBart</span>
+          <span className="post-author">{siteConfig.onlyBart?.title || 'Posts'}</span>
           <span className="post-date">{new Date(post.created_at).toLocaleDateString()}</span>
         </div>
         {access.canPost && (
@@ -471,16 +473,27 @@ export function OnlyBartPage() {
     <div className="onlybart-container" style={{ filter: isBlurred ? 'blur(15px)' : 'none', transition: 'filter 0.2s' }}>
        {showIntro && (
            <div className="onlybart-intro">
-               <img src="/img/logos/OB.png" alt="OnlyBart Logo" className="intro-logo" />
+               <img src={siteConfig.onlyBart?.logoUrl || "/img/logo128.png"} alt="Logo" className="intro-logo" />
            </div>
        )}
 
        <div className="feed-layout pt-20">
            {/* Header / Filter */}
            <div className="flex justify-between items-center mb-6">
-               <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-pink-600">
-                   OnlyBart
-               </h1>
+               <div className="flex items-center gap-3">
+                   <img 
+                        src={siteConfig.onlyBart?.logoUrl || "/img/logo128.png"} 
+                        alt="Logo" 
+                        className="w-10 h-10 rounded-full object-cover border-2 border-pink-500" 
+                   />
+                   <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-pink-600">
+                       {siteConfig.onlyBart?.title || 'Posts'}
+                   </h1>
+               </div>
+               
+               <Link to="/" className="text-gray-400 hover:text-white transition-colors text-sm border border-gray-600 px-3 py-1 rounded hover:border-gray-400">
+                   {t('common.backToHome', 'Zurück zur Startseite')}
+               </Link>
            </div>
 
            <div className="filter-bar">
