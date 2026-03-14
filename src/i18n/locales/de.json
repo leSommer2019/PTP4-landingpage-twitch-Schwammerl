@@ -420,7 +420,8 @@
       "clickMadness": "Klick-Wahnsinn",
       "clickEffect": "3x Klicks für 45s",
       "luckyBonus": "Glücksbonus",
-      "luckyEffect": "+50% für 30s"
+      "luckyEffect": "+50% für 30s",
+      "riskWarning": "⚠️ 20% Risiko für Debuff"
     },
     "relics": {
       "ancientComb": "Antiker Kamm",

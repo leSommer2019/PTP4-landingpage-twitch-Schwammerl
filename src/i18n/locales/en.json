@@ -420,7 +420,8 @@
       "clickMadness": "Click Madness",
       "clickEffect": "3x Clicks for 45s",
       "luckyBonus": "Lucky Bonus",
-      "luckyEffect": "+50% for 30s"
+      "luckyEffect": "+50% for 30s",
+      "riskWarning": "⚠️ 20% risk of debuff"
     },
     "relics": {
       "ancientComb": "Ancient Comb",
