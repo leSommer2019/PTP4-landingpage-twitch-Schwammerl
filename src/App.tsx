@@ -55,7 +55,7 @@ function App() {
                 <Route path="/moderate/statistics"
                        element={<ModeratorRoute><ModerateStatisticsPage/></ModeratorRoute>}/>
                 <Route path="/moderate/twitch"
-                       element={<Navigate to={`https://www.twitch.tv/moderator/${channel}`} replace/>}/>
+                       element={<RedirectToHtml to={`https://www.twitch.tv/moderator/${channel}`}/>}/>
                 <Route path="/moderate/settings"
                        element={<BroadcasterRoute><ModerateSettingsPage/></BroadcasterRoute>}/>
 
@@ -68,14 +68,14 @@ function App() {
                 <Route path="/cdm" element={<Navigate to="/clipdesmonats" replace/>}/>
 
                 {/* ── Externe Links → Redirect ── */}
-                <Route path="/twitch" element={<Navigate to={`https://www.twitch.tv/${channel}`} replace/>}/>
-                <Route path="/insta" element={<Navigate to={`${instagram.url}`} replace/>}/>
-                <Route path="/instagram" element={<Navigate to={`${instagram.url}`} replace/>}/>
-                <Route path="/yt" element={<Navigate to={`${youtube.url}`} replace/>}/>
-                <Route path="/youtube" element={<Navigate to={`${youtube.url}`} replace/>}/>
-                <Route path="/dc" element={<Navigate to={`${discord.url}`} replace/>}/>
-                <Route path="/discord" element={<Navigate to={`${discord.url}`} replace/>}/>
-                <Route path="/tiktok" element={<Navigate to={`${tiktok.url}`} replace/>}/>
+                <Route path="/twitch" element={<RedirectToHtml to={`https://www.twitch.tv/${channel}`}/>}/>
+                <Route path="/insta" element={<RedirectToHtml to={`${instagram.url}`}/>}/>
+                <Route path="/instagram" element={<RedirectToHtml to={`${instagram.url}`}/>}/>
+                <Route path="/yt" element={<RedirectToHtml to={`${youtube.url}`}/>}/>
+                <Route path="/youtube" element={<RedirectToHtml to={`${youtube.url}`}/>}/>
+                <Route path="/dc" element={<RedirectToHtml to={`${discord.url}`}/>}/>
+                <Route path="/discord" element={<RedirectToHtml to={`${discord.url}`}/>}/>
+                <Route path="/tiktok" element={<RedirectToHtml to={`${tiktok.url}`}/>}/>
 
 
                 {/* Custom Wünsche */}
