@@ -480,13 +480,13 @@ export function OnlyBartPage() {
        <div className="feed-layout pt-20">
            {/* Header / Filter */}
            <div className="flex justify-between items-center mb-6">
-               <div className="flex items-center gap-3">
+               <div className="flex items-center gap-2">
                    <img 
                         src={siteConfig.onlyBart?.logoUrl || "/img/logo128.png"} 
                         alt="Logo" 
-                        className="w-10 h-10 rounded-full object-cover border-2 border-pink-500" 
+                        className="ob-logo"
                    />
-                   <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-pink-600">
+                   <h1 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-pink-600">
                        {siteConfig.onlyBart?.title || 'Posts'}
                    </h1>
                </div>
@@ -526,9 +526,7 @@ export function OnlyBartPage() {
            )}
 
            <div className="mt-8 mb-12 flex justify-center">
-               <Link to="/" className="text-gray-400 hover:text-white transition-colors text-sm border border-gray-600 px-6 py-2 rounded-full hover:border-gray-400 bg-gray-900/50 backdrop-blur-sm">
-                   {t('common.backToHome', 'Zurück zur Startseite')}
-               </Link>
+               <Link to="/" className="btn btn-primary">{t('home')}</Link>
            </div>
        </div>
     </div>

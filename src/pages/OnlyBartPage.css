@@ -289,3 +289,8 @@
 .text-transparent { color: transparent; }
 .bg-clip-text { -webkit-background-clip: text; background-clip: text; }
 .bg-gradient-to-r { background-image: linear-gradient(to right, #60a5fa, #db2777); } /* blue-400 to pink-600 */
+
+.ob-logo {
+  width: 150px;
+  height: 150px;
+}
