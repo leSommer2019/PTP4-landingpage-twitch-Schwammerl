@@ -136,19 +136,6 @@ export default function BartclickerGame({ compact = false }: BartclickerGameProp
         </button>
       </div>
 
-      {/* Rebirth Section - Always accessible */}
-      <div className="rebirth-section">
-        <button className="rebirth-button" onClick={performRebirth} disabled={!canRebirth}>
-          {t('bartclicker.rebirth.button')} ({gameState.rebirth_count})
-        </button>
-        <p className="rebirth-info">
-          {t('bartclicker.rebirth.cost', { cost: formatNumber(rebirthCost) })}
-        </p>
-        <p className="rebirth-info">
-          {t('bartclicker.rebirth.description')} {t('bartclicker.rebirth.multiplierBoost', { multiplier: (gameState.rebirth_multiplier * 2).toFixed(0) })}
-        </p>
-      </div>
-
       {/* Tabs */}
       <div className="tabs">
         <button
@@ -493,6 +480,19 @@ export default function BartclickerGame({ compact = false }: BartclickerGameProp
           </div>
         </div>
       )}
+
+      {/* Rebirth Section - Below Shops + Leaderboard + Stats */}
+      <div className="rebirth-section">
+        <button className="rebirth-button" onClick={performRebirth} disabled={!canRebirth}>
+          {t('bartclicker.rebirth.button')} ({gameState.rebirth_count})
+        </button>
+        <p className="rebirth-info">
+          {t('bartclicker.rebirth.cost', { cost: formatNumber(rebirthCost) })}
+        </p>
+        <p className="rebirth-info">
+          {t('bartclicker.rebirth.description')} {t('bartclicker.rebirth.multiplierBoost', { multiplier: (gameState.rebirth_multiplier * 2).toFixed(0) })}
+        </p>
+      </div>
     </div>
   );
 }
