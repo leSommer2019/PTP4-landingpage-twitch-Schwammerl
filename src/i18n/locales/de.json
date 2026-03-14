@@ -273,7 +273,7 @@
   "moderate": {
     "forbidden": "Kein Zugriff",
     "forbiddenHint": "Dieser Bereich ist nur für Moderatoren und den Streamer zugänglich.",
-    "landingTitle": "Moderations-Bereich",
+    "landingTitle": "\uD83D\uDEE1\uFE0F Moderations-Bereich",
     "welcome": "Willkommen, {{name}}!",
     "settings": "Einstellungen",
     "unknownUser": "Moderator",
@@ -474,5 +474,26 @@
       "timeMinutes": "{{minutes}}min",
       "youHave": "Du hast: {{count}} Rebirths"
     }
+  },
+  "onlybart": {
+    "filter": {
+      "all": "Alle",
+      "media": "Medien",
+      "photos": "Fotos",
+      "videos": "Videos"
+    },
+    "create": {
+      "placeholder": "Was gibt's Neues?",
+      "submit": "Posten",
+      "videoPrompt": "Gib die URL eines nicht gelisteten YouTube-Videos ein:"
+    },
+    "confirmDelete": "Diesen Beitrag wirklich löschen?",
+    "confirmDeleteComment": "Diesen Kommentar wirklich löschen?",
+    "accessDenied": {
+      "title": "Zugriff beschränkt",
+      "message": "Nur Subscriber, VIPs und Moderatoren haben Zugriff auf OnlyBart.",
+      "subHint": "Bist du ein Subscriber? Bitte stelle sicher, dass du mit dem richtigen Account eingeloggt bist."
+    },
+    "noPosts": "Noch keine Beiträge vorhanden. Sei der Erste, der etwas Tolles sieht!"
   }
 }

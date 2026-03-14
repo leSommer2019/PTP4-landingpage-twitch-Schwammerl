@@ -273,7 +273,7 @@
   "moderate": {
     "forbidden": "Access Denied",
     "forbiddenHint": "This area is only accessible to moderators and the streamer.",
-    "landingTitle": "Moderation Area",
+    "landingTitle": "\uD83D\uDEE1\uFE0F Moderation Area",
     "welcome": "Welcome, {{name}}!",
     "settings": "Settings",
     "unknownUser": "Moderator",
@@ -474,5 +474,26 @@
       "timeMinutes": "{{minutes}}min",
       "youHave": "You have: {{count}} Rebirths"
     }
+  },
+  "onlybart": {
+    "filter": {
+      "all": "All",
+      "media": "Media",
+      "photos": "Photos",
+      "videos": "Videos"
+    },
+    "create": {
+      "placeholder": "What's on your mind?",
+      "submit": "Post",
+      "videoPrompt": "Enter unlisted YouTube video URL:"
+    },
+    "confirmDelete": "Delete this post?",
+    "confirmDeleteComment": "Delete this comment?",
+    "accessDenied": {
+      "title": "Access Restricted",
+      "message": "Only Subscribers, VIPs, and Moderators have access to OnlyBart.",
+      "subHint": "Are you a subscriber? Please ensure you are logged in with the correct account."
+    },
+    "noPosts": "No posts yet. Be the first to see something amazing!"
   }
 }

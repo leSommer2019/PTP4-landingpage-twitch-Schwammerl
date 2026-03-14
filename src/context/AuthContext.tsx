@@ -74,6 +74,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       provider: 'twitch',
       options: {
         redirectTo: window.location.origin + '/',
+        scopes: 'user:read:subscriptions', // Request access to check subscription status
       },
     })
   }, [])

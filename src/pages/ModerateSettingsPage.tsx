@@ -18,7 +18,7 @@ async function twitchGet<T>(endpoint: string, token: string): Promise<T> {
     },
   })
   if (!res.ok) throw new Error(`Twitch ${res.status}: ${await res.text()}`)
-  return res.json() as Promise<T>
+  return await res.json() as Promise<T>
 }
 
 interface TwitchUser { id: string; login: string; display_name: string }
@@ -61,9 +61,55 @@ async function lookupTwitchUser(providerToken: string, login: string): Promise<T
 
 interface ModRow { twitch_user_id: string; display_name: string | null; is_broadcaster: boolean }
 
+/* ── OnlyBart Broadcaster Sync (VIPs/Subs) ── */
+async function fetchOnlyBartRoles(providerToken: string, broadcasterId: string) {
+    // 1. Fetch VIPs
+    // Requires scope 'channel:read:vips' (or similar). If not available, might fail.
+    // Try https://dev.twitch.tv/docs/api/reference/#get-vips
+    const vips: string[] = []
+    try {
+        let cursor = ''
+        do {
+            const params: Record<string, string> = { broadcaster_id: broadcasterId, first: '100' }
+            if (cursor) params.after = cursor
+            
+            const q = new URLSearchParams(params).toString()
+            const res = await twitchGet<{ data: { user_id: string }[], pagination: { cursor?: string } }>(
+                `channels/vips?${q}`, providerToken
+            )
+            vips.push(...res.data.map(v => v.user_id))
+            cursor = res.pagination?.cursor || ''
+        } while (cursor)
+    } catch (e) {
+        console.warn('Failed to fetch VIPs', e)
+    }
+
+    // 2. Fetch Subscribers
+    // Requires scope 'channel:read:subscriptions'
+    const subs: string[] = []
+    try {
+        let cursor = ''
+        do {
+            const params: Record<string, string> = { broadcaster_id: broadcasterId, first: '100' }
+            if (cursor) params.after = cursor
+            
+            const q = new URLSearchParams(params).toString()
+            const res = await twitchGet<{ data: { user_id: string }[], pagination: { cursor?: string } }>(
+                `subscriptions?${q}`, providerToken
+            )
+            subs.push(...res.data.map(u => u.user_id))
+            cursor = res.pagination?.cursor || ''
+        } while (cursor)
+    } catch (e) {
+        console.warn('Failed to fetch Subs', e)
+    }
+
+    return { vips, subs }
+}
+
 /* ═════════════════════════════════════════════════════════ */
 
-export default function ModerateVotingPage() {
+export default function ModerateSettingsPage() {
   const { t } = useTranslation()
   const { user, session } = useAuth()
   const { showToast } = useToast()
@@ -92,24 +138,55 @@ export default function ModerateVotingPage() {
     if (!TWITCH_CLIENT_ID) { showToast('❌ VITE_TWITCH_CLIENT_ID nicht gesetzt'); return }
     setBusy(true)
     try {
+      // 1. Sync Moderators
       const { mods: modsArr, broadcaster_id } = await fetchTwitchMods(providerToken, siteConfig.twitch.channel)
       const { data, error } = await supabase.rpc('sync_moderators', { 
         p_mods: modsArr,
         p_broadcaster_twitch_id: broadcaster_id,
       })
       const result = data as { error?: string; message?: string; count?: number; caller_is_broadcaster?: boolean } | null
-      if (error || result?.error) {
+      
+      let modMsg: string
+        if (error || result?.error) {
         const errorMsg = result?.message ?? error?.message ?? result?.error ?? 'Unbekannter Fehler'
-        if (result?.error === 'forbidden') {
-          showToast(`❌ ${errorMsg}`)
-        } else {
-          showToast(`❌ ${errorMsg}`)
-        }
+         modMsg = `❌ Mods: ${errorMsg}`
       } else {
         const isBroadcaster = result?.caller_is_broadcaster ? ' (als Broadcaster)' : ''
-        showToast(`✅ ${result?.count ?? 0} Mods synchronisiert${isBroadcaster}`)
+        modMsg = `✅ ${result?.count ?? 0} Mods${isBroadcaster}`
       }
+
+      // 2. Sync OnlyBart (VIPs + Subs) - if broadcaster
+      // We only attempt this if the user is broadcaster, as scopes channel:read:vips/subs require it.
+      // But we can try anyway and catch errors.
+      let obMsg: string
+      try {
+          const { vips, subs } = await fetchOnlyBartRoles(providerToken, broadcaster_id)
+          
+          const uniqueIds = new Set([...vips, ...subs])
+          const updates = Array.from(uniqueIds).map(tid => ({
+            twitch_id: tid,
+            is_vip: vips.includes(tid),
+            is_subscriber: subs.includes(tid),
+            last_updated: new Date().toISOString()
+          }))
+
+          if (updates.length > 0) {
+            const batchSize = 1000
+            for (let i = 0; i < updates.length; i += batchSize) {
+                const batch = updates.slice(i, i + batchSize)
+                const { error: obError } = await supabase.from('twitch_permissions').upsert(batch, { onConflict: 'twitch_id' })
+                if (obError) console.error(obError)
+            }
+          }
+          obMsg = ` | ✅ OnlyBart: ${vips.length} VIPs, ${subs.length} Subs`
+      } catch (e) {
+          console.warn('OnlyBart sync failed', e)
+          obMsg = ' | ⚠️ OnlyBart Sync skipped (fehlende Rechte?)'
+      }
+
+      showToast(modMsg + obMsg)
       setRefreshKey((k) => k + 1)
+
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'Sync fehlgeschlagen'
       if (msg.includes('401') && msg.toLowerCase().includes('missing scope')) {
@@ -127,7 +204,8 @@ export default function ModerateVotingPage() {
       provider: 'twitch',
       options: {
         // Standard-Scopes von Supabase + moderation:read + channel:manage:moderators für Mod-Liste
-        scopes: 'user:read:email moderation:read channel:manage:moderators',
+        // AND channel:read:vips + channel:read:subscriptions for OnlyBart
+        scopes: 'user:read:email moderation:read channel:manage:moderators channel:read:vips channel:read:subscriptions',
         redirectTo: window.location.origin + '/moderate/settings',
         queryParams: { force_verify: 'true' },
       },
@@ -275,4 +353,3 @@ export default function ModerateVotingPage() {
     </SubPage>
   )
 }
-

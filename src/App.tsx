@@ -17,6 +17,7 @@ import ModeratePage from './pages/ModeratePage'
 import ModerateVotingPage from './pages/ModerateVotingPage'
 import ModerateStatisticsPage from './pages/ModerateStatisticsPage'
 import ModerateSettingsPage from './pages/ModerateSettingsPage'
+import OnlyBartPage from './pages/OnlyBartPage'
 import NotFoundPage from './pages/NotFoundPage'
 import './App.css'
 import siteConfig from "./config/siteConfig.ts";
@@ -94,12 +95,9 @@ function App() {
                 <Route path="/bc" element={<Navigate to="/bartclicker" replace/>}/>
                 <Route path="/cdm" element={<Navigate to="/clipdesmonats" replace/>}/>
 
-                {/* ── Legacy "OnlyBart"-Seiten → Redirect zu statischen HTML-Seiten ── */}
-                <Route path="/onlybart" element={<RedirectToHtml to="/ob.html"/>}/>
-                <Route path="/onlybart/media" element={<RedirectToHtml to="/ob/media.html"/>}/>
-                <Route path="/onlybart/photos" element={<RedirectToHtml to="/ob/photos.html"/>}/>
-                <Route path="/onlybart/posts" element={<RedirectToHtml to="/ob/posts.html"/>}/>
-                <Route path="/onlybart/videos" element={<RedirectToHtml to="/ob/videos.html"/>}/>
+                {/* ── New "OnlyBart" Page ── */}
+                <Route path="/onlybart" element={<OnlyBartPage/>}/>
+                <Route path="/onlybart/*" element={<Navigate to="/onlybart" replace/>}/>
 
                 {/* ── Custom Wünsche ── */}
                 <Route path="/rp" element={<RedirectToHtml to="https://github.com/HD1920x1080Media/Minecraft-Ressource-Pack/archive/refs/tags/latest.zip"/>}/>
