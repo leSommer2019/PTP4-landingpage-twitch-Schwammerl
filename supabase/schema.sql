@@ -175,6 +175,7 @@ CREATE TABLE IF NOT EXISTS moderators (
   twitch_user_id  text UNIQUE NOT NULL,
   display_name    text,
   is_broadcaster  boolean DEFAULT false,
+  is_manual       boolean DEFAULT true,
   created_at      timestamptz NOT NULL DEFAULT now()
 );
 
@@ -183,6 +184,9 @@ DO $$
 BEGIN
     IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='moderators' AND column_name='is_broadcaster') THEN
         ALTER TABLE moderators ADD COLUMN is_broadcaster boolean DEFAULT false;
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='moderators' AND column_name='is_manual') THEN
+        ALTER TABLE moderators ADD COLUMN is_manual boolean DEFAULT true;
     END IF;
 END $$;
 
@@ -251,18 +255,20 @@ BEGIN
     END IF;
   END IF;
 
-  -- Alle bisherigen Einträge entfernen und neu befüllen
-  DELETE FROM moderators WHERE true;
+  -- Alle bisherigen Einträge entfernen, die NICHT manuell hinzugefügt wurden
+  DELETE FROM moderators WHERE is_manual = false;
 
-  INSERT INTO moderators (twitch_user_id, display_name, is_broadcaster)
+  INSERT INTO moderators (twitch_user_id, display_name, is_broadcaster, is_manual)
   SELECT
     (m->>'user_id')::text,
     (m->>'user_name')::text,
-    ((m->>'user_id')::text = v_broadcaster_id)
+    ((m->>'user_id')::text = v_broadcaster_id),
+    false
   FROM jsonb_array_elements(p_mods) AS m
   ON CONFLICT (twitch_user_id) DO UPDATE SET
     display_name = EXCLUDED.display_name,
-    is_broadcaster = EXCLUDED.is_broadcaster;
+    is_broadcaster = EXCLUDED.is_broadcaster,
+    is_manual = EXCLUDED.is_manual;
 
   SELECT count(*) INTO v_count FROM moderators;
   RETURN jsonb_build_object(
@@ -486,9 +492,11 @@ BEGIN
     RETURN jsonb_build_object('error', 'forbidden');
   END IF;
 
-  INSERT INTO moderators (twitch_user_id, display_name)
-  VALUES (p_twitch_user_id, p_display_name)
-  ON CONFLICT (twitch_user_id) DO UPDATE SET display_name = EXCLUDED.display_name;
+  INSERT INTO moderators (twitch_user_id, display_name, is_manual)
+  VALUES (p_twitch_user_id, p_display_name, true)
+  ON CONFLICT (twitch_user_id) DO UPDATE SET
+    display_name = EXCLUDED.display_name,
+    is_manual = true;
 
   RETURN jsonb_build_object('success', true);
 END;

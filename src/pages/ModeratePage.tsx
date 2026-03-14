@@ -7,7 +7,7 @@ import SubPage from '../components/SubPage/SubPage'
 export default function ModeratePage() {
     const {t} = useTranslation()
     const {user} = useAuth()
-    const {isBroadcaster} = useIsModerator()
+    const {isBroadcaster, isManual} = useIsModerator()
     const userName =
         user?.user_metadata?.full_name ??
         user?.user_metadata?.preferred_username ??
@@ -28,6 +28,11 @@ export default function ModeratePage() {
                 <Link to="/moderate/statistics" className="btn btn-secondary">
                     📊 {t('moderate.statisticsTitle')}
                 </Link>
+                {!isManual && (
+                    <Link to="/moderate/twitch" className="btn btn-secondary">
+                        📹 {t('moderate.twitchModeration')}
+                    </Link>
+                )}
                 {isBroadcaster && (
                     <Link to="/moderate/settings" className="btn btn-secondary">
                         ⚙️ {t('moderate.settings')}
