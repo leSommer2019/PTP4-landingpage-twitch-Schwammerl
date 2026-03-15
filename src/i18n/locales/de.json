@@ -310,7 +310,7 @@
     "addBtn": "Hinzufügen",
     "cannotRemoveSelf": "Du kannst dich nicht selbst entfernen.",
     "cannotRemoveBroadcaster": "Der Broadcaster kann nicht entfernt werden.",
-    "twitchModerationTitle": "Twitch Modansicht",
+    "twitchModeration": "Twitch Modansicht",
     "statisticsTitle": "Statistiken",
     "statisticsDescription": "Überblick über Voting-, Traffic- und Runden-Daten für die Moderation.",
     "statisticsRange": "Zeitraum",

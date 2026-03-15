@@ -310,7 +310,7 @@
     "addBtn": "Add",
     "cannotRemoveSelf": "You cannot remove yourself.",
     "cannotRemoveBroadcaster": "The broadcaster cannot be removed.",
-    "twitchModerationTitle": "Twitch Mod-View",
+    "twitchModeration": "Twitch Mod-View",
     "statisticsTitle": "Statistics",
     "statisticsDescription": "Overview of voting, traffic, and round data for moderation.",
     "statisticsRange": "Date range",
