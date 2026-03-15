@@ -1,11 +1,10 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/useAuth'
 import { useOnlyBartAccess, type OnlyBartAccess } from '../hooks/useOnlyBartAccess'
-import { FaHeart, FaRegHeart, FaComment, FaTrash, FaYoutube, FaImage, FaLock, FaStar, FaHome } from 'react-icons/fa'
+import { FaHeart, FaRegHeart, FaComment, FaTrash, FaYoutube, FaImage, FaLock, FaStar } from 'react-icons/fa'
 import './OnlyBartPage.css'
 import siteConfig from '../config/siteConfig'
 
@@ -499,9 +498,6 @@ export function OnlyBartPage() {
            {/* Header / Filter */}
            <div className="flex justify-between items-center mb-6">
                <div className="flex items-center gap-2">
-                   <Link to="/" className="onlybart-home-link" title={t('home')}> 
-                       <FaHome size={28} style={{marginRight: '8px'}} />
-                   </Link>
                    <img 
                         src={siteConfig.onlyBart?.logoUrl || "/img/logo128.png"} 
                         alt="Logo" 
@@ -546,7 +542,7 @@ export function OnlyBartPage() {
                ))
            )}
 
-           {/* Home-Button entfernt, stattdessen Haus-Icon oben links */}
+           {/* Home-Button entfernt, stattdessen Haus-Icon in SettingsBar */}
        </div>
     </div>
   )

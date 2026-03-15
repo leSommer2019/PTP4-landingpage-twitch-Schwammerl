@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom'
+import { FaHome } from 'react-icons/fa'
 import { useTranslation } from 'react-i18next'
 import { useTheme } from '../context/useTheme'
 import ProfileButton from './ProfileButton/ProfileButton'
@@ -44,6 +46,9 @@ export default function SettingsBar() {
 
   return (
     <div className="settings-bar">
+      <Link to="/" className="settings-home-link" title={t('home')}>
+        <FaHome size={24} />
+      </Link>
       <ProfileButton />
 
       <div className="settings-right">
@@ -73,4 +78,3 @@ export default function SettingsBar() {
     </div>
   )
 }
-
