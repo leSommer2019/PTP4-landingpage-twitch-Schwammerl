@@ -19,7 +19,11 @@ export default function NextStream() {
     )
   }
 
-  const locale = i18n.language === 'de' ? 'de-DE' : 'en-US'
+  const locale = i18n.language?.startsWith('gsw')
+    ? 'de-CH'
+    : i18n.language?.startsWith('de')
+      ? 'de-DE'
+      : 'en-US'
 
   const dateStr = nextEvent.start.toLocaleDateString(locale, {
     weekday: 'long',
@@ -38,7 +42,7 @@ export default function NextStream() {
       <div className="next-stream-title">{nextEvent.summary}</div>
       <div className="next-stream-date">
         📅 {dateStr} · 🕐 {timeStr}
-        {i18n.language === 'de' ? ' Uhr' : ''}
+        {(i18n.language?.startsWith('de') || i18n.language?.startsWith('gsw')) ? ' Uhr' : ''}
       </div>
       <a className="next-stream-link" href="/streamplan">
         {t('live.seeSchedule')}

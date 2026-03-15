@@ -1,0 +1,500 @@
+{
+  "settings": {
+    "theme": "Design",
+    "language": "Sprooch",
+    "light": "Hell",
+    "dark": "Dunkel",
+    "system": "System"
+  },
+  "hero": {
+    "subtitle": "FullHD – Gaming, Streams & Clips"
+  },
+  "mobileToggle": {
+    "live": "Live",
+    "links": "Links",
+    "games": "Games"
+  },
+  "sections": {
+    "games": "Game-Links",
+    "clips": "Clips & Shorts",
+    "partners": "Partner"
+  },
+  "live": {
+    "title": "🔴 Live",
+    "offlineTitle": "Grad offline",
+    "nextStream": "Nächschti Stream",
+    "scheduleLoading": "Lade Streamplan…",
+    "seeSchedule": "Zum Streamplan →",
+    "chatFallback": "Chat im neue Tab öffne"
+  },
+  "currentGame": {
+    "label": "Aktuells Spill",
+    "nowPlaying": "Jetzt am Spiil",
+    "storesLabel": "In Stores finde",
+    "opensInNewTab": "öffnet in neuem Tab",
+    "stores": {
+      "twitch": "Twitch",
+      "epic": "Epic Games",
+      "nintendo": "Nintendo",
+      "psstore": "PlayStation",
+      "xbox": "Xbox"
+    }
+  },
+  "links": {
+    "streamplan": {
+      "title": "Streamplan",
+      "desc": "Live-Termin"
+    },
+    "streamelements": {
+      "title": "StreamElements",
+      "desc": "Donation + Lischt"
+    },
+    "clipdesmonats": {
+      "title": "Clip vom Monet",
+      "desc": "Votet für die Top Clips"
+    },
+    "youtube": {
+      "title": "YouTube",
+      "desc": "Hauptkanal"
+    },
+    "tiktok": {
+      "title": "TikTok",
+      "desc": "Hauptkanal"
+    },
+    "instagram": {
+      "title": "Instagram",
+      "desc": "Hauptkanal"
+    },
+    "onlybart": {
+      "title": "OnlyBart",
+      "desc": "Exklusive Inhalt"
+    },
+    "discord": {
+      "title": "Discord",
+      "desc": "Server biträte"
+    },
+    "email": {
+      "title": "Kontakt",
+      "desc": "Kontakt per E‑Mail"
+    }
+  },
+  "games": {
+    "tanggle": {
+      "title": "Tanggle.io",
+      "desc": "Live miträtsle"
+    },
+    "resourcepack": {
+      "title": "Minecraft ResourcePack",
+      "desc": "Download"
+    },
+    "bartclicker": {
+      "title": "Bartclicker",
+      "desc": "Bartclicker spiile"
+    }
+  },
+  "clips": {
+    "ytShorts": {
+      "title": "YT Shorts",
+      "desc": "Shorts & Clips"
+    },
+    "tiktokClips": {
+      "title": "TikTok Clips",
+      "desc": "Shorts & Clips"
+    },
+    "instaClips": {
+      "title": "Insta Clips",
+      "desc": "Shorts & Clips"
+    }
+  },
+  "partners": {
+    "yvolve": {
+      "title": "Yvolve",
+      "desc": "10% Rabatt uf die gsamti Bstellig"
+    },
+    "nclip": {
+      "title": "NClip"
+    },
+    "frugends": {
+      "title": "Frugends",
+      "desc": "10% Rabatt mit Code FullHD"
+    }
+  },
+  "footer": {
+    "impressum": "Impressum",
+    "datenschutz": "Dateschutz",
+    "moderate": "Moderation"
+  },
+  "downloadModal": {
+    "title": "Download bestätige",
+    "message": "Wotsch du die Datei abelade:",
+    "cancel": "Abbreche",
+    "confirm": "Abelade"
+  },
+  "cookieBanner": {
+    "text": "Mir verwände Cookies, um anonymisierti Siitenufruef z'erfasse und unseri Website z'verbessere. Witeri Informatione findsch in üsere",
+    "privacyLink": "Dateschutzerklärig",
+    "accept": "Akzeptiere",
+    "reject": "Ablehnä"
+  },
+  "toast": {
+    "codeCopied": "Rabattcode kopiert: {{code}}",
+    "downloadStarted": "Download gstartet"
+  },
+  "discountCode": "Code: {{code}}",
+  "back": "← Zrugg",
+  "home": "← Startsiite",
+  "impressumPage": {
+    "title": "Impressum",
+    "contact": "Kontakt"
+  },
+  "datenschutzPage": {
+    "title": "Dateschutzerklärig",
+    "responsible": "Verantworticho",
+    "contact": "Kontakt",
+    "votingTitle": "Teinahm a Abstimmige (Twitch-Voting)",
+    "votingIntro": "Wenn du a ere Abstimmig uf üsere Website teilnimmsch («Vote»), verarbeitime Date, um d'Integrität vo de Abstimmig sicherzstelle.",
+    "processingTitle": "Verarbeitig bim Interagiere",
+    "processingText": "Erscht bim Klick uf de Abstimmigs-Button wird dini IP-Adress erfasst, sofort mit emem «Salt» (emem geheime Zusatzschlüssel) versä und as kryptografische Hash gspeichert.",
+    "purposeTitle": "Zweck",
+    "purposeText": "Verhindrig vo Mehrfachabstimmige (Schutz vor Spam und Manipulation).",
+    "retentionTitle": "Speicherdauer",
+    "retentionText": "De Hash wird nach Abschluss vo de Abstimmigzrundi (standardmässig nach maximal 10 Täg) automatisch us üsere Datebank glöscht.",
+    "legalBasisTitle": "Rechtsgrundlag",
+    "legalBasisText": "Art. 6 Abs. 1 lit. f DSGVO (Berechtigts Interesse a ere manipulationsfriie Abstimmig).",
+    "analyticsTitle": "Siitenufruef und Analyse",
+    "analyticsIntro": "Wenn du dim Iverständnis über de Cookie-Banner gisch, erfassime anonymisierti Siitenufruef, um d'Nutzung vo üsere Website z'verstoh und z'verbessere.",
+    "analyticsProcessingTitle": "Verarbeitig",
+    "analyticsProcessingText": "Bi jedem Siitenufruef wird de Siitepfad, de Ziitsschtempel und allfällige Wiiterleitigsinformatione gspeichert. Es werdet keini personebezogeni Date wie IP-Adresse gspeichert.",
+    "analyticsPurposeTitle": "Zweck",
+    "analyticsPurposeText": "Analyse vo de Siitenutzung zur Verbessrig vom Agbot.",
+    "analyticsLegalTitle": "Rechtsgrundlag",
+    "analyticsLegalText": "Art. 6 Abs. 1 lit. a DSGVO (Iiwilligig).",
+    "revokeTitle": "Widerruf",
+    "revokeText": "Du chasch dini Iiwilligig jederziit widerruefe, indem du d'Cookies in diim Browser löschsch oder üseri Website erneut bsüechsch und im Cookie-Banner ablehnsch.",
+    "rightsTitle": "Dini Rächt",
+    "rightsText": "Du häsch s'Rächt uf Uskuft, Berichtigig, Löschig, Iischränkig vo de Verarbeitig, Datenuiibertragbarkeit und Widerspruch. Wend di dazu bitte a d'obige Kontaktadress."
+  },
+  "streamplanPage": {
+    "title": "Streamplan",
+    "intro": "Da findsch de aktuälle Streamplan vo HD1920x1080. Bliib uf em Laufende über kommendi Live-Streams und Events!",
+    "calendarTitle": "Stream-Kalender",
+    "filter": "Filter",
+    "all": "Alli",
+    "showMore": "{{count}} witteri Termin azeige",
+    "showLess": "Weniger azeige"
+  },
+  "streamplan": {
+    "categories": {
+      "gog": "GOG - Good Old Games",
+      "justchatting": "Just Chatting / Reaction",
+      "grind": "Grindgames",
+      "special": "Bsunders Event",
+      "multiplayer": "Multi-player Time",
+      "action": "Action Games"
+    }
+  },
+  "streamelementsPage": {
+    "title": "Donations",
+    "intro": "Da findsch alli Donation-Trigger und Priis. Klick uf en Trigger für Details!",
+    "donateButton": "Jetzt spende",
+    "close": "Schliesse",
+    "donateSpecific": "Spende ({{amount}} €)"
+  },
+  "donations": {
+    "taschengeld": {
+      "desc": "Taschemgäld",
+      "text": "Donation Sound wird abgspielt (Danke vo de Chind) 🎉"
+    },
+    "tts": {
+      "desc": "TTS",
+      "text": "Text to Speech wird abgspielt 🔊"
+    },
+    "knock": {
+      "desc": "KnockKnock",
+      "text": "Knock Knock wird abgspielt 🚪"
+    },
+    "majortom": {
+      "desc": "Major Tom",
+      "text": "Major Tom wird abgspielt 🧑🏼‍🚀"
+    },
+    "scream": {
+      "desc": "Scream",
+      "text": "Scream wird abgspielt 😱"
+    },
+    "fliege1": {
+      "desc": "nervigi Flugi (60 Sekunde)",
+      "text": "nervigi Flugi wird abgspielt 🪰"
+    },
+    "centershock": {
+      "desc": "Suurs macht Lustig – CenterShock",
+      "text": "Stefan isst en CenterShock & Sound wird abgspielt 🍋"
+    },
+    "ytSound": {
+      "desc": "Youtube Mitglieder Sound",
+      "text": "Youtube Mitglieder Sound wird abgspielt 🪩"
+    },
+    "fliege2": {
+      "desc": "Flugi XXL — 2 Minute",
+      "text": "sehr nervigi Flugi wird abgspielt 🪰"
+    },
+    "1920": {
+      "desc": "1920",
+      "text": "1920 wird abgspielt ⁉️"
+    },
+    "fliege3": {
+      "desc": "Flugi ultra lang",
+      "text": "ultra nervigi Flugi wird abgspielt 🪰"
+    },
+    "konfetti": {
+      "desc": "Konfettikanone (nur wenn verfüegbar)",
+      "text": "Stefan zündet e Konfettikanone 🎉"
+    },
+    "hotnuts": {
+      "desc": "8 Hot Nuts + FIRE!!! (nur wenn verfüegbar)",
+      "text": "Stefan isst 8 Hot Nuts & Sound wird abgspielt 🔥"
+    },
+    "sandwich": {
+      "desc": "Satanischs Sandwich (nur wenn verfüegbar)",
+      "text": "Stefan isst es satanischs Sandwich (Oreo + Hotnuts + Centershock) & Sound wird abgspielt 🔥"
+    }
+  },
+  "auth": {
+    "loading": "Lade…",
+    "loginRequired": "Login erforderlich",
+    "loginHint": "Meld di mit Twitch aa, um die Siite z'gseh.",
+    "loginWithTwitch": "Mit Twitch aamelda",
+    "loggedInAs": "Iigloggt als {{name}}",
+    "logout": "Uuslogge"
+  },
+  "bartclickerPage": {
+    "title": "Bartclicker",
+    "description": "Klick uf de Bart und verdiene Barthaare! Chauf Upgrades, starte Rebirths und erreich d'Spitze vom Leaderboard."
+  },
+  "moderate": {
+    "forbidden": "Kei Zuegriff",
+    "forbiddenHint": "Dä Bereich isch nur für Moderatore und de Streamer zugänglich.",
+    "landingTitle": "\uD83D\uDEE1\uFE0F Moderations-Bereich",
+    "welcome": "Willkomme, {{name}}!",
+    "settings": "Iistellige",
+    "unknownUser": "Moderator",
+    "loggedInAs": "Iigloggt als {{name}}",
+    "votingTitle": "Voting-Verwaltung",
+    "settingsTitle": "Verwaltung",
+    "actions": "Aktione",
+    "startRound2": "Runde 2 starte",
+    "endRound2": "Runde 2 beende",
+    "startYearly": "Jahres-Voting starte",
+    "endYearly": "Jahres-Voting beende",
+    "success": "erfolgriich",
+    "roundOverview": "Runde-Überblick",
+    "noRounds": "No keini Voting-Runde vorhande.",
+    "modSync": "Moderatore synchronisiere",
+    "modSyncHint": "Holt Broadcaster + Mods direkt us de Twitch API. Bruucht en frische Login mit moderation:read- und channel:manage:moderators-Berächtigung.",
+    "modSyncWhoCanSync": "Wär darf synchronisiere?",
+    "modSyncBroadcasterCanSync": "✅ Broadcaster (Streamer) – jederziit",
+    "modSyncModeratorCanSync": "✅ Moderatore – nach de Erstiirichtig",
+    "modSyncAnyoneCanSync": "✅ Jede (Bootstrap) – bim erschte Mal",
+    "modSyncUserCannotSync": "❌ Normali Benutzer – nöd erlaubt",
+    "syncNow": "Jetzt synchronisiere",
+    "syncSyncing": "Synchronisiere…",
+    "loginForSync": "Neu aamelda für Sync",
+    "syncMissingScope": "Fehlendi Berächtigung – bitte über «Neu aamelda für Sync» erneut iiloge, damit s'Token d'neue Scopes (channel:manage:moderators) het.",
+    "syncSuccess": "{{count}} Mods synchronisiert{{isBroadcaster}}",
+    "syncError": "Synchronisierig fehlgschlage: {{error}}",
+    "syncErrorForbidden": "Du darfsch nöd synchronisiere. Nur de Broadcaster oder Moderatore chönd synchronisiere.",
+    "currentMods": "{{count}} Moderator(e)",
+    "noMods": "No keini Moderatore iitragt. Nutze de Sync oder füeg manuell hinzu.",
+    "manualAdd": "Manuell hinzuefüege",
+    "manualAddHintWithToken": "Gib en Twitch-Username ii – d'ID wird automatisch ufglöst.",
+    "manualAddHintNoToken": "Ohni aktive Sync-Login chasch nur numerischi Twitch-User-IDs iigäh.",
+    "addBtn": "Hinzuefüege",
+    "cannotRemoveSelf": "Du chasch di selber nöd entferne.",
+    "cannotRemoveBroadcaster": "De Broadcaster cha nöd entfernt werde.",
+    "twitchModerationTitle": "Twitch Modaasicht",
+    "statisticsTitle": "Statistike",
+    "statisticsDescription": "Überblick über Voting-, Traffic- und Runde-Date für d'Moderation.",
+    "statisticsRange": "Zytraum",
+    "statisticsLastDays": "Letschti {{days}} Täg",
+    "statisticsRefresh": "Aktualisiere",
+    "statisticsLoading": "Dashboard wird glade…",
+    "statisticsError": "Dashboard konnt nöd glade werde: {{error}}",
+    "statisticsUpdatedAt": "Zuletscht aktualisiert: {{timestamp}}",
+    "statisticsKpiVotes": "Abgäbeni Stimme",
+    "statisticsKpiVoters": "Eindeütigi Voter",
+    "statisticsKpiViews": "Siitenufruef",
+    "statisticsKpiSessions": "Eindeütigi Sessions",
+    "statisticsKpiConversion": "Votes pro View",
+    "statisticsRoundHealth": "Runde-Status",
+    "statisticsNoRound": "Keini Runde vorhande.",
+    "statisticsNoData": "Keini Date im gwählte Zytraum.",
+    "statisticsRound": "Runde",
+    "statisticsStatus": "Status",
+    "statisticsMonth": "Monet/Jahr",
+    "statisticsClips": "Clips",
+    "statisticsVotes": "Stimme",
+    "statisticsStartsAt": "Start",
+    "statisticsEndsAt": "Ende",
+    "statisticsTopClips": "Top Clips",
+    "statisticsClip": "Clip",
+    "statisticsVoteTrend": "Stimme pro Tag",
+    "statisticsViewsTrend": "Siitenufruef pro Tag",
+    "statisticsTopPages": "Top Siite",
+    "statisticsTopReferrers": "Top Referrer",
+    "statisticsLatestWinners": "Letschti Gwünner",
+    "statisticsRecentRounds": "Letschti Runde",
+    "statisticsPage": "Siite",
+    "statisticsViews": "Ufruef",
+    "statisticsReferrer": "Referrer"
+  },
+  "clipVotingPage": {
+    "title": "Clip vom Monet – Voting",
+    "intro": "Stimm für dine Liebligs-Clip vom Monet ab! Pro Runde häsch du eine Stimm."
+  },
+  "clipVoting": {
+    "loading": "Lade Voting-Date…",
+    "noRound": "Momentan lauft kei Voting. D'nächschti Runde startet am 21. vom Monet 🎬",
+    "vote": "Abstimme",
+    "voted": "Gwählt",
+    "votes": "Stimme",
+    "voteNow": "Jetzt abstimme!",
+    "voteHint": "Wähl dine Liebligs-Clip!",
+    "alreadyVoted": "Du häsch scho abgstimmt.",
+    "voteSuccess": "Stimm abgäh! ✅",
+    "loginToVote": "Meld di mit Twitch aa, um abstimme z'chönne.",
+    "roundPending": "D'nächschti Runde startet in Chürze…",
+    "roundCompleted": "Runde beendet – da sind d'Ergebnis!",
+    "monthlyWinner": "Clip vom Monet {{month}}/{{year}}",
+    "yearlyWinner": "Clip vom Jahr {{year}}",
+    "phase": {
+      "loading": "Ladt…",
+      "no-round": "Kei Voting",
+      "round1-active": "Runde 1 – Alli Clips",
+      "round1-results": "Top 10 – Ergebnis Runde 1",
+      "round2-active": "Runde 2 – Top 10",
+      "round2-results": "Clip vom Monet",
+      "yearly-active": "Clip vom Jahr – Voting",
+      "yearly-results": "Clip vom Jahr",
+      "between-rounds": "Zwüsche de Runde"
+    },
+    "error": {
+      "not_authenticated": "Du muesch aameldet sii.",
+      "round_not_active": "D'Abstimmig isch nöd aktiv.",
+      "already_voted": "Du häsch in dere Runde scho abgstimmt.",
+      "clip_not_in_round": "Dä Clip ghört nöd zur aktuälle Runde.",
+      "round_not_found": "Runde nöd gfunde."
+    }
+  },
+  "bartclicker": {
+    "stats": {
+      "beards": "Barthaare",
+      "perSecond": "Pro Sekunde",
+      "rebirth": "Rebirth",
+      "totalEver": "Insgsamt",
+      "currentEnergy": "Aktuelli Energie",
+      "cps": "CPS",
+      "activeBuffs": "Aktivi Buffs",
+      "relicsUnlocked": "Relikte freiggschaltet",
+      "rebirthMultiplier": "Rebirth Multiplikator"
+    },
+    "tabs": {
+      "shop": "🛒 Shop",
+      "leaderboard": "🏆 Leaderboard",
+      "stats": "📊 Statistik"
+    },
+    "shopTabs": {
+      "passive": "💧 Passiv",
+      "click": "💪 Klick",
+      "booster": "⚡ Booster",
+      "relics": "💎 Relikte",
+      "autobuyer": "🤖 Automatisch",
+      "offline": "🌙 Offline"
+    },
+    "rebirth": {
+      "button": "🔄 Rebirth",
+      "description": "Verdoppel dine Multiplikator und fang vo vorne aa! Dim Bart wird länger!",
+      "multiplierBoost": "Multiplikator ×{{multiplier}}",
+      "cost": "Choscht: {{cost}} Barthaare"
+    },
+    "booster": {
+      "turboBoost": "Turbo-Boost",
+      "turboEffect": "2x CPS für 1 Min",
+      "clickMadness": "Klick-Wahnsinn",
+      "clickEffect": "3x Klicks für 45s",
+      "luckyBonus": "Glücksbonus",
+      "luckyEffect": "+50% für 30s",
+      "riskWarning": "⚠️ 20% Risiko für Debuff"
+    },
+    "relics": {
+      "ancientComb": "Antike Kamm",
+      "ancientEffect": "+10% CPS",
+      "magicalOil": "Magischs Bartöl",
+      "oilEffect": "+15% Klick-Power",
+      "goldenBeard": "Goldene Bart",
+      "goldenEffect": "+25% alles",
+      "timeOil": "Zytreisends Bartöl",
+      "timeEffect": "+50% Offline",
+      "unlocked": "✅ Freiggschaltet"
+    },
+    "autobuyer": {
+      "autoClicker": "🤖 Auto-Klicker",
+      "autoClickerDesc": "Choscht: 10 Rebirths",
+      "autoClickerEnable": "✅ Aktiviere",
+      "autoClickerDisable": "❌ Deaktiviere",
+      "upgradebuyer": "📈 Auto-Upgrade Chäufer",
+      "upgradebuyerDesc": "Choscht: 10 Rebirths",
+      "youHave": "Du häsch: {{count}} Rebirths"
+    },
+    "leaderboard": {
+      "title": "🏆 Top Spiiler",
+      "subtitle": "Bescht Bartclicker Spiiler (Insgsamt)",
+      "rank": "📊",
+      "player": "Spiiler",
+      "score": "💰",
+      "rebirths": "🔄",
+      "loading": "📊 Leaderboard wird glade...",
+      "empty": "📊 No keini Spiiler uf de Ranglischte"
+    },
+    "buttons": {
+      "buy": "Chaufe",
+      "max": "Max",
+      "cost": "Choscht: {cost}"
+    },
+    "offline": {
+      "shopTitle": "🌙 Offline-Verdienst Upgrades",
+      "shopDesc": "Verbessere dine Verdienst während du offline bisch. Basis: 10% vom CPS, max. 8 Stunde.",
+      "currentRate": "Aktuälli Offline-Rate: {{rate}}%",
+      "maxTime": "Maximali Offline-Ziit: 8 Stunde",
+      "upgradesOwned": "Upgrades: {{current}}/{{max}}",
+      "upgradeEffect": "+10% Offline-Verdienst",
+      "buyUpgrade": "+10% Offline chaufe ({{cost}} Rebirths)",
+      "maxUpgrades": "Maximali Upgrades erreicht!",
+      "welcomeBack": "Willkomme zrugg!",
+      "earned": "Du häsch {{amount}} Barthaare verdient während du weg warsch ({{time}}).",
+      "timeHoursMinutes": "{{hours}}h {{minutes}}min",
+      "timeMinutes": "{{minutes}}min",
+      "youHave": "Du häsch: {{count}} Rebirths"
+    }
+  },
+  "onlybart": {
+    "filter": {
+      "all": "Alli",
+      "media": "Medie",
+      "photos": "Fotos",
+      "videos": "Videos"
+    },
+    "create": {
+      "placeholder": "Was git's Nöis?",
+      "submit": "Poschte",
+      "videoPrompt": "Gib d'URL vo emem nöd-gelistete YouTube-Video ii:"
+    },
+    "confirmDelete": "Dä Beitrag würklich lösche?",
+    "confirmDeleteComment": "Dä Kommentar würklich lösche?",
+    "accessDenied": {
+      "title": "Zuegriff beschränkt",
+      "message": "Nur Subscriber, VIPs und Moderatore händ Zuegriff uf OnlyBart.",
+      "subHint": "Bisch du en Subscriber? Bitte stell sicher, dass du mit em richtige Account iigloggt bisch."
+    },
+    "notLoggedIn": "Meld di mit Twitch aa, um z'prüefe, ob du Zuegriff uf OnlyBart häsch.",
+    "noPosts": "No keini Beiträg vorhande. Bis de Erschte, wo öppis Tolls gsiit!"
+  }
+}

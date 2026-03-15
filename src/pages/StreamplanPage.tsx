@@ -28,7 +28,7 @@ export default function StreamplanPage() {
   const [expanded, setExpanded] = useState(false)
 
   // Date-fns locale
-  const dateLocale = i18n.language === 'de' ? de : enUS
+  const dateLocale = i18n.language?.startsWith('de') || i18n.language?.startsWith('gsw') ? de : enUS
 
   useEffect(() => {
     async function fetchCalendars() {
