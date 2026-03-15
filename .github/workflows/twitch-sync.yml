@@ -31,6 +31,7 @@ jobs:
           TWITCH_CLIENT_SECRET: ${{ secrets.TWITCH_CLIENT_SECRET }}
           TWITCH_REFRESH_TOKEN: ${{ secrets.TWITCH_REFRESH_TOKEN }}
           CHANNEL_NAME: ${{ secrets.CHANNEL_NAME }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
         run: npx tsx .github/scripts/sync-twitch-data.ts
 
       - name: Update Refresh Token Secret
