@@ -233,6 +233,7 @@ function PostCard({ post, access, onDelete }: { post: Post, access: OnlyBartAcce
       })
       if (!error) {
           setNewComment('')
+          setShowComments(true)
           loadComments()
       }
   }
