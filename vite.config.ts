@@ -138,9 +138,26 @@ function calendarIcsPlugin(): Plugin {
   }
 }
 
+/**
+ * Copies index.html to 404.html after build for GitHub Pages SPA support
+ */
+function make404Plugin(): Plugin {
+  return {
+    name: 'make-404',
+    writeBundle() {
+      const distIndex = path.resolve(__dirname, 'dist/index.html')
+      const dist404 = path.resolve(__dirname, 'dist/404.html')
+      if (fs.existsSync(distIndex)) {
+        fs.copyFileSync(distIndex, dist404)
+        console.log('[make-404] Copied index.html to 404.html for SPA fallback.')
+      }
+    },
+  }
+}
+
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react(), calendarIcsPlugin()],
+  plugins: [react(), calendarIcsPlugin(), make404Plugin()],
   // Für GitHub Pages mit Custom Domain (z.B. hd1920x1080.de): base: '/'
   // Für GitHub Pages OHNE Custom Domain: base: '/repo-name/'
   base: '/',
