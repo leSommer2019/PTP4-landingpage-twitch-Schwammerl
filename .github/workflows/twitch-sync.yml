@@ -37,7 +37,7 @@ jobs:
         # Dieser Schritt läuft nur, wenn das Script einen neuen Token gefunden hat
         if: steps.twitch_sync.outputs.NEW_REFRESH_TOKEN != ''
         env:
-          GH_TOKEN: ${{ secrets.GH_PAT }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
           NEW_TOKEN: ${{ steps.twitch_sync.outputs.NEW_REFRESH_TOKEN }}
         run: |
           gh secret set TWITCH_REFRESH_TOKEN --body "$NEW_TOKEN"
