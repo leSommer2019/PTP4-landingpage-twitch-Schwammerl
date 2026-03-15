@@ -55,6 +55,12 @@ body {
   padding-top: var(--settingsbar-height, 64px); /* Abstand für SettingsBar */
 }
 
+@media (max-width: 720px) {
+  body {
+    padding-top: 0 !important;
+  }
+}
+
 a {
   color: var(--color-link);
   text-decoration: none;

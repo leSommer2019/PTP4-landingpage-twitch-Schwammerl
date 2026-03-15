@@ -38,7 +38,7 @@
     z-index: 1001;
     background: var(--color-bg, #18181b);
     justify-content: space-between;
-    padding: 1rem 1rem 0;
+    padding: 1rem 1rem 1rem 1rem;
     box-shadow: 0 2px 8px rgba(0,0,0,0.08);
     --settingsbar-height: calc(2rem + 24px); /* gleiche Höhe wie Desktop */
   }

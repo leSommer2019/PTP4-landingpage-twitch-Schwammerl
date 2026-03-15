@@ -5,6 +5,12 @@
   padding-top: var(--settingsbar-height, 64px); /* Abstand für SettingsBar */
 }
 
+@media (max-width: 720px) {
+  .subpage-container {
+    padding-top: 0 !important;
+  }
+}
+
 .subpage-card {
   background: var(--box-gradient);
   border: 1px solid var(--box-border);

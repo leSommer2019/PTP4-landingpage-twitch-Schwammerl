@@ -9,6 +9,12 @@
   padding-top: var(--settingsbar-height, 64px); /* Abstand für SettingsBar */
 }
 
+@media (max-width: 720px) {
+  .landing-container {
+    padding-top: 0 !important;
+  }
+}
+
 /* ── Mobile visibility control ── */
 @media (max-width: 720px) {
   .landing-container[data-tab="live"] .section-live { display: block; }
