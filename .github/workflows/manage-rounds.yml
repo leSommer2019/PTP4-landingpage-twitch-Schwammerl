@@ -25,7 +25,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '24'
 
       - name: Run round management
         env:
@@ -33,4 +33,3 @@ jobs:
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           ACTION: ${{ github.event.inputs.action || 'auto' }}
         run: node .github/scripts/manage-rounds.mjs
-

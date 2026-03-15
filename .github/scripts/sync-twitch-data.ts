@@ -8,11 +8,9 @@ const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY
 const TWITCH_CLIENT_ID = process.env.VITE_TWITCH_CLIENT_ID
 const TWITCH_CLIENT_SECRET = process.env.TWITCH_CLIENT_SECRET
 const TWITCH_REFRESH_TOKEN = process.env.TWITCH_REFRESH_TOKEN
+const CHANNEL_NAME = process.env.CHANNEL_NAME
 
-// Config
-const CHANNEL_NAME = 'hd1920x1080' // Hardcoded or from env
-
-if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY || !TWITCH_CLIENT_ID || !TWITCH_CLIENT_SECRET || !TWITCH_REFRESH_TOKEN) {
+if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY || !TWITCH_CLIENT_ID || !TWITCH_CLIENT_SECRET || !TWITCH_REFRESH_TOKEN || !CHANNEL_NAME) {
   console.error('Missing environment variables. Please check GitHub Secrets.')
   process.exit(1)
 }
@@ -44,14 +42,15 @@ async function getAccessToken() {
 
     const data = await res.json()
 
-    // WICHTIG: Falls Twitch einen neuen Refresh Token schickt, loggen wir ihn
-    // in einem speziellen GitHub-Format, damit die Action ihn lesen kann.
-    if (data.refresh_token && data.refresh_token !== TWITCH_REFRESH_TOKEN) {
-        console.log(`::set-output name=new_refresh_token::${data.refresh_token}`);
-        // Für modernere Runner nutzen wir zusätzlich ein Environment File:
-        if (process.env.GITHUB_OUTPUT) {
-            fs.appendFileSync(process.env.GITHUB_OUTPUT, `NEW_REFRESH_TOKEN=${data.refresh_token}\n`);
-        }
+    // Logik-Update:
+    // Falls Twitch einen neuen schickt, nimm den. Ansonsten nimm den alten aus den Env-Vars.
+    const finalRefreshToken = data.refresh_token || TWITCH_REFRESH_TOKEN;
+
+    if (process.env.GITHUB_OUTPUT) {
+        // Wir schreiben den Token IMMER raus.
+        // Wenn er gleich geblieben ist, überschreibt GitHub das Secret einfach mit demselben Wert.
+        fs.appendFileSync(process.env.GITHUB_OUTPUT, `new_refresh_token=${finalRefreshToken}\n`);
+        console.log(data.refresh_token ? "Neuer Refresh-Token erhalten." : "Alten Refresh-Token beibehalten.");
     }
 
     return data.access_token as string
@@ -194,4 +193,3 @@ async function main() {
 }
 
 main()
-
