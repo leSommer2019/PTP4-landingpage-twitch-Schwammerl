@@ -1,20 +1,21 @@
 <!DOCTYPE html>
-<html>
+<html lang="de">
   <head>
     <meta http-equiv="refresh" content="0; url=/" />
     <script>
       // SPA-Fallback für GitHub Pages
       // Leitet auf index.html weiter und erhält die Pfad-URL für React Router
       (function() {
-        var l = window.location;
-        var pathname = l.pathname.replace(/\\/g, '/');
+        const l = window.location;
+        let pathname = l.pathname.replace(/\\/g, '/');
         if (pathname !== '/' && !pathname.endsWith('/')) {
           pathname += '/';
         }
-        var redirect = '/' + '#' + l.pathname + l.search + l.hash;
+        const redirect = '/' + '#' + l.pathname + l.search + l.hash;
         window.location.replace(redirect);
       })();
     </script>
+    <title>Redirecting...</title>
   </head>
   <body>
     <h1>Redirecting...</h1>

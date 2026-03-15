@@ -21,6 +21,7 @@ import OnlyBartPage from './pages/OnlyBartPage'
 import NotFoundPage from './pages/NotFoundPage'
 import './App.css'
 import siteConfig from "./config/siteConfig.ts";
+import * as React from "react";
 
 // Komponente für echte Browser-Redirects zu statischen HTML-Dateien
 const RedirectToHtml: React.FC<{ to: string }> = ({ to }) => {
