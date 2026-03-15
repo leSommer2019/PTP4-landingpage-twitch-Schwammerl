@@ -162,14 +162,17 @@ function PostCard({ post, access, onDelete }: { post: Post, access: OnlyBartAcce
   const [likesCount, setLikesCount] = useState(post.likes_count || 0)
   const [hasLiked, setHasLiked] = useState(post.user_has_liked || false)
   const [hasSuperliked, setHasSuperliked] = useState(post.user_has_superliked || false)
+  const [commentsCount, setCommentsCount] = useState(post.comments_count || 0)
 
   const loadComments = useCallback(async () => {
     // 1. Kommentare laden (ohne Join)
-    const { data: commentsData } = await supabase
+    const { data: commentsData, count } = await supabase
       .from('onlybart_comments')
-      .select('*')
+      .select('*', { count: 'exact' })
       .eq('post_id', post.id)
       .order('created_at', { ascending: true })
+
+    setCommentsCount(count || 0)
 
     if (!commentsData || commentsData.length === 0) {
       setComments([])
@@ -254,6 +257,7 @@ function PostCard({ post, access, onDelete }: { post: Post, access: OnlyBartAcce
       if (!error) {
           setNewComment('')
           setShowComments(true)
+          setCommentsCount(prev => prev + 1)
           loadComments()
       }
   }
@@ -261,6 +265,7 @@ function PostCard({ post, access, onDelete }: { post: Post, access: OnlyBartAcce
   const handleDeleteComment = async (commentId: string) => {
       if (!confirm(t('onlybart.confirmDeleteComment', 'Delete this comment?'))) return
       await supabase.from('onlybart_comments').delete().eq('id', commentId)
+      setCommentsCount(prev => Math.max(0, prev - 1))
       loadComments()
   }
 
@@ -336,7 +341,7 @@ function PostCard({ post, access, onDelete }: { post: Post, access: OnlyBartAcce
            )}
 
            <button className="action-btn" onClick={() => setShowComments(!showComments)}>
-               <FaComment /> {comments.length > 0 ? comments.length : ''}
+               <FaComment /> {commentsCount > 0 ? commentsCount : ''}
            </button>
       </div>
 
@@ -422,7 +427,7 @@ export function OnlyBartPage() {
      
      const { data, error } = await supabase
         .from('onlybart_posts')
-        .select('*')
+        .select('*, comments_count:onlybart_comments(count)')
         .order('created_at', { ascending: false })
 
      if (error) {
@@ -431,29 +436,34 @@ export function OnlyBartPage() {
      }
      
      if (data) {
-        // Enhance with likes count and user status
-        // Doing this N+1 is bad, but for MVP/Proof of functionality it works. 
-        // Optimization: Create a VIEW or RPC.
-        const enhancedPromise = data.map(async (p: { id: string } & Record<string, unknown>) => {
+        // Enhance with likes count, user status und Kommentaranzahl
+        const enhancedPromise = data.map(async (p: any) => {
             const { count } = await supabase
                 .from('onlybart_likes')
                 .select('*', { count: 'exact', head: true })
                 .eq('post_id', p.id)
-            
+
             const { data: myLike } = await supabase
                 .from('onlybart_likes')
                 .select('is_superlike')
                 .eq('post_id', p.id)
                 .maybeSingle()
 
+            // comments_count ist ein Array mit einem Objekt mit count
+            let comments_count = 0
+            if (Array.isArray(p.comments_count) && p.comments_count.length > 0) {
+                comments_count = p.comments_count[0].count || 0
+            }
+
             return {
                 ...p,
                 likes_count: count || 0,
                 user_has_liked: !!myLike,
-                user_has_superliked: myLike?.is_superlike || false
+                user_has_superliked: myLike?.is_superlike || false,
+                comments_count
             }
         })
-        
+
         const enhanced: Post[] = ((await Promise.all(enhancedPromise)) as unknown) as Post[]
         setPosts(enhanced)
      }
