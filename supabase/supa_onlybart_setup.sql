@@ -41,21 +41,30 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
-CREATE OR REPLACE FUNCTION public.has_onlybart_view_access()
+CREATE OR REPLACE FUNCTION public.is_moderator_role()
 RETURNS boolean AS $$
 BEGIN
   RETURN EXISTS (
     SELECT 1 FROM user_roles
     WHERE user_id = auth.uid()
-    AND (is_subscriber = true OR is_vip = true OR is_moderator = true OR is_broadcaster = true)
+    AND is_moderator = true
   );
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
+CREATE OR REPLACE FUNCTION public.is_vip_role()
+RETURNS boolean AS $$
+BEGIN
+  RETURN EXISTS (
+    SELECT 1 FROM user_roles
+    WHERE user_id = auth.uid()
+    AND is_vip = true
+  );
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
 
-CREATE POLICY "Allowed users can view posts" ON onlybart_posts FOR SELECT USING (
-  has_onlybart_view_access()
-);
+CREATE POLICY "All logged-in users can view posts" ON onlybart_posts
+FOR SELECT USING (auth.role() = 'authenticated');
 
 CREATE POLICY "Broadcaster can insert posts" ON onlybart_posts FOR INSERT WITH CHECK (
   is_broadcaster_role()
@@ -65,9 +74,8 @@ CREATE POLICY "Broadcaster can update own posts" ON onlybart_posts FOR UPDATE US
   is_broadcaster_role()
 );
 
-CREATE POLICY "Broadcaster can delete own posts" ON onlybart_posts FOR DELETE USING (
-  is_broadcaster_role()
-);
+CREATE POLICY "Broadcaster can delete own posts" ON onlybart_posts
+FOR DELETE USING (is_broadcaster_role());
 
 
 -- 3. Create the likes table
@@ -82,27 +90,18 @@ CREATE TABLE IF NOT EXISTS onlybart_likes (
 
 ALTER TABLE onlybart_likes ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Allowed users can view likes" ON onlybart_likes FOR SELECT USING (
-  has_onlybart_view_access()
-);
+CREATE POLICY "All logged-in users can view likes" ON onlybart_likes
+FOR SELECT USING (auth.role() = 'authenticated');
 
--- Like specific logic:
--- Normal Like: All allowed users EXCEPT Broadcaster.
--- Superlike: Only VIPs.
-
-CREATE POLICY "Allowed users can insert likes" ON onlybart_likes FOR INSERT WITH CHECK (
-  has_onlybart_view_access()
-  AND
-  NOT is_broadcaster_role()
-  AND
-  (
-    (is_superlike = false) OR
-    (is_superlike = true AND EXISTS (SELECT 1 FROM user_roles WHERE user_id = auth.uid() AND is_vip = true))
+CREATE POLICY "All logged-in users can insert likes, superlike nur VIP/Mod" ON onlybart_likes
+FOR INSERT WITH CHECK (
+  auth.role() = 'authenticated'
+  AND NOT is_broadcaster_role()
+  AND (
+    (is_superlike = false)
+    OR
+    (is_superlike = true AND (is_vip_role() OR is_moderator_role()))
   )
-);
-
-CREATE POLICY "Users can remove own likes" ON onlybart_likes FOR DELETE USING (
-  auth.uid() = user_id
 );
 
 
@@ -117,24 +116,19 @@ CREATE TABLE IF NOT EXISTS onlybart_comments (
 
 ALTER TABLE onlybart_comments ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Allowed users can view comments" ON onlybart_comments FOR SELECT USING (
-  has_onlybart_view_access()
-);
+CREATE POLICY "All logged-in users can view comments" ON onlybart_comments
+FOR SELECT USING (auth.role() = 'authenticated');
 
-CREATE POLICY "Allowed users can insert comments" ON onlybart_comments FOR INSERT WITH CHECK (
-  has_onlybart_view_access()
-);
+CREATE POLICY "All logged-in users can insert comments" ON onlybart_comments
+FOR INSERT WITH CHECK (auth.role() = 'authenticated');
 
--- Delete: Valid if it's your own comment OR if you are Mod OR Broadcaster
-CREATE POLICY "Users can delete own comments or mods/broadcaster can delete any" ON onlybart_comments FOR DELETE USING (
+CREATE POLICY "User kann eigenen Kommentar löschen, Mod/Broadcaster alle" ON onlybart_comments
+FOR DELETE USING (
   auth.uid() = user_id
-  OR
-  EXISTS (
-    SELECT 1 FROM user_roles
-    WHERE user_id = auth.uid()
-    AND (is_moderator = true OR is_broadcaster = true)
-  )
+  OR is_moderator_role()
+  OR is_broadcaster_role()
 );
+
 
 -- 5. Helper Views/Functions for Frontend convenience
 
