@@ -48,5 +48,37 @@ export default function NextStream() {
             </Link>
         </div>
     )
+  }
+
+  const locale = i18n.language?.startsWith('gsw')
+    ? 'de-CH'
+    : i18n.language?.startsWith('de')
+      ? 'de-DE'
+      : 'en-US'
+
+  const dateStr = nextEvent.start.toLocaleDateString(locale, {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+  })
+
+  const timeStr = nextEvent.start.toLocaleTimeString(locale, {
+    hour: '2-digit',
+    minute: '2-digit',
+  })
+
+  return (
+    <div className="next-stream">
+      <div className="next-stream-label">{t('live.nextStream')}</div>
+      <div className="next-stream-title">{nextEvent.summary}</div>
+      <div className="next-stream-date">
+        📅 {dateStr} · 🕐 {timeStr}
+        {(i18n.language?.startsWith('de') || i18n.language?.startsWith('gsw')) ? ' Uhr' : ''}
+      </div>
+      <a className="next-stream-link" href="/streamplan">
+        {t('live.seeSchedule')}
+      </a>
+    </div>
+  )
 }
 

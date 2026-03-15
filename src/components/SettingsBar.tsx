@@ -14,6 +14,16 @@ const themeOrder = ['system', 'light', 'dark'] as const
 const languageFlags: Record<string, string> = {
   de: '🇩🇪',
   en: '🇬🇧',
+  gsw: '🇨🇭',
+}
+
+const langOrder = ['de', 'en', 'gsw'] as const
+type Lang = (typeof langOrder)[number]
+
+function getCurrentLang(language: string): Lang {
+  if (language?.startsWith('gsw')) return 'gsw'
+  if (language?.startsWith('de')) return 'de'
+  return 'en'
 }
 
 export default function SettingsBar() {
@@ -29,8 +39,8 @@ export default function SettingsBar() {
     i18n.changeLanguage(lng)
   }
 
-  const currentLang = i18n.language?.startsWith('de') ? 'de' : 'en'
-  const nextLang = currentLang === 'de' ? 'en' : 'de'
+  const currentLang = getCurrentLang(i18n.language)
+  const nextLang = langOrder[(langOrder.indexOf(currentLang) + 1) % langOrder.length]
 
   return (
     <div className="settings-bar">
@@ -49,6 +59,7 @@ export default function SettingsBar() {
         >
           <option value="de">🇩🇪 Deutsch</option>
           <option value="en">🇬🇧 English</option>
+          <option value="gsw">🇨🇭 Schweizerdeutsch</option>
         </select>
 
         <button
