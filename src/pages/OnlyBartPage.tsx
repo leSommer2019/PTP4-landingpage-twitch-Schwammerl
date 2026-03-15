@@ -354,7 +354,7 @@ function PostCard({ post, access, onDelete }: { post: Post, access: OnlyBartAcce
                           <span className="comment-author text-xs text-gray-400">{c.display_name}</span>
                           <span className="text-sm">{c.content}</span>
                       </div>
-                      {(access.canDeleteComment || user?.id === c.user_id) && (
+                      {((user && user.id === c.user_id) || access.canDeleteComment) && (
                           <button onClick={() => handleDeleteComment(c.id)} className="comment-delete">
                               <FaTrash size={12} />
                           </button>
