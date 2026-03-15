@@ -39,6 +39,20 @@ export default function DatenschutzPage() {
       <h3>{t('datenschutzPage.legalBasisTitle')}</h3>
       <p>{t('datenschutzPage.legalBasisText')}</p>
 
+      <h2>{t('datenschutzPage.onlyBartTitle')}</h2>
+      <p>{t('datenschutzPage.onlyBartIntro')}</p>
+      <h3>{t('datenschutzPage.onlyBartPurposeTitle')}</h3>
+      <p>{t('datenschutzPage.onlyBartPurposeText')}</p>
+      <h3>{t('datenschutzPage.onlyBartRetentionTitle')}</h3>
+      <p>{t('datenschutzPage.onlyBartRetentionText')}</p>
+
+      <h2>{t('datenschutzPage.bartclickerTitle')}</h2>
+      <p>{t('datenschutzPage.bartclickerIntro')}</p>
+      <h3>{t('datenschutzPage.bartclickerPurposeTitle')}</h3>
+      <p>{t('datenschutzPage.bartclickerPurposeText')}</p>
+      <h3>{t('datenschutzPage.bartclickerRetentionTitle')}</h3>
+      <p>{t('datenschutzPage.bartclickerRetentionText')}</p>
+
       <h2>{t('datenschutzPage.analyticsTitle')}</h2>
       <p>{t('datenschutzPage.analyticsIntro')}</p>
 
