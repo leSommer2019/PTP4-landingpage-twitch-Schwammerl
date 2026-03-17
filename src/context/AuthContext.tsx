@@ -41,7 +41,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [user, session])
 
-  // Auto-create profile on login
+  // Auto-create profile on login & transfer roles from twitch_permissions → user_roles
   useEffect(() => {
     if (user) {
       const createProfile = async () => {
@@ -62,7 +62,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           }
         }
       }
+
+      const transferRoles = async () => {
+        try {
+          const { data, error } = await supabase.rpc('transfer_permissions_to_roles')
+          if (error) {
+            console.error('Failed to transfer permissions to roles:', error)
+          } else if (data?.error) {
+            console.warn('Role transfer skipped:', data.error)
+          }
+        } catch (err) {
+          console.error('Failed to transfer permissions to roles:', err)
+        }
+      }
+
       createProfile()
+      transferRoles()
     }
   }, [user])
 

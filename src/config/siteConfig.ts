@@ -93,7 +93,7 @@ export interface SiteConfig {
   clips: LinkItem[]
   partners: LinkItem[]
   footerLinks: Link[]
-  profileLinks: Link[]
+  moderatorLink: Link
   copyrightHolder: string
   onlyBart: OnlyBartConfig  // Should contain the default "OnlyBart" for this project
 }
@@ -349,10 +349,7 @@ const siteConfig: SiteConfig = {
     },
   ],
 
-  // -- Profile --
-  profileLinks: [
-    { labelKey: 'profile.moderate', url: '/moderate' },
-  ],
+  moderatorLink: { labelKey: 'profile.moderate', url: '/moderate' },
 
   // ── Footer ──
   footerLinks: [

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useBartclickerGame, MAX_OFFLINE_UPGRADES, BASE_REBIRTH_COST } from '../../hooks/useBartclickerGame';
 import { useBartclickerLeaderboard } from '../../hooks/useBartclickerLeaderboard';
@@ -11,7 +11,7 @@ interface BartclickerGameProps {
 
 export default function BartclickerGame({ compact = false }: BartclickerGameProps) {
   const { t } = useTranslation();
-  const { gameState, isLoading, cps, handleClick, buyItem, buyMaxItems, activateBuff, performRebirth, buyAutobuyer, buyUpgradeAutobuyer, unlockRelic, buyOfflineUpgrade, offlineEarnings, dismissOfflineEarnings } =
+  const { gameState, isLoading, cps, clickBlocked, handleClick, buyItem, buyMaxItems, activateBuff, performRebirth, buyAutobuyer, buyUpgradeAutobuyer, unlockRelic, buyOfflineUpgrade, offlineEarnings, dismissOfflineEarnings } =
     useBartclickerGame();
   const { entries: leaderboardEntries, isLoading: leaderboardLoading } = useBartclickerLeaderboard();
 
@@ -19,6 +19,13 @@ export default function BartclickerGame({ compact = false }: BartclickerGameProp
   const [shopTab, setShopTab] = useState<'passive' | 'click' | 'booster' | 'relics' | 'autobuyer' | 'offline'>('passive');
   const [clickPulse, setClickPulse] = useState(false);
   const [clickCount, setClickCount] = useState(0);
+  const [now, setNow] = useState(() => Date.now());
+
+  // Tick every second so buff/debuff timers update without calling Date.now() during render
+  useEffect(() => {
+    const id = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(id);
+  }, []);
 
   if (isLoading) {
     return (
@@ -72,12 +79,6 @@ export default function BartclickerGame({ compact = false }: BartclickerGameProp
   const passiveItems = gameState.shop_items.filter((item) => item.type === 'passive');
   const clickItems = gameState.shop_items.filter((item) => item.type === 'click');
 
-  // Berechne Cost-Multiplikator basierend auf Rebirths
-  const costMultiplier = Math.pow(1.1, gameState.rebirth_count);
-  
-  // Hilfsfunktion für skalierte Kosten
-  const getScaledCost = (baseCost: number) => Math.floor(baseCost * costMultiplier);
-
   // Boosters (Temporary buffs)
   const BOOSTERS = [
     { id: 0, name: 'Turbo-Boost', icon: '⚡', effect: '2x CPS für 1 Min', baseCost: 1000 },
@@ -126,10 +127,15 @@ export default function BartclickerGame({ compact = false }: BartclickerGameProp
 
       {/* Main Click Area with Animated Bart */}
       <div className="click-area">
+        {clickBlocked && (
+          <div className="click-blocked-warning">
+            🚫 Zu schnell geklickt! Kurze Pause…
+          </div>
+        )}
         <button
-          className={`click-button ${clickPulse ? 'pulse' : ''}`}
+          className={`click-button ${clickPulse ? 'pulse' : ''} ${clickBlocked ? 'blocked' : ''}`}
           onClick={handleBartClick}
-          disabled={isLoading}
+          disabled={isLoading || clickBlocked}
           title={`+Barthaare`}
         >
           <BeardSVG bartLength={bartLength} clickCount={clickCount} />
@@ -203,7 +209,6 @@ export default function BartclickerGame({ compact = false }: BartclickerGameProp
           {shopTab === 'passive' && (
             <div className="item-list">
               {passiveItems.map((item) => {
-                const scaledCost = getScaledCost(item.cost / costMultiplier);
                 return (
                   <div key={item.id} className="shop-item">
                     <div className="item-header">
@@ -218,15 +223,15 @@ export default function BartclickerGame({ compact = false }: BartclickerGameProp
                       <button
                         className="buy-button"
                         onClick={() => buyItem(item.id)}
-                        disabled={gameState.energy < scaledCost}
-                        title={`Kosten: ${formatNumber(scaledCost)}`}
+                        disabled={gameState.energy < item.cost}
+                        title={`Kosten: ${formatNumber(item.cost)}`}
                       >
-                        {formatNumber(scaledCost)}
+                        {formatNumber(item.cost)}
                       </button>
                       <button
                         className="max-button"
                         onClick={() => buyMaxItems(item.id)}
-                        disabled={gameState.energy < scaledCost}
+                        disabled={gameState.energy < item.cost}
                         title="Max kaufen"
                       >
                         Max
@@ -241,7 +246,6 @@ export default function BartclickerGame({ compact = false }: BartclickerGameProp
           {shopTab === 'click' && (
             <div className="item-list">
               {clickItems.map((item) => {
-                const scaledCost = getScaledCost(item.cost / costMultiplier);
                 return (
                   <div key={item.id} className="shop-item">
                     <div className="item-header">
@@ -256,15 +260,15 @@ export default function BartclickerGame({ compact = false }: BartclickerGameProp
                       <button
                         className="buy-button"
                         onClick={() => buyItem(item.id)}
-                        disabled={gameState.energy < scaledCost}
-                        title={`Kosten: ${formatNumber(scaledCost)}`}
+                        disabled={gameState.energy < item.cost}
+                        title={`Kosten: ${formatNumber(item.cost)}`}
                       >
-                        {formatNumber(scaledCost)}
+                        {formatNumber(item.cost)}
                       </button>
                       <button
                         className="max-button"
                         onClick={() => buyMaxItems(item.id)}
-                        disabled={gameState.energy < scaledCost}
+                        disabled={gameState.energy < item.cost}
                         title="Max kaufen"
                       >
                         Max
@@ -281,7 +285,7 @@ export default function BartclickerGame({ compact = false }: BartclickerGameProp
               {gameState.active_debuffs.length > 0 && (
                 <div className="active-debuffs-banner">
                   {gameState.active_debuffs.map((debuff, idx) => {
-                    const remainingSecs = Math.max(0, Math.ceil((debuff.endTime - Date.now()) / 1000));
+                    const remainingSecs = Math.max(0, Math.ceil((debuff.endTime - now) / 1000));
                     return (
                       <div key={idx} className="debuff-pill">
                         ⚠️ {debuff.description} ({remainingSecs}s)
@@ -292,9 +296,9 @@ export default function BartclickerGame({ compact = false }: BartclickerGameProp
               )}
               <div className="booster-grid">
                 {BOOSTERS.map((booster) => {
-                  const scaledCost = getScaledCost(booster.baseCost);
+                  const boosterCost = booster.baseCost * Math.pow(2, gameState.rebirth_count);
                   const activeBuff = gameState.active_buffs.find((b) => b.id === booster.id);
-                  const remainingSecs = activeBuff?.endTime ? Math.max(0, Math.ceil((activeBuff.endTime - Date.now()) / 1000)) : 0;
+                  const remainingSecs = activeBuff?.endTime ? Math.max(0, Math.ceil((activeBuff.endTime - now) / 1000)) : 0;
                   return (
                     <div key={booster.id} className={`booster-card ${activeBuff ? 'booster-active' : ''}`}>
                       <div className="booster-icon">{booster.icon}</div>
@@ -307,9 +311,9 @@ export default function BartclickerGame({ compact = false }: BartclickerGameProp
                         <button
                           className="buy-button"
                           onClick={() => activateBuff(booster.id)}
-                          disabled={gameState.energy < scaledCost}
+                          disabled={gameState.energy < boosterCost}
                         >
-                          {formatNumber(scaledCost)}
+                          {formatNumber(boosterCost)}
                         </button>
                       )}
                     </div>

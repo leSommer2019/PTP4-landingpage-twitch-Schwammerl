@@ -10,6 +10,14 @@ CREATE TABLE IF NOT EXISTS user_roles (
   last_synced_at timestamptz DEFAULT now()
 );
 
+-- Ensure is_broadcaster column exists (added later for sync_moderators & transfer_permissions_to_roles)
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='user_roles' AND column_name='is_broadcaster') THEN
+        ALTER TABLE user_roles ADD COLUMN is_broadcaster boolean DEFAULT false;
+    END IF;
+END $$;
+
 -- RLS for user_roles
 ALTER TABLE user_roles ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Users can read own roles" ON user_roles FOR SELECT USING (auth.uid() = user_id);
@@ -294,3 +302,89 @@ BEGIN
   );
 END;
 $$;
+
+-- ═════════════════════════════════════════════════════════
+--  Rollentransfer: twitch_permissions → user_roles beim Login
+-- ═════════════════════════════════════════════════════════
+-- Wird vom Frontend nach jedem Login aufgerufen.
+-- Liest die Twitch-ID des eingeloggten Users, sucht in
+-- twitch_permissions nach VIP/Sub-Status und upserted
+-- in user_roles (UUID basiert) für RLS-kompatiblen Zugriff.
+
+CREATE OR REPLACE FUNCTION transfer_permissions_to_roles()
+RETURNS jsonb
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+  v_user_id    uuid;
+  v_twitch_id  text;
+  v_is_vip     boolean := false;
+  v_is_sub     boolean := false;
+  v_is_mod     boolean := false;
+  v_is_bc      boolean := false;
+BEGIN
+  v_user_id := auth.uid();
+  IF v_user_id IS NULL THEN
+    RETURN jsonb_build_object('error', 'not_authenticated');
+  END IF;
+
+  -- Twitch-ID des eingeloggten Users ermitteln
+  SELECT coalesce(
+    raw_user_meta_data->>'sub',
+    raw_user_meta_data->>'provider_id'
+  ) INTO v_twitch_id
+  FROM auth.users WHERE id = v_user_id;
+
+  IF v_twitch_id IS NULL THEN
+    RETURN jsonb_build_object('error', 'no_twitch_id');
+  END IF;
+
+  -- VIP/Sub-Status aus twitch_permissions lesen
+  SELECT
+    coalesce(tp.is_vip, false),
+    coalesce(tp.is_subscriber, false)
+  INTO v_is_vip, v_is_sub
+  FROM twitch_permissions tp
+  WHERE tp.twitch_id = v_twitch_id;
+
+  -- Mod/Broadcaster-Status aus moderators-Tabelle lesen (falls vorhanden)
+  SELECT
+    true,
+    coalesce(m.is_broadcaster, false)
+  INTO v_is_mod, v_is_bc
+  FROM moderators m
+  WHERE m.twitch_user_id = v_twitch_id;
+
+  -- Falls weder in twitch_permissions noch in moderators gefunden
+  -- und auch kein bestehender user_roles-Eintrag existiert → nichts tun
+  IF NOT FOUND AND v_is_vip = false AND v_is_sub = false THEN
+    -- Prüfen ob bereits ein Eintrag existiert (z.B. vom Sync)
+    IF NOT EXISTS (SELECT 1 FROM user_roles WHERE user_id = v_user_id) THEN
+      RETURN jsonb_build_object('success', true, 'action', 'no_permissions_found');
+    END IF;
+  END IF;
+
+  -- Upsert in user_roles
+  INSERT INTO user_roles (user_id, is_subscriber, is_vip, is_moderator, is_broadcaster, last_synced_at)
+  VALUES (v_user_id, v_is_sub, v_is_vip, v_is_mod, v_is_bc, now())
+  ON CONFLICT (user_id)
+  DO UPDATE SET
+    is_subscriber  = EXCLUDED.is_subscriber,
+    is_vip         = EXCLUDED.is_vip,
+    is_moderator   = CASE WHEN user_roles.is_moderator THEN true ELSE EXCLUDED.is_moderator END,
+    is_broadcaster = CASE WHEN user_roles.is_broadcaster THEN true ELSE EXCLUDED.is_broadcaster END,
+    last_synced_at = now();
+
+  RETURN jsonb_build_object(
+    'success', true,
+    'action', 'synced',
+    'is_vip', v_is_vip,
+    'is_subscriber', v_is_sub,
+    'is_moderator', v_is_mod,
+    'is_broadcaster', v_is_bc
+  );
+END;
+$$;
+

@@ -146,9 +146,19 @@ export function useBartclickerGame() {
   const [isLoading, setIsLoading] = useState(true);
   const [lastSaveTime, setLastSaveTime] = useState(0);
   const [offlineEarnings, setOfflineEarnings] = useState<{ amount: number; seconds: number } | null>(null);
+  const [clickBlocked, setClickBlocked] = useState(false);
   const gameLoopRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
   const isLoadingRef = useRef(false);
+
+  // ── Anti-Autoclicker ──
+  // Speichert Timestamps der letzten Klicks für Rate-Limiting und Regelmäßigkeitserkennung
+  const clickTimestampsRef = useRef<number[]>([]);
+  const penaltyUntilRef = useRef<number>(0);        // Unix-Timestamp bis wann Klicks gesperrt sind
+  const AC_WINDOW = 30;          // Anzahl Klicks im Analyse-Fenster
+  const AC_MAX_CPS = 22;         // Max erlaubte Klicks pro Sekunde
+  const AC_MIN_STD_DEV = 8;      // Min Standardabweichung (ms) der Intervalle – zu gleichmäßig = Bot
+  const AC_PENALTY_MS = 5_000;   // Sperre in ms bei Erkennung
 
   // Calculate CPS based on shop items, relics, and multipliers
   const calculateCps = useCallback((): number => {
@@ -439,8 +449,65 @@ export function useBartclickerGame() {
     }
   }, [user?.id, gameState]);
 
-  // Handle click
+  // Handle click – with anti-autoclicker protection
   const handleClick = useCallback(() => {
+    const now = performance.now();
+
+    // Aktive Sperre?
+    if (penaltyUntilRef.current > Date.now()) {
+      return; // Klick wird stillschweigend ignoriert
+    }
+
+    // Timestamp aufnehmen
+    const timestamps = clickTimestampsRef.current;
+    timestamps.push(now);
+
+    // Nur die letzten AC_WINDOW Klicks behalten
+    if (timestamps.length > AC_WINDOW) {
+      timestamps.splice(0, timestamps.length - AC_WINDOW);
+    }
+
+    // Mindestens 6 Klicks für eine sinnvolle Analyse
+    if (timestamps.length >= 6) {
+      const windowStart = timestamps[0];
+      const windowEnd = timestamps[timestamps.length - 1];
+      const windowDuration = (windowEnd - windowStart) / 1000; // in Sekunden
+
+      // 1. Rate-Limiting: Zu viele Klicks pro Sekunde?
+      if (windowDuration > 0) {
+        const clicksPerSecond = (timestamps.length - 1) / windowDuration;
+        if (clicksPerSecond > AC_MAX_CPS) {
+          penaltyUntilRef.current = Date.now() + AC_PENALTY_MS;
+          clickTimestampsRef.current = [];
+          setClickBlocked(true);
+          setTimeout(() => setClickBlocked(false), AC_PENALTY_MS);
+          console.warn('Autoclicker erkannt: Klickrate zu hoch (' + clicksPerSecond.toFixed(1) + ' CPS)');
+          return;
+        }
+      }
+
+      // 2. Regelmäßigkeitserkennung: Intervalle zu gleichmäßig?
+      if (timestamps.length >= AC_WINDOW) {
+        const intervals: number[] = [];
+        for (let i = 1; i < timestamps.length; i++) {
+          intervals.push(timestamps[i] - timestamps[i - 1]);
+        }
+        const mean = intervals.reduce((a, b) => a + b, 0) / intervals.length;
+        const variance = intervals.reduce((sum, iv) => sum + Math.pow(iv - mean, 2), 0) / intervals.length;
+        const stdDev = Math.sqrt(variance);
+
+        if (stdDev < AC_MIN_STD_DEV && mean < 200) {
+          // Zu gleichmäßig UND schnell → Autoclicker
+          penaltyUntilRef.current = Date.now() + AC_PENALTY_MS;
+          clickTimestampsRef.current = [];
+          setClickBlocked(true);
+          setTimeout(() => setClickBlocked(false), AC_PENALTY_MS);
+          console.warn('Autoclicker erkannt: Zu gleichmäßige Intervalle (σ=' + stdDev.toFixed(2) + 'ms, μ=' + mean.toFixed(1) + 'ms)');
+          return;
+        }
+      }
+    }
+
     const power = calculateClickPower();
 
     setGameState((prev) => ({
@@ -450,62 +517,56 @@ export function useBartclickerGame() {
     }));
   }, [calculateClickPower]);
 
-  // Buy shop item - Kosten skalieren mit Rebirths
+  // Buy shop item – item.cost ist bereits der aktuelle Preis (inkl. Rebirth-Skalierung)
   const buyItem = useCallback(
     (itemId: number) => {
       const item = gameState.shop_items.find((i) => i.id === itemId);
       if (!item || gameState.energy < item.cost) return false;
 
-      const costMultiplier = Math.pow(1.1, gameState.rebirth_count);
-      const actualCost = Math.floor(item.cost * costMultiplier);
-      
-      if (gameState.energy < actualCost) return false;
-
       setGameState((prev) => ({
         ...prev,
-        energy: prev.energy - actualCost,
+        energy: prev.energy - item.cost,
         shop_items: prev.shop_items.map((i) =>
           i.id === itemId 
             ? { 
                 ...i, 
                 count: i.count + 1, 
-                cost: Math.floor(Math.floor(i.cost * costMultiplier) * 1.15)
-              } 
+                cost: Math.floor(i.cost * 1.15)
+              }
             : i
         ),
       }));
 
       return true;
     },
-    [gameState.energy, gameState.shop_items, gameState.rebirth_count]
+    [gameState.energy, gameState.shop_items]
   );
 
-  // Buy max items
+  // Buy max items – item.cost ist bereits der aktuelle Preis (inkl. Rebirth-Skalierung)
   const buyMaxItems = useCallback(
     (itemId: number) => {
       const item = gameState.shop_items.find((i) => i.id === itemId);
       if (!item) return false;
 
-      const costMultiplier = Math.pow(1.1, gameState.rebirth_count);
-      let baseCost = Math.floor(item.cost * costMultiplier);
+      let nextCost = item.cost;
       let currentEnergy = gameState.energy;
       let count = 0;
 
       // Berechne wie viele Items man sich leisten kann
-      while (currentEnergy >= baseCost) {
-        currentEnergy -= baseCost;
+      while (currentEnergy >= nextCost) {
+        currentEnergy -= nextCost;
         count++;
-        baseCost = Math.floor(baseCost * 1.15);
+        nextCost = Math.floor(nextCost * 1.15);
       }
 
       if (count === 0) return false;
 
-      // Kaufe alle Items
+      // Kaufe alle Items – berechne Gesamtkosten und neuen Preis
       let energyUsed = 0;
-      let newCost = Math.floor(item.cost * costMultiplier);
+      let cost = item.cost;
       for (let i = 0; i < count; i++) {
-        energyUsed += newCost;
-        newCost = Math.floor(newCost * 1.15);
+        energyUsed += cost;
+        cost = Math.floor(cost * 1.15);
       }
 
       setGameState((prev) => ({
@@ -516,15 +577,15 @@ export function useBartclickerGame() {
             ? { 
                 ...i, 
                 count: i.count + count, 
-                cost: Math.floor(item.cost * costMultiplier * Math.pow(1.15, count))
-              } 
+                cost: cost
+              }
             : i
         ),
       }));
 
       return true;
     },
-    [gameState.energy, gameState.shop_items, gameState.rebirth_count]
+    [gameState.energy, gameState.shop_items]
   );
 
   // Activate buff
@@ -586,7 +647,7 @@ export function useBartclickerGame() {
         shop_items: prev.shop_items.map((item) => ({
           ...item,
           count: 0,
-          cost: Math.floor((INITIAL_SHOP_ITEMS.find((i) => i.id === item.id)?.cost || item.cost) * Math.pow(1.1, prev.rebirth_count)),
+          cost: Math.floor((INITIAL_SHOP_ITEMS.find((i) => i.id === item.id)?.cost || item.cost) * Math.pow(1.1, prev.rebirth_count + 1)),
         })),
         active_buffs: [],
         active_debuffs: [],
@@ -732,6 +793,7 @@ export function useBartclickerGame() {
     isLoading,
     clickPower: calculateClickPower(),
     cps,
+    clickBlocked,
     offlineEarnings,
     dismissOfflineEarnings,
     handleClick,

@@ -126,6 +126,34 @@
 .click-button:disabled {
     opacity: 0.5;
     cursor: not-allowed;
+    filter: grayscale(1);
+    animation: shake 0.4s ease-in-out;
+    pointer-events: none;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-6px); }
+    50% { transform: translateX(6px); }
+    75% { transform: translateX(-4px); }
+}
+
+.click-blocked-warning {
+    background: rgba(255, 60, 60, 0.2);
+    border: 1px solid #ff3c3c;
+    color: #ff6b6b;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 8px;
+    animation: fadeInWarning 0.3s ease-in-out;
+}
+
+@keyframes fadeInWarning {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 /* Tabs */

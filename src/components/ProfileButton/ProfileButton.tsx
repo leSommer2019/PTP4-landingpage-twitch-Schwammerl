@@ -13,7 +13,7 @@ export default function ProfileButton() {
   const navigate = useNavigate()
   const { isMod, loading: modLoading } = useIsModerator()
   const { t } = useTranslation()
-  const moderatorLink = siteConfig.profileLinks[0] //ToDo: make better
+  const moderatorLink = siteConfig.moderatorLink
 
   // Schließe Menu wenn außerhalb geklickt wird
   const handleClickOutside = (e: MouseEvent) => {
