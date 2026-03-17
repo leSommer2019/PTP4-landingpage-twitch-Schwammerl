@@ -80,25 +80,6 @@ async function twitchGet<T>(endpoint: string, token: string): Promise<T> {
     return res.json() as Promise<T>
 }
 
-// Hilfsfunktion: Mappe Twitch-IDs auf UUIDs aus auth.users
-async function getUuidsForTwitchIds(twitchIds: string[]): Promise<string[]> {
-    const uuids: string[] = []
-    let nextPage: number | undefined = undefined
-    do {
-        const {data, error} = await supabase.auth.admin.listUsers({page: nextPage})
-        if (error) throw error
-        const users = data?.users ?? []
-        for (const user of users) {
-            const providerId = user?.user_metadata?.provider_id || user?.user_metadata?.sub
-            if (providerId && twitchIds.includes(providerId)) {
-                uuids.push(user.id)
-            }
-        }
-        nextPage = (data && 'nextPage' in data) ? (data as { nextPage?: number }).nextPage : undefined
-    } while (nextPage !== undefined)
-    return uuids
-}
-
 // ── Main Logic ──
 
 async function main() {
@@ -212,51 +193,7 @@ async function main() {
         }
 
         console.log('Sync completed successfully.')
-
-        // ── Upsert VIPs in user_roles (nur für bekannte UUIDs) ──
-        if (vips.length > 0) {
-            const vipUuids = await getUuidsForTwitchIds(vips)
-            if (vipUuids.length === 0) {
-                console.warn('Keine passenden UUIDs für VIPs gefunden. Upsert wird übersprungen.')
-            } else {
-                const vipUserRoles = vipUuids.map(id => ({user_id: id, is_vip: true}))
-                const {error: vipError} = await supabase.from('user_roles').upsert(vipUserRoles, {
-                    onConflict: 'user_id',
-                    ignoreDuplicates: false,
-                })
-                if (vipError) {
-                    console.error('Error upserting VIPs in user_roles:', vipError)
-                    throw vipError
-                } else {
-                    console.log(`VIPs upserted in user_roles: ${vipUserRoles.length}`)
-                }
-            }
-        }
-
-        // ── Upsert MODs in user_roles (nur für bekannte UUIDs) ──
-        if (mods.length > 0) {
-            const modTwitchIds = mods.map(mod => mod.user_id)
-            if (!modTwitchIds.includes(broadcaster.id)) {
-                modTwitchIds.push(broadcaster.id)
-            }
-            const modUuids = await getUuidsForTwitchIds(modTwitchIds)
-            if (modUuids.length === 0) {
-                console.warn('Keine passenden UUIDs für MODs gefunden. Upsert wird übersprungen.')
-            } else {
-                const modUserRoles = modUuids.map(id => ({user_id: id, is_moderator: true}))
-                const {error: modUpsertError} = await supabase.from('user_roles').upsert(modUserRoles, {
-                    onConflict: 'user_id',
-                    ignoreDuplicates: false,
-                })
-                if (modUpsertError) {
-                    console.error('Error upserting MODs in user_roles:', modUpsertError)
-                    throw modUpsertError
-                } else {
-                    console.log(`MODs upserted in user_roles: ${modUserRoles.length}`)
-                }
-            }
-        }
-
+        process.exit(0)
     } catch (err) {
         console.error('Script failed:', err)
         process.exit(1)
