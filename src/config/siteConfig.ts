@@ -34,7 +34,7 @@ export interface TwitchConfig {
   icsUrl: string
 }
 
-export interface FooterLink {
+export interface Link {
   labelKey: string
   url: string
 }
@@ -92,9 +92,9 @@ export interface SiteConfig {
   games: LinkItem[]
   clips: LinkItem[]
   partners: LinkItem[]
-  footerLinks: FooterLink[]
+  footerLinks: Link[]
+  profileLinks: Link[]
   copyrightHolder: string
-  donationTriggers: DonationTrigger[]
   onlyBart: OnlyBartConfig  // Should contain the default "OnlyBart" for this project
 }
 
@@ -349,18 +349,17 @@ const siteConfig: SiteConfig = {
     },
   ],
 
+  // -- Profile --
+  profileLinks: [
+    { labelKey: 'moderate', url: '/moderate' },
+  ],
+
   // ── Footer ──
   footerLinks: [
     { labelKey: 'footer.impressum', url: '/impressum' },
-    { labelKey: 'footer.datenschutz', url: '/datenschutz' },
-    { labelKey: 'footer.moderate', url: '/moderate' },
+    { labelKey: 'footer.datenschutz', url: '/datenschutz' }
   ],
   copyrightHolder: 'FullHD Media',
-  donationTriggers: [
-    { id: 'trigger1', price: '4.20 €', amountValue: 4.20, descKey: 'donations.trigger1' }, // 420
-    { id: 'trigger2', price: '13.37 €', amountValue: 13.37, descKey: 'donations.trigger2' }, // Leet
-    { id: 'trigger3', price: '69.69 €', amountValue: 69.69, descKey: 'donations.trigger3' }, // nice
-  ],
   
   onlyBart: {
     title: 'OnlyBart',

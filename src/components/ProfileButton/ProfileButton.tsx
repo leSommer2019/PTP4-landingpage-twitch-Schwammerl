@@ -1,11 +1,19 @@
 import { useRef, useState, useEffect } from 'react'
 import { useAuth } from '../../context/useAuth'
+import { useNavigate } from 'react-router-dom'
+import { useIsModerator } from '../../hooks/useIsModerator'
 import './ProfileButton.css'
+import siteConfig from "../../config/siteConfig.ts";
+import { useTranslation } from 'react-i18next'
 
 export default function ProfileButton() {
   const { user, session, signInWithTwitch, signOut, loading } = useAuth()
   const [showMenu, setShowMenu] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
+  const navigate = useNavigate()
+  const { isMod, loading: modLoading } = useIsModerator()
+  const { t } = useTranslation()
+  const moderatorLink = siteConfig.profileLinks.find(link => link.labelKey === 'moderate')
 
   // Schließe Menu wenn außerhalb geklickt wird
   const handleClickOutside = (e: MouseEvent) => {
@@ -52,7 +60,7 @@ export default function ProfileButton() {
 
   return (
     <div className="profile-button" ref={menuRef}>
-      <button 
+      <button
         className="profile-btn logged-in"
         onClick={() => setShowMenu(!showMenu)}
         title={twitchUsername}
@@ -67,6 +75,18 @@ export default function ProfileButton() {
 
       {showMenu && (
         <div className="profile-menu">
+          {/* Mod-Settings Button nur für Moderatoren anzeigen */}
+          {!modLoading && isMod && moderatorLink && (
+            <button
+              className="menu-item"
+              onClick={() => {
+                navigate(moderatorLink.url)
+                setShowMenu(false)
+              }}
+            >
+              {t(moderatorLink.labelKey)}
+            </button>
+          )}
           <button className="menu-item logout-btn" onClick={() => {
             signOut()
             setShowMenu(false)
@@ -78,5 +98,3 @@ export default function ProfileButton() {
     </div>
   )
 }
-
-

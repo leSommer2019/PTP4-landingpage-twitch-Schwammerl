@@ -119,10 +119,12 @@
       "desc": "10% off with code FullHD"
     }
   },
+  "profile": {
+    "moderate": "Moderation"
+  },
   "footer": {
     "impressum": "Imprint",
-    "datenschutz": "Privacy Policy",
-    "moderate": "Moderation Section"
+    "datenschutz": "Privacy Policy"
   },
   "downloadModal": {
     "title": "Confirm download",
@@ -510,5 +512,8 @@
     "comment": {
       "placeholder": "Write a comment..."
     }
+  },
+  "common": {
+    "loading": "Loading …"
   }
 }
