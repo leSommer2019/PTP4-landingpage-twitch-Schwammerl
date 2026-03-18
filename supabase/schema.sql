@@ -586,7 +586,7 @@ BEGIN
     RETURN jsonb_build_object('error', 'forbidden');
   END IF;
 
-  DELETE FROM mod_sync_excluded;
+  DELETE FROM mod_sync_excluded WHERE TRUE;
   GET DIAGNOSTICS v_deleted = ROW_COUNT;
 
   RETURN jsonb_build_object('success', true, 'cleared', v_deleted);

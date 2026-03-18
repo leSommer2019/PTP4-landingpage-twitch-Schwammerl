@@ -286,8 +286,23 @@ export default function ModerateSettingsPage() {
       showToast(`❌ ${error?.message ?? result?.error}`)
     } else {
       showToast(`✅ ${t('moderate.resetExclusionsSuccess', { count: result?.cleared ?? 0 })}`)
+      await syncMods() // Automatischer Sync nach Reset
     }
     setRefreshKey((k) => k + 1)
+    setBusy(false)
+  }
+
+  /* ── Einzelnen Ausschluss entfernen ── */
+  async function removeExclusion(twitchUserId: string) {
+    setBusy(true)
+    const { error } = await supabase.from('mod_sync_excluded').delete().eq('twitch_user_id', twitchUserId)
+    if (error) {
+      showToast(`❌ ${error.message}`)
+    } else {
+      showToast('✅ Ausschluss aufgehoben')
+      await syncMods() // Automatischer Sync nach Einzel-Reset
+      setRefreshKey((k) => k + 1)
+    }
     setBusy(false)
   }
 
@@ -395,6 +410,7 @@ export default function ModerateSettingsPage() {
                   <th style={{ padding: '8px 6px' }}>Name</th>
                   <th style={{ padding: '8px 6px' }}>Twitch-ID</th>
                   <th style={{ padding: '8px 6px' }}>Ausgeschlossen seit</th>
+                  <th style={{ padding: '8px 6px' }}></th>
                 </tr>
               </thead>
               <tbody>
@@ -404,6 +420,12 @@ export default function ModerateSettingsPage() {
                     <td style={{ padding: '8px 6px', opacity: 0.6 }}>{e.twitch_user_id}</td>
                     <td style={{ padding: '8px 6px', opacity: 0.6 }}>
                       {new Date(e.excluded_at).toLocaleDateString()}
+                    </td>
+                    <td style={{ padding: '8px 6px' }}>
+                      <button className="btn btn-primary" disabled={busy} style={{ fontSize: '0.78rem', padding: '4px 10px' }}
+                        onClick={() => removeExclusion(e.twitch_user_id)}>
+                        ➕ {t('moderate.removeExclusionBtn')}
+                      </button>
                     </td>
                   </tr>
                 ))}
