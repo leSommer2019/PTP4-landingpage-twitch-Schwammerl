@@ -156,7 +156,7 @@ export function useBartclickerGame() {
   const clickTimestampsRef = useRef<number[]>([]);
   const penaltyUntilRef = useRef<number>(0);        // Unix-Timestamp bis wann Klicks gesperrt sind
   const AC_WINDOW = 30;          // Anzahl Klicks im Analyse-Fenster
-  const AC_MAX_CPS = 22;         // Max erlaubte Klicks pro Sekunde
+  const AC_MAX_CPS = 300;         // Max erlaubte Klicks pro Sekunde
   const AC_MIN_STD_DEV = 8;      // Min Standardabweichung (ms) der Intervalle – zu gleichmäßig = Bot
   const AC_PENALTY_MS = 5_000;   // Sperre in ms bei Erkennung
 
