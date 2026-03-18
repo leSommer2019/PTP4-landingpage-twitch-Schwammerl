@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/useAuth'
 import { useToast } from '../context/useToast'
+import { useConfirmModal } from '../context/useConfirmModal'
 import siteConfig from '../config/siteConfig'
 import SubPage from '../components/SubPage/SubPage'
 
@@ -60,6 +61,7 @@ async function lookupTwitchUser(providerToken: string, login: string): Promise<T
 }
 
 interface ModRow { twitch_user_id: string; display_name: string | null; is_broadcaster: boolean }
+interface ExcludedRow { twitch_user_id: string; display_name: string | null; excluded_at: string }
 
 /* ── OnlyBart Broadcaster Sync (VIPs/Subs) ── */
 async function fetchOnlyBartRoles(providerToken: string, broadcasterId: string) {
@@ -113,7 +115,9 @@ export default function ModerateSettingsPage() {
   const { t } = useTranslation()
   const { user, session } = useAuth()
   const { showToast } = useToast()
+  const { showConfirm } = useConfirmModal()
   const [mods, setMods] = useState<ModRow[]>([])
+  const [exclusions, setExclusions] = useState<ExcludedRow[]>([])
   const [busy, setBusy] = useState(false)
   const [refreshKey, setRefreshKey] = useState(0)
   const [addName, setAddName] = useState('')
@@ -123,10 +127,12 @@ export default function ModerateSettingsPage() {
   /* ── Daten laden ── */
   useEffect(() => {
     (async () => {
-      const [modsRes] = await Promise.all([
+      const [modsRes, exclRes] = await Promise.all([
         supabase.from('moderators').select('twitch_user_id, display_name, is_broadcaster').order('display_name'),
+        supabase.from('mod_sync_excluded').select('twitch_user_id, display_name, excluded_at').order('display_name'),
       ])
       setMods((modsRes.data ?? []) as ModRow[])
+      setExclusions((exclRes.data ?? []) as ExcludedRow[])
     })()
   }, [refreshKey])
 
@@ -265,6 +271,26 @@ export default function ModerateSettingsPage() {
     setBusy(false)
   }
 
+  /* ── Ausschlüsse zurücksetzen ── */
+  async function resetExclusions() {
+    const confirmed = await showConfirm({
+      title: t('moderate.resetExclusionsConfirmTitle'),
+      message: t('moderate.resetExclusionsConfirmMsg', { count: exclusions.length }),
+      confirmLabel: t('moderate.resetExclusions'),
+    })
+    if (!confirmed) return
+    setBusy(true)
+    const { data, error } = await supabase.rpc('reset_mod_sync_exclusions')
+    const result = data as { error?: string; cleared?: number } | null
+    if (error || result?.error) {
+      showToast(`❌ ${error?.message ?? result?.error}`)
+    } else {
+      showToast(`✅ ${t('moderate.resetExclusionsSuccess', { count: result?.cleared ?? 0 })}`)
+    }
+    setRefreshKey((k) => k + 1)
+    setBusy(false)
+  }
+
   const myTwitchId: string = user?.user_metadata?.sub ?? user?.user_metadata?.provider_id ?? ''
 
   return (
@@ -351,6 +377,43 @@ export default function ModerateSettingsPage() {
             </tbody>
           </table>
         </div>
+      )}
+
+      {/* ── Sync-Ausschlüsse ── */}
+      <h2 style={{ marginTop: 32 }}>{t('moderate.syncExclusions')}</h2>
+      <p style={{ color: 'var(--muted)', fontSize: '0.88rem', margin: '0 0 10px' }}>
+        {t('moderate.syncExclusionsHint')}
+      </p>
+      {exclusions.length === 0 ? (
+        <p style={{ color: 'var(--muted)', fontSize: '0.88rem' }}>{t('moderate.syncExclusionsNone')}</p>
+      ) : (
+        <>
+          <div style={{ overflowX: 'auto', marginBottom: 12 }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.88rem' }}>
+              <thead>
+                <tr style={{ borderBottom: '1px solid var(--box-border)', textAlign: 'left' }}>
+                  <th style={{ padding: '8px 6px' }}>Name</th>
+                  <th style={{ padding: '8px 6px' }}>Twitch-ID</th>
+                  <th style={{ padding: '8px 6px' }}>Ausgeschlossen seit</th>
+                </tr>
+              </thead>
+              <tbody>
+                {exclusions.map((e) => (
+                  <tr key={e.twitch_user_id} style={{ borderBottom: '1px solid var(--box-border)' }}>
+                    <td style={{ padding: '8px 6px' }}>{e.display_name ?? '—'}</td>
+                    <td style={{ padding: '8px 6px', opacity: 0.6 }}>{e.twitch_user_id}</td>
+                    <td style={{ padding: '8px 6px', opacity: 0.6 }}>
+                      {new Date(e.excluded_at).toLocaleDateString()}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <button className="btn btn-secondary" disabled={busy} onClick={resetExclusions}>
+            🔓 {t('moderate.resetExclusions')}
+          </button>
+        </>
       )}
     </SubPage>
   )

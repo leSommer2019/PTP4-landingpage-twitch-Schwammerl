@@ -193,6 +193,18 @@ END $$;
 ALTER TABLE moderators ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "select" ON moderators FOR SELECT USING (true);
 
+-- ── Ausschlussliste für manuell entfernte Mods ──
+-- Mods, die manuell entfernt wurden, werden hier gespeichert und
+-- beim nächsten Sync übersprungen.
+CREATE TABLE IF NOT EXISTS mod_sync_excluded (
+  twitch_user_id  text PRIMARY KEY,
+  display_name    text,
+  excluded_at     timestamptz NOT NULL DEFAULT now()
+);
+
+ALTER TABLE mod_sync_excluded ENABLE ROW LEVEL SECURITY;
+CREATE POLICY IF NOT EXISTS "select_mod_sync_excluded" ON mod_sync_excluded FOR SELECT USING (true);
+
 -- ── Sync: Twitch-Mods automatisch übernehmen ──
 -- Wird vom Frontend aufgerufen, wenn ein Mod/Broadcaster mit
 -- provider_token eingeloggt ist.
@@ -258,6 +270,8 @@ BEGIN
   -- Alle bisherigen Einträge entfernen, die NICHT manuell hinzugefügt wurden
   DELETE FROM moderators WHERE is_manual = false;
 
+  -- Mods einfügen, aber Ausschlüsse (mod_sync_excluded) überspringen.
+  -- Der Broadcaster wird IMMER eingefügt, auch wenn er auf der Ausschlussliste steht.
   INSERT INTO moderators (twitch_user_id, display_name, is_broadcaster, is_manual)
   SELECT
     (m->>'user_id')::text,
@@ -265,6 +279,8 @@ BEGIN
     ((m->>'user_id')::text = v_broadcaster_id),
     false
   FROM jsonb_array_elements(p_mods) AS m
+  WHERE (m->>'user_id')::text = v_broadcaster_id
+     OR NOT EXISTS (SELECT 1 FROM mod_sync_excluded e WHERE e.twitch_user_id = (m->>'user_id')::text)
   ON CONFLICT (twitch_user_id) DO UPDATE SET
     display_name = EXCLUDED.display_name,
     is_broadcaster = EXCLUDED.is_broadcaster,
@@ -274,6 +290,7 @@ BEGIN
   RETURN jsonb_build_object(
     'success', true,
     'count', v_count,
+    'excluded_count', (SELECT count(*) FROM mod_sync_excluded),
     'broadcaster_id', v_broadcaster_id,
     'caller_is_broadcaster', v_is_broadcaster
   );
@@ -528,8 +545,51 @@ BEGIN
     RETURN jsonb_build_object('error', 'cannot_remove_self');
   END IF;
 
+  -- Broadcaster kann nicht entfernt werden
+  IF EXISTS(SELECT 1 FROM moderators WHERE twitch_user_id = p_twitch_user_id AND is_broadcaster = true) THEN
+    RETURN jsonb_build_object('error', 'cannot_remove_broadcaster');
+  END IF;
+
+  -- In die Ausschlussliste eintragen, damit der Mod beim nächsten Sync nicht erneut hinzugefügt wird
+  INSERT INTO mod_sync_excluded (twitch_user_id, display_name)
+  SELECT twitch_user_id, display_name FROM moderators WHERE twitch_user_id = p_twitch_user_id
+  ON CONFLICT (twitch_user_id) DO UPDATE SET
+    display_name = EXCLUDED.display_name,
+    excluded_at = now();
+
   DELETE FROM moderators WHERE twitch_user_id = p_twitch_user_id;
   RETURN jsonb_build_object('success', true);
+END;
+$$;
+
+-- ── Ausschlüsse zurücksetzen ──
+-- Leert die mod_sync_excluded-Tabelle, sodass beim nächsten Sync
+-- alle Twitch-Mods wieder übernommen werden.
+
+CREATE OR REPLACE FUNCTION reset_mod_sync_exclusions()
+RETURNS jsonb
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+  v_caller_twitch_id text;
+  v_deleted integer;
+BEGIN
+  SELECT coalesce(raw_user_meta_data->>'sub', raw_user_meta_data->>'provider_id')
+  INTO v_caller_twitch_id FROM auth.users WHERE id = auth.uid();
+  IF v_caller_twitch_id IS NULL THEN
+    RETURN jsonb_build_object('error', 'not_authenticated');
+  END IF;
+
+  IF NOT EXISTS(SELECT 1 FROM moderators WHERE twitch_user_id = v_caller_twitch_id) THEN
+    RETURN jsonb_build_object('error', 'forbidden');
+  END IF;
+
+  DELETE FROM mod_sync_excluded;
+  GET DIAGNOSTICS v_deleted = ROW_COUNT;
+
+  RETURN jsonb_build_object('success', true, 'cleared', v_deleted);
 END;
 $$;
 
