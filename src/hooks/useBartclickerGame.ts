@@ -163,10 +163,10 @@ export function useBartclickerGame() {
   // Speichert Timestamps der letzten Klicks für Rate-Limiting und Regelmäßigkeitserkennung
   const clickTimestampsRef = useRef<number[]>([]);
   const penaltyUntilRef = useRef<number>(0);        // Unix-Timestamp bis wann Klicks gesperrt sind
-  const AC_WINDOW = 30;          // Anzahl Klicks im Analyse-Fenster
-  const AC_MAX_CPS = 300;         // Max erlaubte Klicks pro Sekunde
-  const AC_MIN_STD_DEV = 8;      // Min Standardabweichung (ms) der Intervalle – zu gleichmäßig = Bot
-  const AC_PENALTY_MS = 5_000;   // Sperre in ms bei Erkennung
+  const AC_WINDOW = 20;          // Anzahl Klicks im Analyse-Fenster
+  const AC_MAX_CPS = 25;         // Max erlaubte Klicks pro Sekunde
+  const AC_MIN_STD_DEV = 3;      // Min Standardabweichung (ms) der Intervalle – zu gleichmäßig = Bot
+  const AC_PENALTY_MS = 3000;   // Sperre in ms bei Erkennung
 
   // Calculate CPS based on shop items, relics, and multipliers
   const calculateCps = useCallback((): number => {
