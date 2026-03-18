@@ -3,6 +3,7 @@ import {useTranslation} from 'react-i18next'
 import {motion, AnimatePresence} from 'framer-motion'
 import {supabase} from '../lib/supabase'
 import {useAuth} from '../context/useAuth'
+import {useConfirmModal} from '../context/useConfirmModal'
 import {useOnlyBartAccess, type OnlyBartAccess} from '../hooks/useOnlyBartAccess'
 import {FaHeart, FaRegHeart, FaComment, FaTrash, FaYoutube, FaImage, FaLock, FaStar} from 'react-icons/fa'
 import './OnlyBartPage.css'
@@ -43,6 +44,7 @@ interface Profile {
 
 function CreatePost({onSuccess}: { onSuccess: () => void }) {
     const {t} = useTranslation()
+    const {showAlert, showPrompt} = useConfirmModal()
     const [content, setContent] = useState('')
     const [mediaFile, setMediaFile] = useState<File | null>(null)
     const [videoUrl, setVideoUrl] = useState('')
@@ -93,7 +95,11 @@ function CreatePost({onSuccess}: { onSuccess: () => void }) {
             onSuccess()
         } catch (err) {
             console.error('Error creating post:', err)
-            alert('Failed to create post')
+            showAlert({
+                title: t('confirmModal.errorTitle', 'Error'),
+                message: t('onlybart.create.failedToPost', 'Failed to create post'),
+                confirmLabel: t('confirmModal.ok', 'OK'),
+            })
         } finally {
             setLoading(false)
         }
@@ -131,8 +137,14 @@ function CreatePost({onSuccess}: { onSuccess: () => void }) {
                     </label>
                     <button
                         className="media-upload-label flex items-center gap-2 bg-transparent border-none"
-                        onClick={() => {
-                            const url = prompt(t('onlybart.create.videoPrompt', 'Enter unlisted YouTube URL:'))
+                        onClick={async () => {
+                            const url = await showPrompt({
+                                title: t('onlybart.create.videoPromptTitle', 'YouTube Video'),
+                                message: t('onlybart.create.videoPrompt', 'Enter unlisted YouTube URL:'),
+                                inputPlaceholder: 'https://youtu.be/...',
+                                confirmLabel: t('confirmModal.ok', 'OK'),
+                                cancelLabel: t('confirmModal.cancel', 'Cancel'),
+                            })
                             if (url) {
                                 setVideoUrl(url)
                                 setMediaFile(null) // Clear image if video selected
@@ -162,6 +174,7 @@ function PostCard({post, access, onDelete, onLikeChange}: {
 }) {
     const {user} = useAuth()
     const {t} = useTranslation()
+    const {showConfirm} = useConfirmModal()
     const [comments, setComments] = useState<Comment[]>([])
     const [showComments, setShowComments] = useState(false)
     const [newComment, setNewComment] = useState('')
@@ -301,7 +314,13 @@ function PostCard({post, access, onDelete, onLikeChange}: {
     }
 
     const handleDeletePost = async () => {
-        if (!confirm(t('onlybart.confirmDelete', 'Delete this post?'))) return
+        const confirmed = await showConfirm({
+            title: t('confirmModal.deleteTitle', 'Confirm deletion'),
+            message: t('onlybart.confirmDelete', 'Delete this post?'),
+            confirmLabel: t('confirmModal.delete', 'Delete'),
+            cancelLabel: t('confirmModal.cancel', 'Cancel'),
+        })
+        if (!confirmed) return
         onDelete(post.id)
         await supabase.from('onlybart_posts').delete().eq('id', post.id)
     }
@@ -322,7 +341,13 @@ function PostCard({post, access, onDelete, onLikeChange}: {
     }
 
     const handleDeleteComment = async (commentId: string) => {
-        if (!confirm(t('onlybart.confirmDeleteComment', 'Delete this comment?'))) return
+        const confirmed = await showConfirm({
+            title: t('confirmModal.deleteTitle', 'Confirm deletion'),
+            message: t('onlybart.confirmDeleteComment', 'Delete this comment?'),
+            confirmLabel: t('confirmModal.delete', 'Delete'),
+            cancelLabel: t('confirmModal.cancel', 'Cancel'),
+        })
+        if (!confirmed) return
         await supabase.from('onlybart_comments').delete().eq('id', commentId)
         setCommentsCount(prev => Math.max(0, prev - 1))
         loadComments()
@@ -436,6 +461,14 @@ function PostCard({post, access, onDelete, onLikeChange}: {
                                     placeholder={t('onlybart.comment.placeholder')}
                                     onKeyDown={(e) => e.key === 'Enter' && handlePostComment()}
                                 />
+                                <button
+                                    className="comment-send-btn"
+                                    onClick={handlePostComment}
+                                    disabled={!newComment.trim()}
+                                    title={t('onlybart.comment.send', 'Send')}
+                                >
+                                    ⌲
+                                </button>
                             </div>
                         )}
                     </motion.div>

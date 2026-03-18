@@ -133,6 +133,13 @@
     "cancel": "Abbreche",
     "confirm": "Abelade"
   },
+  "confirmModal": {
+    "ok": "OK",
+    "cancel": "Abbreche",
+    "delete": "Lösche",
+    "deleteTitle": "Lösche bestätige",
+    "errorTitle": "Fähler"
+  },
   "cookieBanner": {
     "text": "Mir verwände Cookies, um anonymisierti Siitenufruef z'erfasse und unseri Website z'verbessere. Witeri Informatione findsch in üsere",
     "privacyLink": "Dateschutzerklärig",
@@ -487,7 +494,9 @@
     "create": {
       "placeholder": "Was git's Nöis?",
       "submit": "Poschte",
-      "videoPrompt": "Gib d'URL vo emem nöd-gelistete YouTube-Video ii:"
+      "videoPrompt": "Gib d'URL vo emem nöd-gelistete YouTube-Video ii:",
+      "videoPromptTitle": "YouTube Video",
+      "failedToPost": "Beitrag het nöd chöne erstellt wärde"
     },
     "confirmDelete": "Dä Beitrag würklich lösche?",
     "confirmDeleteComment": "Dä Kommentar würklich lösche?",
@@ -499,7 +508,8 @@
     "notLoggedIn": "Meld di mit Twitch aa, um z'prüefe, ob du Zuegriff uf OnlyBart häsch.",
     "noPosts": "No keini Beiträg vorhande. Bis de Erschte, wo öppis Tolls gsiit!",
     "comment": {
-      "placeholder": "Schriib e Kommentar..."
+      "placeholder": "Schriib e Kommentar...",
+      "send": "Sende"
     }
   },
   "common": {

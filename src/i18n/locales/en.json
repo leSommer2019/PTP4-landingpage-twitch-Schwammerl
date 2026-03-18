@@ -132,6 +132,13 @@
     "cancel": "Cancel",
     "confirm": "Download"
   },
+  "confirmModal": {
+    "ok": "OK",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "deleteTitle": "Confirm deletion",
+    "errorTitle": "Error"
+  },
   "cookieBanner": {
     "text": "We use cookies to collect anonymized page views and improve our website. For more information, see our",
     "privacyLink": "Privacy Policy",
@@ -498,7 +505,9 @@
     "create": {
       "placeholder": "What's on your mind?",
       "submit": "Post",
-      "videoPrompt": "Enter unlisted YouTube video URL:"
+      "videoPrompt": "Enter unlisted YouTube video URL:",
+      "videoPromptTitle": "YouTube Video",
+      "failedToPost": "Failed to create post"
     },
     "confirmDelete": "Delete this post?",
     "confirmDeleteComment": "Delete this comment?",
@@ -510,7 +519,8 @@
     "notLoggedIn": "Log in with Twitch to check if you have access to OnlyBart.",
     "noPosts": "No posts yet. Be the first to see something amazing!",
     "comment": {
-      "placeholder": "Write a comment..."
+      "placeholder": "Write a comment...",
+      "send": "send"
     }
   },
   "common": {

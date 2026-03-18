@@ -132,6 +132,13 @@
     "cancel": "Abbrechen",
     "confirm": "Herunterladen"
   },
+  "confirmModal": {
+    "ok": "OK",
+    "cancel": "Abbrechen",
+    "delete": "Löschen",
+    "deleteTitle": "Löschen bestätigen",
+    "errorTitle": "Fehler"
+  },
   "cookieBanner": {
     "text": "Wir verwenden Cookies, um anonymisierte Seitenaufrufe zu erfassen und unsere Website zu verbessern. Weitere Informationen finden Sie in unserer",
     "privacyLink": "Datenschutzerklärung",
@@ -498,7 +505,9 @@
     "create": {
       "placeholder": "Was gibt's Neues?",
       "submit": "Posten",
-      "videoPrompt": "Gib die URL eines nicht gelisteten YouTube-Videos ein:"
+      "videoPrompt": "Gib die URL eines nicht gelisteten YouTube-Videos ein:",
+      "videoPromptTitle": "YouTube Video",
+      "failedToPost": "Beitrag konnte nicht erstellt werden"
     },
     "confirmDelete": "Diesen Beitrag wirklich löschen?",
     "confirmDeleteComment": "Diesen Kommentar wirklich löschen?",
@@ -510,7 +519,8 @@
     "notLoggedIn": "Melde dich mit Twitch an, um zu prüfen, ob du Zugriff auf OnlyBart hast.",
     "noPosts": "Noch keine Beiträge vorhanden. Sei der Erste, der etwas Tolles sieht!",
     "comment": {
-      "placeholder": "Schreibe einen Kommentar..."
+      "placeholder": "Schreibe einen Kommentar...",
+      "send": "Senden"
     }
   },
   "common": {

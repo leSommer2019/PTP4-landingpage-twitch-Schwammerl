@@ -5,6 +5,7 @@ import './i18n/i18n'
 import { ThemeProvider } from './context/ThemeContext'
 import { ToastProvider } from './context/ToastContext'
 import { AuthProvider } from './context/AuthContext'
+import { ConfirmModalProvider } from './context/ConfirmModalContext'
 import App from './App.tsx'
 
 createRoot(document.getElementById('root')!).render(
@@ -12,7 +13,9 @@ createRoot(document.getElementById('root')!).render(
     <ThemeProvider>
       <AuthProvider>
         <ToastProvider>
-          <App />
+          <ConfirmModalProvider>
+            <App />
+          </ConfirmModalProvider>
         </ToastProvider>
       </AuthProvider>
     </ThemeProvider>
