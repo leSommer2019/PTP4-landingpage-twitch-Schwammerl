@@ -22,11 +22,11 @@ public class TwitchBot {
     private Timer streamStatusTimer;
     private boolean lastStreamOnline = false;
 
-    public TwitchBot(String oauthToken, String clientId, String channelName, UserPointsManager pointsManager) {
-        this(oauthToken, clientId, channelName, pointsManager, 10000); // Standard-Intervall 10 Sekunden
+    public TwitchBot(String oauthToken, String clientId, String clientSecret, String channelName, UserPointsManager pointsManager) {
+        this(oauthToken, clientId, clientSecret, channelName, pointsManager, 10000); // Standard-Intervall 10 Sekunden
     }
 
-    public TwitchBot(String oauthToken, String clientId, String channelName, UserPointsManager pointsManager, long timerIntervalMs) {
+    public TwitchBot(String oauthToken, String clientId, String clientSecret, String channelName, UserPointsManager pointsManager, long timerIntervalMs) {
         logger.info("Konstruktor betreten: oauthToken={}, clientId={}, channelName={}, timerIntervalMs={}", oauthToken != null, clientId, channelName, timerIntervalMs);
         this.channelName = channelName;
         this.pointsManager = pointsManager;
@@ -41,6 +41,7 @@ public class TwitchBot {
                     .withEnableHelix(true)
                     .withChatAccount(credential)
                     .withClientId(clientId)
+                    .withClientSecret(clientSecret)
                     .build();
             logger.info("TwitchBot initialisiert für Channel: {} (Timer-Intervall: {} ms)", channelName, timerIntervalMs);
             logger.info("EventSub aktiviert: false (Polling wird verwendet)");

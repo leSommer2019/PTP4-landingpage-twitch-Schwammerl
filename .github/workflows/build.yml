@@ -57,6 +57,7 @@ jobs:
             "SUPABASE_API_KEY=${{ secrets.SUPABASE_API_KEY }}",
             "TWITCH_OAUTH_TOKEN=$($env:TWITCH_OAUTH_TOKEN)",
             "TWITCH_CLIENT_ID=${{ secrets.VITE_TWITCH_CLIENT_ID }}",
+            "TWITCH_CLIENT_SECRET=${{ secrets.TWITCH_CLIENT_SECRET }}",
             "CHANNEL_NAME=${{ secrets.CHANNEL_NAME }}"
           )
           $envContent | Out-File -FilePath "$resPath/.env" -Encoding utf8

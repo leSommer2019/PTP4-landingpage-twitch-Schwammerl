@@ -7,8 +7,9 @@ public class Main {
         Dotenv dotenv = Dotenv.load();
         String supabaseUrl = getEnv(dotenv, "SUPABASE_URL");
         String supabaseApiKey = getEnv(dotenv, "SUPABASE_API_KEY");
-        String twitchOauthToken = getEnv(dotenv, "TWITCH_OAUTH_TOKEN");
+        String twitchOauthToken = getEnv(dotenv, "TWITCH_OAUTH_TOKEN").startsWith("oauth:") ? getEnv(dotenv, "TWITCH_OAUTH_TOKEN") : "oauth:" + getEnv(dotenv, "TWITCH_OAUTH_TOKEN");
         String twitchClientId = getEnv(dotenv, "TWITCH_CLIENT_ID");
+        String twitchClientSecret = getEnv(dotenv, "TWITCH_CLIENT_SECRET");
         String channelName = getEnv(dotenv, "CHANNEL_NAME");
 
         SupabaseClient supabaseClient = new SupabaseClient(supabaseUrl, supabaseApiKey);
@@ -16,7 +17,7 @@ public class Main {
         OverlayApiServer.syncRewardsFromJson(supabaseClient, "rewards.json");
         System.out.println("[Main] Starte Overlay-API-Server...");
         UserPointsManager pointsManager = new UserPointsManager(supabaseClient);
-        TwitchBot bot = new TwitchBot(twitchOauthToken, twitchClientId, channelName, pointsManager);
+        TwitchBot bot = new TwitchBot(twitchOauthToken, twitchClientId, twitchClientSecret, channelName, pointsManager);
         bot.connect();
 
         OverlayApiServer overlayApiServer = new OverlayApiServer(supabaseClient);
