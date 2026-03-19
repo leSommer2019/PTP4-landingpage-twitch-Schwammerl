@@ -1,4 +1,5 @@
 public class UserSession {
+    public String userId; // Twitch-User-ID (numerisch als String)
     public String username;
     public long joinTimestamp;
     public boolean isFollower;
@@ -7,7 +8,8 @@ public class UserSession {
     public boolean hasReceived30MinPoints;
     public boolean hasReceivedStayTillEndPoints;
 
-    public UserSession(String username, long joinTimestamp) {
+    public UserSession(String userId, String username, long joinTimestamp) {
+        this.userId = userId;
         this.username = username;
         this.joinTimestamp = joinTimestamp;
         this.isFollower = false;

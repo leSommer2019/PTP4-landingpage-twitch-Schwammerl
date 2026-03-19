@@ -53,15 +53,17 @@ public class TwitchBot {
     private void registerListeners() {
         // Join Event
         twitchClient.getEventManager().onEvent(ChannelJoinEvent.class, event -> {
-            String user = event.getUser().getName();
-            logger.info("User joined: {}", user);
-            pointsManager.userJoined(user);
+            String userId = event.getUser().getId();
+            String username = event.getUser().getName();
+            logger.info("User joined: {} ({})", username, userId);
+            pointsManager.userJoined(userId, username);
         });
         // Part/Leave Event
         twitchClient.getEventManager().onEvent(ChannelLeaveEvent.class, event -> {
-            String user = event.getUser().getName();
-            logger.info("User left: {}", user);
-            pointsManager.userLeft(user);
+            String userId = event.getUser().getId();
+            String username = event.getUser().getName();
+            logger.info("User left: {} ({})", username, userId);
+            pointsManager.userLeft(userId);
         });
         // Online Event (GoLive)
         twitchClient.getEventManager().onEvent(ChannelGoLiveEvent.class, event -> {
@@ -75,8 +77,8 @@ public class TwitchBot {
             logger.info("{} User-Sessions beim Streamende: {}", sessionCount, pointsManager.getAllSessions().keySet());
             for (UserSession session : pointsManager.getAllSessions().values()) {
                 if (!session.hasReceivedStayTillEndPoints) {
-                    logger.info("Punkte für bis zum Ende geblieben: {}", session.username);
-                    pointsManager.addPoints(session.username, 250, "Bis zum Ende geblieben");
+                    logger.info("Punkte für bis zum Ende geblieben: {} ({})", session.username, session.userId);
+                    pointsManager.addPoints(session.userId, 250, "Bis zum Ende geblieben");
                     session.hasReceivedStayTillEndPoints = true;
                 }
             }
@@ -96,13 +98,13 @@ public class TwitchBot {
                 for (UserSession session : pointsManager.getAllSessions().values()) {
                     long minutes = (now - session.joinTimestamp) / 60000;
                     if (minutes >= 5 && !session.hasReceived5MinPoints) {
-                        logger.info("Punkte für 5 Minuten an {}", session.username);
-                        pointsManager.addPoints(session.username, 10, "5 Minuten");
+                        logger.info("Punkte für 5 Minuten an {} ({})", session.username, session.userId);
+                        pointsManager.addPoints(session.userId, 10, "5 Minuten");
                         session.hasReceived5MinPoints = true;
                     }
                     if (minutes >= 30 && !session.hasReceived30MinPoints) {
-                        logger.info("Punkte für 30 Minuten an {}", session.username);
-                        pointsManager.addPoints(session.username, 50, "30 Minuten");
+                        logger.info("Punkte für 30 Minuten an {} ({})", session.username, session.userId);
+                        pointsManager.addPoints(session.userId, 50, "30 Minuten");
                         session.hasReceived30MinPoints = true;
                     }
                 }
@@ -165,8 +167,8 @@ public class TwitchBot {
         logger.info("[Polling] {} User-Sessions beim Streamende: {}", sessionCount, pointsManager.getAllSessions().keySet());
         for (UserSession session : pointsManager.getAllSessions().values()) {
             if (!session.hasReceivedStayTillEndPoints) {
-                logger.info("[Polling] Punkte für bis zum Ende geblieben: {}", session.username);
-                pointsManager.addPoints(session.username, 250, "Bis zum Ende geblieben");
+                logger.info("[Polling] Punkte für bis zum Ende geblieben: {} ({})", session.username, session.userId);
+                pointsManager.addPoints(session.userId, 250, "Bis zum Ende geblieben");
                 session.hasReceivedStayTillEndPoints = true;
             }
         }
