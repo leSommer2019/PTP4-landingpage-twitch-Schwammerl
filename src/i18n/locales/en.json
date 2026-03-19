@@ -292,7 +292,7 @@
     "title": "Bartclicker",
     "description": "Click on the bart and earn beard hairs! Buy upgrades, trigger rebirths, and reach the top of the leaderboard."
   },
-  "moderate": {
+    "moderate": {
     "forbidden": "Access Denied",
     "forbiddenHint": "This area is only accessible to moderators and the streamer.",
     "landingTitle": "Moderation Area",
@@ -375,8 +375,45 @@
     "statisticsRecentRounds": "Recent rounds",
     "statisticsPage": "Page",
     "statisticsViews": "Views",
-    "statisticsReferrer": "Referrer"
-  },
+    "statisticsReferrer": "Referrer",
+    "accountManagement": "Account Management",
+    "banAccount": "Ban Account",
+    "banInputPlaceholder": "Enter Twitch user ID or username",
+    "banBtn": "Ban",
+    "bannedAccountsTitle": "Banned Accounts",
+    "noBannedAccounts": "No banned accounts",
+    "unbanBtn": "Unban",
+    "channelPoints": "Manage Channel Points",
+    "pointsInputPlaceholder": "Enter Twitch user ID",
+    "resetPoints": "Reset Points",
+    "givePoints": "Give Points",
+    "pointsValuePlaceholder": "Enter points value",
+    "rewards": "Manage Rewards",
+    "rewardsListTitle": "Rewards List",
+    "noRewards": "No rewards available",
+    "editRewardBtn": "Edit",
+    "deleteRewardBtn": "Delete",
+    "editRewardTitle": "Edit Reward",
+    "newRewardTitle": "New Reward",
+    "rewardNameKeyPlaceholder": "Enter name key",
+    "rewardDescKeyPlaceholder": "Enter description key",
+    "rewardCostPlaceholder": "Enter cost",
+    "rewardTypePlaceholder": "Enter type",
+    "rewardCooldownPlaceholder": "Cooldown (seconds)",
+    "saveRewardBtn": "Save",
+    "cancelRewardBtn": "Cancel",
+    "instructionsTitle": "Instructions",
+    "instructionsBan": "Ban account:",
+    "instructionsBanDesc": "Enter the Twitch user ID or username to ban an account.",
+    "instructionsPoints": "Manage channel points:",
+    "instructionsPointsDesc": "Points can be reset or given.",
+    "instructionsRewards": "Manage rewards:",
+    "instructionsRewardsDesc": "Rewards can be added, edited, or deleted.",
+    "technicalHint": "Technical hint:",
+    "technicalHintPoints": "Points are changed directly in the database.",
+    "technicalHintRewards": "Rewards are applied immediately.",
+    "technicalHintBanned": "Banned accounts can be unbanned at any time."
+    },
   "clipVotingPage": {
     "title": "Clip of the Month – Voting",
     "intro": "Vote for your favourite clip of the month! You have one vote per round."
@@ -563,5 +600,15 @@
       "Even the beard doesn't know where this is."
     ],
     "hint": "(Click the beard for more wisdom)"
+  },
+  "rewards": {
+    "foo": {
+      "name": "Reward Foo",
+      "desc": "This is a sample reward."
+    },
+    "bar": {
+      "name": "Reward Bar",
+      "desc": "Another reward."
+    }
   }
 }

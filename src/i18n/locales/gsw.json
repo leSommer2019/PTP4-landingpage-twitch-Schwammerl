@@ -281,7 +281,7 @@
     "title": "Bartclicker",
     "description": "Klick uf de Bart und verdiene Barthaare! Chauf Upgrades, starte Rebirths und erreich d'Spitze vom Leaderboard."
   },
-  "moderate": {
+    "moderate": {
     "forbidden": "Kei Zuegriff",
     "forbiddenHint": "Dä Bereich isch nur für Moderatore und de Streamer zugänglich.",
     "landingTitle": "Moderations-Bereich",
@@ -364,8 +364,45 @@
     "statisticsRecentRounds": "Letschti Runde",
     "statisticsPage": "Siite",
     "statisticsViews": "Ufruef",
-    "statisticsReferrer": "Referrer"
-  },
+    "statisticsReferrer": "Referrer",
+    "accountManagement": "Account-Verwaltig",
+    "banAccount": "Account sperre",
+    "banInputPlaceholder": "Twitch-User-ID oder Username iigä",
+    "banBtn": "Sperre",
+    "bannedAccountsTitle": "Gspärri Accounts",
+    "noBannedAccounts": "Kei gspärri Accounts",
+    "unbanBtn": "Entsperre",
+    "channelPoints": "Kanalpunkte verwalte",
+    "pointsInputPlaceholder": "Twitch-User-ID iigä",
+    "resetPoints": "Punkte lösche",
+    "givePoints": "Punkte gä",
+    "pointsValuePlaceholder": "Punktewert iigä",
+    "rewards": "Belohnige verwalte",
+    "rewardsListTitle": "Belohnige-Lischt",
+    "noRewards": "Kei Belohnige vorhande",
+    "editRewardBtn": "Bearbeite",
+    "deleteRewardBtn": "Lösche",
+    "editRewardTitle": "Belohnig bearbeite",
+    "newRewardTitle": "Neui Belohnig",
+    "rewardNameKeyPlaceholder": "Name-Key iigä",
+    "rewardDescKeyPlaceholder": "Beschrieb-Key iigä",
+    "rewardCostPlaceholder": "Kosten iigä",
+    "rewardTypePlaceholder": "Typ iigä",
+    "rewardCooldownPlaceholder": "Cooldown (Sekunde)",
+    "saveRewardBtn": "Speichere",
+    "cancelRewardBtn": "Abbreche",
+    "instructionsTitle": "Aaleitig",
+    "instructionsBan": "Account sperre:",
+    "instructionsBanDesc": "Gib d Twitch-User-ID oder de Username i, um en Account z sperre.",
+    "instructionsPoints": "Kanalpunkte verwalte:",
+    "instructionsPointsDesc": "Punkte chönd zruggsetzt oder gä werde.",
+    "instructionsRewards": "Belohnige verwalte:",
+    "instructionsRewardsDesc": "Belohnige chönd hinzugefügt, bearbeitet oder gelöscht werde.",
+    "technicalHint": "Technischer Hinweis:",
+    "technicalHintPoints": "Punkte werde direkt i de Datenbank ändere.",
+    "technicalHintRewards": "Belohnige werde sofort überno.",
+    "technicalHintBanned": "Gspärri Accounts chönd jederziit entsperrt werde."
+    },
   "clipVotingPage": {
     "title": "Clip vom Monet – Voting",
     "intro": "Stimm für dine Liebligs-Clip vom Monet ab! Pro Runde häsch du eine Stimm."
@@ -552,5 +589,15 @@
       "Sogar dr Bart weiss nöd, wo das isch."
     ],
     "hint": "(Klick uf dr Bart für meh Wisheitä)"
+  },
+  "rewards": {
+    "foo": {
+      "name": "Belohnig Foo",
+      "desc": "Das isch e Beispiel-Belohnig."
+    },
+    "bar": {
+      "name": "Belohnig Bar",
+      "desc": "No e Belohnig."
+    }
   }
 }

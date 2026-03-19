@@ -292,7 +292,7 @@
     "title": "Bartclicker",
     "description": "Klicke auf den Bart und verdiene Barthaare! Kaufe Upgrades, starte Rebirths und erreiche die Spitze des Leaderboards."
   },
-  "moderate": {
+    "moderate": {
     "forbidden": "Kein Zugriff",
     "forbiddenHint": "Dieser Bereich ist nur für Moderatoren und den Streamer zugänglich.",
     "landingTitle": "Moderations-Bereich",
@@ -375,8 +375,45 @@
     "statisticsRecentRounds": "Letzte Runden",
     "statisticsPage": "Seite",
     "statisticsViews": "Aufrufe",
-    "statisticsReferrer": "Referrer"
-  },
+    "statisticsReferrer": "Referrer",
+    "accountManagement": "Account-Verwaltung",
+    "banAccount": "Account bannen",
+    "banInputPlaceholder": "Twitch-User-ID oder Username eingeben",
+    "banBtn": "Bannen",
+    "bannedAccountsTitle": "Gebannte Accounts",
+    "noBannedAccounts": "Keine gebannten Accounts",
+    "unbanBtn": "Entbannen",
+    "channelPoints": "Kanalpunkte verwalten",
+    "pointsInputPlaceholder": "Twitch-User-ID eingeben",
+    "resetPoints": "Punkte löschen",
+    "givePoints": "Punkte vergeben",
+    "pointsValuePlaceholder": "Punktewert eingeben",
+    "rewards": "Belohnungen verwalten",
+    "rewardsListTitle": "Belohnungen-Liste",
+    "noRewards": "Keine Belohnungen vorhanden",
+    "editRewardBtn": "Bearbeiten",
+    "deleteRewardBtn": "Löschen",
+    "editRewardTitle": "Belohnung bearbeiten",
+    "newRewardTitle": "Neue Belohnung",
+    "rewardNameKeyPlaceholder": "Name-Key eingeben",
+    "rewardDescKeyPlaceholder": "Beschreibung-Key eingeben",
+    "rewardCostPlaceholder": "Kosten eingeben",
+    "rewardTypePlaceholder": "Typ eingeben",
+    "rewardCooldownPlaceholder": "Cooldown (Sekunden)",
+    "saveRewardBtn": "Speichern",
+    "cancelRewardBtn": "Abbrechen",
+    "instructionsTitle": "Anleitung",
+    "instructionsBan": "Account bannen:",
+    "instructionsBanDesc": "Gebe die Twitch-User-ID oder den Username ein, um einen Account zu bannen.",
+    "instructionsPoints": "Kanalpunkte verwalten:",
+    "instructionsPointsDesc": "Punkte können zurückgesetzt oder vergeben werden.",
+    "instructionsRewards": "Belohnungen verwalten:",
+    "instructionsRewardsDesc": "Belohnungen können hinzugefügt, bearbeitet oder gelöscht werden.",
+    "technicalHint": "Technischer Hinweis:",
+    "technicalHintPoints": "Punkte werden direkt in der Datenbank geändert.",
+    "technicalHintRewards": "Belohnungen werden sofort übernommen.",
+    "technicalHintBanned": "Gebannte Accounts können jederzeit entbannt werden."
+    },
   "clipVotingPage": {
     "title": "Clip des Monats – Voting",
     "intro": "Stimme für deinen Lieblings-Clip des Monats ab! Pro Runde hast du eine Stimme."
@@ -563,5 +600,15 @@
       "Selbst der Bart weiß nicht, wo das ist."
     ],
     "hint": "(Klick auf den Bart für mehr Weisheiten)"
+  },
+  "rewards": {
+    "foo": {
+      "name": "Belohnung Foo",
+      "desc": "Dies ist eine Beispiel-Belohnung."
+    },
+    "bar": {
+      "name": "Belohnung Bar",
+      "desc": "Eine weitere Belohnung."
+    }
   }
 }

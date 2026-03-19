@@ -11,7 +11,7 @@ ALTER TABLE banned_accounts ENABLE ROW LEVEL SECURITY;
 
 -- Broadcaster darf alles, Mods dürfen nur lesen
 CREATE POLICY "select_banned" ON banned_accounts FOR SELECT USING (is_moderator());
-CREATE POLICY "insert_banned" ON banned_accounts FOR INSERT USING (is_broadcaster());
+CREATE POLICY "insert_banned" ON banned_accounts FOR INSERT WITH CHECK (is_broadcaster());
 CREATE POLICY "delete_banned" ON banned_accounts FOR DELETE USING (is_broadcaster());
 
 -- Helper: Prüft ob der eingeloggte User Broadcaster ist

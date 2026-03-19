@@ -89,12 +89,6 @@ jobs:
           & $l4jExe "${{ github.workspace }}/TwitchAddon/launch4j-config.xml"
         working-directory: TwitchAddon
 
-      # 5.1. rewards.json in den dist-Ordner kopieren
-      - name: Copy rewards.json to dist
-        shell: pwsh
-        run: |
-          Copy-Item "${{ github.workspace }}/TwitchAddon/config/rewards.json" "${{ github.workspace }}/TwitchAddon/dist/rewards.json" -Force
-        working-directory: TwitchAddon
 
       # 6. RELEASE
       - name: Create and Upload Release
@@ -104,6 +98,5 @@ jobs:
           name: TwitchAddon Build ${{ github.run_number }}
           files: |
             TwitchAddon/dist/*.exe
-            TwitchAddon/dist/rewards.json
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
