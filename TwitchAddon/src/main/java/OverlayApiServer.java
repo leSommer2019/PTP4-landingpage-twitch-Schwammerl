@@ -11,26 +11,18 @@ import java.nio.file.Paths;
 
 public class OverlayApiServer {
     private final SupabaseClient supabaseClient;
-    // rewards.json wird aus dem aktuellen Arbeitsverzeichnis geladen (liegt neben der EXE)
-    private final String rewardsJsonPath = "rewards.json";
 
     public OverlayApiServer(SupabaseClient supabaseClient) throws IOException {
         this.supabaseClient = supabaseClient;
         HttpServer server = HttpServer.create(new java.net.InetSocketAddress(8081), 0);
         server.createContext("/api/redeemed_rewards", new RedeemedRewardsHandler());
-        server.createContext("/api/rewards.json", new RewardsJsonHandler());
+        server.createContext("/api/rewards", new RewardsHandler());
+        // server.createContext("/api/rewards.json", new RewardsJsonHandler()); // entfernt
         // server.createContext("/api/redeem_reward", new RedeemRewardHandler()); // entfernt, Redeems laufen nur noch über Supabase
         server.createContext("/overlay.html", new StaticFileHandler("overlay.html", "text/html"));
         server.createContext("/media", new StaticDirHandler("media"));
         server.setExecutor(null);
         server.start();
-
-        // Prüfe beim Start, ob rewards.json existiert, sonst Fehler ausgeben
-        if (!Files.exists(Paths.get(rewardsJsonPath))) {
-            System.err.println("[OverlayApiServer] WARNUNG: rewards.json wurde nicht gefunden! Bitte stelle sicher, dass sie neben der EXE liegt.");
-        } else {
-            System.out.println("[OverlayApiServer] rewards.json gefunden.");
-        }
     }
 
     class RedeemedRewardsHandler implements HttpHandler {
@@ -98,45 +90,27 @@ public class OverlayApiServer {
         }
     }
 
-    class RewardsJsonHandler implements HttpHandler {
+    class RewardsHandler implements HttpHandler {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
             String method = exchange.getRequestMethod();
             if (method.equalsIgnoreCase("GET")) {
-                try {
-                    String json = new String(Files.readAllBytes(Paths.get(rewardsJsonPath)));
-                    // Teste, ob JSON gültig ist
-                    new org.json.JSONArray(json); // oder new org.json.JSONObject(json) bei Objekt
-                    byte[] jsonBytes = json.getBytes(java.nio.charset.StandardCharsets.UTF_8);
-                    exchange.getResponseHeaders().add("Content-Type", "application/json");
-                    exchange.sendResponseHeaders(200, jsonBytes.length);
-                    OutputStream os = exchange.getResponseBody();
-                    os.write(jsonBytes);
-                    os.close();
-                } catch (Exception e) {
-                    System.err.println("[OverlayApiServer] Fehler beim Lesen/Parsen von rewards.json: " + e.getMessage());
-                    exchange.sendResponseHeaders(500, 0);
-                    exchange.getResponseBody().close();
-                }
-            } else if (method.equalsIgnoreCase("POST")) {
-                try {
-                    String body = new String(exchange.getRequestBody().readAllBytes());
-                    // Teste, ob JSON gültig ist
-                    new org.json.JSONArray(body); // oder new org.json.JSONObject(body) bei Objekt
-                    Files.write(Paths.get(rewardsJsonPath), body.getBytes());
-                    exchange.sendResponseHeaders(200, 0);
-                    exchange.getResponseBody().close();
-                } catch (Exception e) {
-                    System.err.println("[OverlayApiServer] Fehler beim Schreiben/Parsen von rewards.json: " + e.getMessage());
-                    exchange.sendResponseHeaders(400, 0);
-                    exchange.getResponseBody().close();
-                }
+                JSONArray rewards = supabaseClient.getRewards(); // Annahme: getRewards() liefert alle Rewards aus der DB
+                String response = rewards.toString();
+                byte[] responseBytes = response.getBytes(java.nio.charset.StandardCharsets.UTF_8);
+                exchange.getResponseHeaders().add("Content-Type", "application/json");
+                exchange.sendResponseHeaders(200, responseBytes.length);
+                OutputStream os = exchange.getResponseBody();
+                os.write(responseBytes);
+                os.close();
             } else {
                 exchange.sendResponseHeaders(405, 0);
                 exchange.getResponseBody().close();
             }
         }
     }
+
+    // RewardsJsonHandler entfernt, da rewards.json nicht mehr verwendet wird
 
     // Handler für das Einlösen von Rewards mit Cooldown-Prüfung wurde entfernt, da Redeems nur noch über Supabase laufen
 
@@ -198,18 +172,5 @@ public class OverlayApiServer {
         }
     }
 
-    // Synchronisiert alle Rewards aus rewards.json in die Supabase-DB
-    public static void syncRewardsFromJson(SupabaseClient supabaseClient, String rewardsJsonPath) {
-        try {
-            String json = new String(Files.readAllBytes(Paths.get(rewardsJsonPath)));
-            JSONArray arr = new JSONArray(json);
-            for (int i = 0; i < arr.length(); i++) {
-                JSONObject reward = arr.getJSONObject(i);
-                supabaseClient.upsertReward(reward);
-            }
-            System.out.println("Rewards erfolgreich mit Supabase synchronisiert.");
-        } catch (Exception e) {
-            System.err.println("Fehler beim Synchronisieren der Rewards: " + e.getMessage());
-        }
-    }
+    // syncRewardsFromJson entfernt, da rewards.json nicht mehr verwendet wird
 }

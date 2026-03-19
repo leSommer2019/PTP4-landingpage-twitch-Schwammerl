@@ -33,8 +33,7 @@ public class Main {
         }
 
         SupabaseClient supabaseClient = new SupabaseClient(supabaseUrl, supabaseApiKey);
-        // Rewards aus rewards.json im aktuellen Arbeitsverzeichnis in die DB synchronisieren
-        OverlayApiServer.syncRewardsFromJson(supabaseClient, "rewards.json");
+        // OverlayApiServer.syncRewardsFromJson entfernt, da rewards.json nicht mehr verwendet wird
         System.out.println("[Main] Starte Overlay-API-Server...");
 
         // Broadcaster-ID ermitteln

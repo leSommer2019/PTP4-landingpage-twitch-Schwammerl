@@ -287,4 +287,24 @@ public class SupabaseClient {
         }
         return null;
     }
+
+    // Gibt alle Rewards aus der Tabelle rewards zurück
+    public JSONArray getRewards() {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(supabaseUrl + "/rest/v1/rewards"))
+                .header("apikey", apiKey)
+                .header("Authorization", "Bearer " + apiKey)
+                .header("Accept", "application/json")
+                .timeout(Duration.ofSeconds(10))
+                .build();
+        try {
+            HttpResponse<String> response = client.send(request, BodyHandlers.ofString());
+            if (response.statusCode() >= 200 && response.statusCode() < 300 && response.body() != null) {
+                return new JSONArray(response.body());
+            }
+        } catch (IOException | InterruptedException e) {
+            logger.error("Fehler beim Supabase GET rewards: {}", e.getMessage(), e);
+        }
+        return new JSONArray();
+    }
 }
