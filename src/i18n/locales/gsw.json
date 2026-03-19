@@ -387,6 +387,33 @@
     "newRewardTitle": "Neui Belohnig",
     "rewardNameKeyPlaceholder": "Name-Key iigä",
     "rewardDescKeyPlaceholder": "Beschrieb-Key iigä",
+
+    "rewardNameLabel": "Name",
+    "rewardNamePlaceholder": "Aazeigte Name iigä",
+
+    "rewardDescriptionLabel": "Beschrieb",
+    "rewardDescriptionPlaceholder": "Beschribig vo de Belohnig iigä",
+
+    "rewardSourceLabel": "Quell",
+    "rewardSourcePlaceholder": "z.B. 'local', 'youtube' oder 'tts'",
+
+    "rewardMediaurlLabel": "Media-URL",
+    "rewardMediaurlPlaceholder": "URL zu Audio/Video (falls vorhande)",
+
+    "rewardShowYoutubeVideoLabel": "YouTube-Video aazeige",
+    "rewardShowYoutubeVideoHint": "Wenn aktiviert, wird s'YouTube-Video im Stream/Overlay aazeigt bzw. abgespielt (falls unterstützt)",
+
+    "rewardCustomImageLabel": "Custom Image URL",
+    "rewardCustomImagePlaceholder": "URL für es benutzerdefinierts Bild",
+
+    "rewardTextLabel": "Text",
+    "rewardTextPlaceholder": "Text iigä (z.B. für TTS)",
+
+    "rewardDurationLabel": "Dauer (Sekunde)",
+    "rewardDurationPlaceholder": "Dauer i Sekunde (z.B. 60)",
+
+    "rewardOncePerStreamLabel": "Nur einisch pro Stream",
+    "rewardOncePerStreamHint": "Wenn aktiviert, cha d'Belohnig pro Stream nume einisch iiglöst wäre",
     "rewardCostPlaceholder": "Kosten iigä",
     "rewardTypePlaceholder": "Typ iigä",
     "rewardCooldownPlaceholder": "Abkühlig (Sekunde)",

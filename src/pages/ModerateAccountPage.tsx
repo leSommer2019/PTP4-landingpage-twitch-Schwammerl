@@ -411,14 +411,27 @@ export default function ModerateAccountPage() {
             <div className="modal-card" style={{zIndex:10051}}>
               <b style={{fontSize:'1.2em'}}>{rewardEdit ? t('moderate.editRewardTitle') : t('moderate.newRewardTitle')}</b>
               <form style={{display:'grid',gridTemplateColumns:'repeat(2,1fr)',gap:18,marginTop:16}} onSubmit={e => {e.preventDefault();saveReward();setRewardModalOpen(false);}}>
+                {/* name / i18n key */}
+                <div style={{display:'flex',flexDirection:'column',gap:6}}>
+                  <label htmlFor="rewardName" style={{fontWeight:'bold'}}>{t('moderate.rewardNameLabel') || 'Name'}</label>
+                  <input id="rewardName" type="text" className="modal-input" placeholder={t('moderate.rewardNamePlaceholder') || ''} value={rewardForm.name} onChange={e => setRewardForm((f: Reward) => ({...f, name: e.target.value}))} />
+                </div>
                 <div style={{display:'flex',flexDirection:'column',gap:6}}>
                   <label htmlFor="rewardNameKey" style={{fontWeight:'bold'}}>{t('moderate.rewardNameKeyLabel')}</label>
                   <input id="rewardNameKey" type="text" className="modal-input" placeholder={t('moderate.rewardNameKeyPlaceholder')} title={t('moderate.rewardNameKeyHint')} value={rewardForm.nameKey} onChange={e => setRewardForm((f: Reward) => ({...f, nameKey: e.target.value}))} />
+                </div>
+
+                {/* description / i18n descKey */}
+                <div style={{display:'flex',flexDirection:'column',gap:6,gridColumn:'span 2'}}>
+                  <label htmlFor="rewardDescription" style={{fontWeight:'bold'}}>{t('moderate.rewardDescriptionLabel') || 'Beschreibung'}</label>
+                  <textarea id="rewardDescription" className="modal-input" placeholder={t('moderate.rewardDescriptionPlaceholder') || ''} value={rewardForm.description} onChange={e => setRewardForm((f: Reward) => ({...f, description: e.target.value}))} style={{minHeight:80}} />
                 </div>
                 <div style={{display:'flex',flexDirection:'column',gap:6}}>
                   <label htmlFor="rewardDescKey" style={{fontWeight:'bold'}}>{t('moderate.rewardDescKeyLabel')}</label>
                   <input id="rewardDescKey" type="text" className="modal-input" placeholder={t('moderate.rewardDescKeyPlaceholder')} title={t('moderate.rewardDescKeyHint')} value={rewardForm.descKey} onChange={e => setRewardForm((f: Reward) => ({...f, descKey: e.target.value}))} />
                 </div>
+
+                {/* cost / type */}
                 <div style={{display:'flex',flexDirection:'column',gap:6}}>
                   <label htmlFor="rewardCost" style={{fontWeight:'bold'}}>{t('moderate.rewardCostLabel')}</label>
                   <input id="rewardCost" type="number" className="modal-input" placeholder={t('moderate.rewardCostPlaceholder')} title={t('moderate.rewardCostHint')} value={rewardForm.cost} min={0} onChange={e => setRewardForm((f: Reward) => ({...f, cost: Number(e.target.value)}))} />
@@ -427,12 +440,57 @@ export default function ModerateAccountPage() {
                   <label htmlFor="rewardType" style={{fontWeight:'bold'}}>{t('moderate.rewardTypeLabel')}</label>
                   <input id="rewardType" type="text" className="modal-input" placeholder={t('moderate.rewardTypePlaceholder')} title={t('moderate.rewardTypeHint')} value={rewardForm.type} onChange={e => setRewardForm((f: Reward) => ({...f, type: e.target.value}))} />
                 </div>
+
+                {/* source / mediaurl */}
+                <div style={{display:'flex',flexDirection:'column',gap:6}}>
+                  <label htmlFor="rewardSource" style={{fontWeight:'bold'}}>{t('moderate.rewardSourceLabel') || 'Source'}</label>
+                  <input id="rewardSource" type="text" className="modal-input" placeholder={t('moderate.rewardSourcePlaceholder') || ''} value={rewardForm.source} onChange={e => setRewardForm((f: Reward) => ({...f, source: e.target.value}))} />
+                </div>
+                <div style={{display:'flex',flexDirection:'column',gap:6}}>
+                  <label htmlFor="rewardMediaurl" style={{fontWeight:'bold'}}>{t('moderate.rewardMediaurlLabel') || 'Media URL'}</label>
+                  <input id="rewardMediaurl" type="text" className="modal-input" placeholder={t('moderate.rewardMediaurlPlaceholder') || ''} value={rewardForm.mediaurl} onChange={e => setRewardForm((f: Reward) => ({...f, mediaurl: e.target.value}))} />
+                </div>
+
+                {/* show youtube video */}
+                <div style={{display:'flex',flexDirection:'column',gap:6}}>
+                  <label style={{fontWeight:'bold'}}>{t('moderate.rewardShowYoutubeVideoLabel') || 'YouTube abspielen'}</label>
+                  <label style={{display:'flex',alignItems:'center',gap:8}}>
+                    <input type="checkbox" checked={!!rewardForm.showyoutubevideo} onChange={e => setRewardForm((f: Reward) => ({...f, showyoutubevideo: e.target.checked}))} />
+                    <span style={{fontSize:12,color:'var(--muted-color,#666)'}}>{t('moderate.rewardShowYoutubeVideoHint') || ''}</span>
+                  </label>
+                </div>
+
+                {/* custom image / text */}
+                <div style={{display:'flex',flexDirection:'column',gap:6}}>
+                  <label htmlFor="rewardCustomImage" style={{fontWeight:'bold'}}>{t('moderate.rewardCustomImageLabel') || 'Custom Image URL'}</label>
+                  <input id="rewardCustomImage" type="text" className="modal-input" placeholder={t('moderate.rewardCustomImagePlaceholder') || ''} value={rewardForm.customimageurl} onChange={e => setRewardForm((f: Reward) => ({...f, customimageurl: e.target.value}))} />
+                </div>
+                <div style={{display:'flex',flexDirection:'column',gap:6}}>
+                  <label htmlFor="rewardText" style={{fontWeight:'bold'}}>{t('moderate.rewardTextLabel') || 'Text'}</label>
+                  <input id="rewardText" type="text" className="modal-input" placeholder={t('moderate.rewardTextPlaceholder') || ''} value={rewardForm.text} onChange={e => setRewardForm((f: Reward) => ({...f, text: e.target.value}))} />
+                </div>
+
+                {/* duration / once per stream */}
+                <div style={{display:'flex',flexDirection:'column',gap:6}}>
+                  <label htmlFor="rewardDuration" style={{fontWeight:'bold'}}>{t('moderate.rewardDurationLabel') || 'Duration (s)'}</label>
+                  <input id="rewardDuration" type="number" className="modal-input" placeholder={t('moderate.rewardDurationPlaceholder') || ''} value={rewardForm.duration} min={0} onChange={e => setRewardForm((f: Reward) => ({...f, duration: Number(e.target.value)}))} />
+                </div>
+                <div style={{display:'flex',flexDirection:'column',gap:6}}>
+                  <label style={{fontWeight:'bold'}}>{t('moderate.rewardOncePerStreamLabel') || 'Einmal pro Stream'}</label>
+                  <label style={{display:'flex',alignItems:'center',gap:8}}>
+                    <input type="checkbox" checked={!!rewardForm.onceperstream} onChange={e => setRewardForm((f: Reward) => ({...f, onceperstream: e.target.checked}))} />
+                    <span style={{fontSize:12,color:'var(--muted-color,#666)'}}>{t('moderate.rewardOncePerStreamHint') || ''}</span>
+                  </label>
+                </div>
+
+                {/* cooldown */}
                 <div style={{display:'flex',flexDirection:'column',gap:6}}>
                   <label htmlFor="rewardCooldown" style={{fontWeight:'bold'}}>{t('moderate.rewardCooldownLabel')}</label>
                   <input id="rewardCooldown" type="number" className="modal-input" placeholder={t('moderate.rewardCooldownPlaceholder')} title={t('moderate.rewardCooldownHint')} value={rewardForm.cooldown} min={0} onChange={e => setRewardForm((f: Reward) => ({...f, cooldown: Number(e.target.value)}))} />
                 </div>
+
                 <div style={{display:'flex',flexDirection:'row',gap:12,alignItems:'center',marginTop:18,gridColumn:'span 2'}}>
-                  <button className="btn btn-primary" type="submit" disabled={rewardBusy || !rewardForm.nameKey || !rewardForm.type}>{t('moderate.saveRewardBtn')}</button>
+                  <button className="btn btn-primary" type="submit" disabled={rewardBusy || (!rewardForm.name && !rewardForm.nameKey) || !rewardForm.type}>{t('moderate.saveRewardBtn')}</button>
                   <button className="btn btn-secondary" type="button" onClick={() => { setRewardEdit(null); setRewardForm({ ...defaultReward }); setRewardModalOpen(false); }}>{t('moderate.cancelRewardBtn')}</button>
                 </div>
               </form>

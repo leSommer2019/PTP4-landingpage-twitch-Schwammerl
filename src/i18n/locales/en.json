@@ -398,6 +398,33 @@
     "newRewardTitle": "New Reward",
     "rewardNameKeyPlaceholder": "Enter name key",
     "rewardDescKeyPlaceholder": "Enter description key",
+
+    "rewardNameLabel": "Name",
+    "rewardNamePlaceholder": "Enter displayed name",
+
+    "rewardDescriptionLabel": "Description",
+    "rewardDescriptionPlaceholder": "Enter reward description",
+
+    "rewardSourceLabel": "Source",
+    "rewardSourcePlaceholder": "e.g. 'local', 'youtube' or 'tts'",
+
+    "rewardMediaurlLabel": "Media URL",
+    "rewardMediaurlPlaceholder": "URL to audio/video (if any)",
+
+    "rewardShowYoutubeVideoLabel": "Show YouTube Video",
+    "rewardShowYoutubeVideoHint": "If enabled, the YouTube video will be shown/played in the stream/overlay (if supported)",
+
+    "rewardCustomImageLabel": "Custom Image URL",
+    "rewardCustomImagePlaceholder": "URL for a custom image",
+
+    "rewardTextLabel": "Text",
+    "rewardTextPlaceholder": "Enter text (e.g. for TTS)",
+
+    "rewardDurationLabel": "Duration (seconds)",
+    "rewardDurationPlaceholder": "Duration in seconds (e.g. 60)",
+
+    "rewardOncePerStreamLabel": "Once per stream",
+    "rewardOncePerStreamHint": "If enabled, the reward can only be redeemed once per stream",
     "rewardCostPlaceholder": "Enter cost",
     "rewardTypePlaceholder": "Enter type",
     "rewardCooldownPlaceholder": "Cooldown (seconds)",

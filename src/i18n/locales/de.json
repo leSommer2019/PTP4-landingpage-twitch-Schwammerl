@@ -398,6 +398,33 @@
     "newRewardTitle": "Neue Belohnung",
     "rewardNameKeyPlaceholder": "Name-Key eingeben",
     "rewardDescKeyPlaceholder": "Beschreibung-Key eingeben",
+
+    "rewardNameLabel": "Name",
+    "rewardNamePlaceholder": "Angezeigten Namen eingeben",
+
+    "rewardDescriptionLabel": "Beschreibung",
+    "rewardDescriptionPlaceholder": "Beschreibung der Belohnung eingeben",
+
+    "rewardSourceLabel": "Quelle",
+    "rewardSourcePlaceholder": "z. B. 'local', 'youtube' oder 'tts'",
+
+    "rewardMediaurlLabel": "Media-URL",
+    "rewardMediaurlPlaceholder": "URL zu Audio/Video (falls vorhanden)",
+
+    "rewardShowYoutubeVideoLabel": "YouTube-Video anzeigen",
+    "rewardShowYoutubeVideoHint": "Wenn aktiviert, wird das YouTube-Video im Stream/Overlay angezeigt/abgespielt (falls unterstützt)",
+
+    "rewardCustomImageLabel": "Custom Image URL",
+    "rewardCustomImagePlaceholder": "URL für ein benutzerdefiniertes Bild",
+
+    "rewardTextLabel": "Text",
+    "rewardTextPlaceholder": "Text eingeben (z. B. für TTS)",
+
+    "rewardDurationLabel": "Dauer (Sekunden)",
+    "rewardDurationPlaceholder": "Dauer in Sekunden (z. B. 60)",
+
+    "rewardOncePerStreamLabel": "Nur einmal pro Stream",
+    "rewardOncePerStreamHint": "Wenn aktiviert, kann die Belohnung pro Stream nur einmal eingelöst werden",
     "rewardCostPlaceholder": "Kosten eingeben",
     "rewardTypePlaceholder": "Typ eingeben",
     "rewardCooldownPlaceholder": "Cooldown (Sekunden)",
