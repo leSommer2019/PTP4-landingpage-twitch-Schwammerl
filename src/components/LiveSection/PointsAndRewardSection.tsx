@@ -23,6 +23,14 @@ export default function PointsAndRewardSection({ isLive }: { isLive: boolean }) 
   const [success, setSuccess] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  // Wenn Rewards geladen sind und noch kein Reward ausgewählt ist, wähle automatisch den ersten aus
+  useEffect(() => {
+    if (rewards.length > 0 && !selectedReward) {
+      setSelectedReward(rewards[0].id);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rewards]);
+
   useEffect(() => {
     if (!user) {
       console.log('[PointsAndRewardSection] Kein User eingeloggt');
