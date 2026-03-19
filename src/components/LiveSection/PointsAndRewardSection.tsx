@@ -13,13 +13,13 @@ interface Reward {
 }
 
 export default function PointsAndRewardSection({ isLive }: { isLive: boolean }) {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const { t } = useTranslation();
   const [points, setPoints] = useState<number | null>(null);
   const [rewards, setRewards] = useState<Reward[]>([]);
   const [selectedReward, setSelectedReward] = useState<string>('');
   const [ttsText, setTtsText] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [redeemLoading, setRedeemLoading] = useState(false);
   const [success, setSuccess] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -67,23 +67,23 @@ export default function PointsAndRewardSection({ isLive }: { isLive: boolean }) 
   }, []);
 
   const handleRedeem = async () => {
-    setLoading(true);
+    setRedeemLoading(true);
     setError(null);
     setSuccess(null);
     const reward = rewards.find((r) => r.id === selectedReward);
     if (!reward) {
       setError('Kein Reward ausgewählt');
-      setLoading(false);
+      setRedeemLoading(false);
       return;
     }
     if (points !== null && points < reward.cost) {
       setError('Nicht genug Punkte');
-      setLoading(false);
+      setRedeemLoading(false);
       return;
     }
     if (!user) {
       setError('Nicht eingeloggt');
-      setLoading(false);
+      setRedeemLoading(false);
       return;
     }
     // Insert in redeemed_rewards
@@ -104,9 +104,13 @@ export default function PointsAndRewardSection({ isLive }: { isLive: boolean }) 
       setTtsText('');
       setSelectedReward('');
     }
-    setLoading(false);
+    setRedeemLoading(false);
   };
 
+
+  if (loading) {
+    return <div className="points-reward-section"><i>Lade Benutzerdaten...</i></div>;
+  }
   if (!user) {
     return <div className="points-reward-section"><i>Bitte einloggen, um Punkte & Rewards zu sehen.</i></div>;
   }
@@ -140,7 +144,7 @@ export default function PointsAndRewardSection({ isLive }: { isLive: boolean }) 
             maxLength={200}
           />
         )}
-        <button onClick={handleRedeem} disabled={loading || !selectedReward}>
+        <button onClick={handleRedeem} disabled={redeemLoading || !selectedReward}>
           {t('Einlösen')}
         </button>
       </div>
