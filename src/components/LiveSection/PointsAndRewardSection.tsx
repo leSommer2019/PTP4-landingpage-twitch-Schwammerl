@@ -4,7 +4,6 @@ import { useAuth } from '../../context/useAuth';
 import { supabase } from '../../lib/supabase';
 import { useTranslation } from 'react-i18next';
 
-// Typdefinition für Reward
 interface Reward {
   id: string;
   name: string;
@@ -16,94 +15,59 @@ interface Reward {
 export default function PointsAndRewardSection({ isLive }: { isLive: boolean }) {
   const { user, loading } = useAuth();
   const { t } = useTranslation();
+
   const [points, setPoints] = useState<number | null>(null);
   const [rewards, setRewards] = useState<Reward[]>([]);
-  const [selectedReward, setSelectedReward] = useState<string>('');
+  // Änderung: Erlaubt null, damit wir zwischen Liste und Detail unterscheiden können
+  const [selectedRewardId, setSelectedRewardId] = useState<string | null>(null);
   const [ttsText, setTtsText] = useState('');
   const [redeemLoading, setRedeemLoading] = useState(false);
-  const [success, setSuccess] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [status, setStatus] = useState<{type: 'success' | 'error', msg: string} | null>(null);
 
-  // Wenn Rewards geladen sind und noch kein Reward ausgewählt ist, wähle automatisch den ersten aus
-  useEffect(() => {
-    if (rewards.length > 0 && !selectedReward) {
-      setSelectedReward(rewards[0].id);
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rewards]);
+  const selectedReward = rewards.find(r => r.id === selectedRewardId) ?? null;
 
+  // Punkte laden
   useEffect(() => {
-    if (loading) return;
-    if (!user) {
-      console.log('[PointsAndRewardSection] Kein User eingeloggt');
-      return;
-    }
-    // Twitch-User-ID aus user.user_metadata holen
+    if (loading || !user) return;
+
     const twitchUserId = user.user_metadata?.provider_id || user.user_metadata?.sub;
-    if (!twitchUserId) {
-      console.log('[PointsAndRewardSection] Keine Twitch-User-ID gefunden');
-      return;
-    }
+    if (!twitchUserId) return;
+
     supabase
-      .from('points')
-      .select('points')
-      .eq('twitch_user_id', twitchUserId)
-      .maybeSingle()
-      .then(({ data, error }) => {
-        if (error) {
-          setPoints(0);
-          setError('Fehler beim Laden der Punkte: ' + error.message);
-          console.error('[PointsAndRewardSection] Fehler beim Laden der Punkte:', error);
-        } else {
-          setPoints(data?.points ?? 0);
-          console.log('[PointsAndRewardSection] Punkte geladen:', data?.points);
-        }
-      });
+        .from('points')
+        .select('points')
+        .eq('twitch_user_id', twitchUserId)
+        .maybeSingle()
+        .then(({ data, error }) => {
+          if (error) {
+            setPoints(0);
+            setStatus({ type: 'error', msg: 'Fehler beim Laden der Punkte' });
+          } else {
+            setPoints(data?.points ?? 0);
+          }
+        });
   }, [user, loading]);
 
-  // Rewards aus der Datenbank laden
+  // Rewards laden
   useEffect(() => {
     supabase
-      .from('rewards')
-      .select('*')
-      .then(({ data, error }) => {
-        if (error) {
-          setError('Fehler beim Laden der Rewards: ' + error.message);
-          console.error('[PointsAndRewardSection] Fehler beim Laden der Rewards:', error);
-        }
-        setRewards(data || []);
-        console.log('[PointsAndRewardSection] Rewards geladen:', data);
-      });
+        .from('rewards')
+        .select('*')
+        .then(({ data, error }) => {
+          if (error) {
+            setStatus({ type: 'error', msg: 'Fehler beim Laden der Rewards' });
+          }
+          setRewards(data || []);
+        });
   }, []);
 
   const handleRedeem = async () => {
+    if (!selectedRewardId) return;
+    const reward = rewards.find(r => r.id === selectedRewardId);
+    if (!reward || (reward.type === 'tts' && !ttsText) || !user) return;
     setRedeemLoading(true);
-    setError(null);
-    setSuccess(null);
-    const reward = rewards.find((r) => r.id === selectedReward);
-    if (!reward) {
-      setError('Kein Reward ausgewählt');
-      setRedeemLoading(false);
-      return;
-    }
-    if (points !== null && points < reward.cost) {
-      setError('Nicht genug Punkte');
-      setRedeemLoading(false);
-      return;
-    }
-    if (!user) {
-      setError('Nicht eingeloggt');
-      setRedeemLoading(false);
-      return;
-    }
-    // Twitch-User-ID extrahieren
-    let twitchUserId = user.user_metadata?.provider_id || user.user_metadata?.sub;
-    if (!twitchUserId) {
-      setError('Keine Twitch-User-ID gefunden');
-      setRedeemLoading(false);
-      twitchUserId = user.id; // Fallback: Verwende Supabase-User-ID, wenn Twitch-ID nicht verfügbar
-    }
-    // Insert in redeemed_rewards
+    setStatus(null);
+    const twitchUserId = user.user_metadata?.provider_id || user.user_metadata?.sub || user.id;
     const { error: insertError } = await supabase.from('redeemed_rewards').insert([
       {
         twitch_user_id: twitchUserId,
@@ -113,71 +77,90 @@ export default function PointsAndRewardSection({ isLive }: { isLive: boolean }) 
       },
     ]);
     if (insertError) {
-      setError('Fehler beim Einlösen: ' + insertError.message);
+      setStatus({ type: 'error', msg: 'Fehler: ' + insertError.message });
     } else {
-      setSuccess('Reward eingelöst!');
-      setPoints(points! - reward.cost);
+      setStatus({ type: 'success', msg: t('Erfolgreich eingelöst!') });
+      if (points !== null) setPoints(points - reward.cost);
       setTtsText('');
-      setSelectedReward('');
+      setTimeout(() => {
+        setSelectedRewardId(null);
+        setStatus(null);
+      }, 2000);
     }
     setRedeemLoading(false);
   };
 
-
-  if (loading) {
-    return
-  }
-  if (!user) {
-    return
-  }
-  if (!isLive) {
-    return
-  }
+  if (loading || !user || !isLive) return null;
 
   return (
-    <div className="points-reward-section compact">
-      <div className="points-display">
-        <b>{t('Deine Punkte')}:</b> {points ?? '-'}
-      </div>
-      <div className="reward-list-scroll">
-        {rewards.map((r) => (
-          <button
-            key={r.id}
-            className={`reward-card${selectedReward === r.id ? ' selected' : ''}`}
-            onClick={() => setSelectedReward(r.id)}
-            type="button"
-            tabIndex={0}
-            aria-pressed={selectedReward === r.id}
-          >
-            <div className="reward-card-title">{r.name}</div>
-            <div className="reward-card-cost">{r.cost} Punkte</div>
-            <div className="reward-card-type">{r.type === 'tts' ? 'TTS' : ''}</div>
-          </button>
-        ))}
-      </div>
-      {selectedReward && (
-        <div className="reward-action-box">
-          {rewards.find((r) => r.id === selectedReward)?.type === 'tts' && (
-            <input
-              type="text"
-              className="tts-input"
-              placeholder={t('TTS Nachricht eingeben')}
-              value={ttsText}
-              onChange={e => setTtsText(e.target.value)}
-              maxLength={200}
-            />
-          )}
-          <button
-            className="btn btn-primary redeem-btn"
-            onClick={handleRedeem}
-            disabled={redeemLoading || (rewards.find((r) => r.id === selectedReward)?.type === 'tts' && !ttsText)}
-          >
-            {t('Einlösen')}
-          </button>
+      <div className="points-reward-section">
+        <div className="points-header">
+          <span>{t('Deine Punkte')}</span>
+          <div className="points-amount">{points?.toLocaleString() ?? '0'}</div>
         </div>
-      )}
-      {success && <div className="success-msg">{success}</div>}
-      {error && <div className="error-msg">{error}</div>}
-    </div>
+
+        {!selectedRewardId ? (
+            /* GRID ANSICHT: 3 Spalten durch CSS */
+            <div className="reward-grid">
+              {rewards.map((r) => (
+                  <button
+                      key={r.id}
+                      className="reward-card"
+                      onClick={() => setSelectedRewardId(r.id)}
+                  >
+                    <div className="reward-card-title">{r.name}</div>
+                    <div className="reward-card-cost">{r.cost}</div>
+                  </button>
+              ))}
+            </div>
+        ) : (
+            /* DETAIL ANSICHT */
+            <div className="reward-detail-view">
+              <button
+                  className="back-btn"
+                  onClick={() => { setSelectedRewardId(null); setStatus(null); }}
+              >
+                ← {t('Zurück')}
+              </button>
+
+              <div className="selected-reward-info">
+                <div className="reward-card-title" style={{ fontSize: '1.2rem' }}>
+                  {selectedReward ? selectedReward.name : ''}
+                </div>
+                <div className="reward-card-cost">
+                  {selectedReward ? `${selectedReward.cost} ${t('Punkte')}` : ''}
+                </div>
+              </div>
+              {selectedReward && selectedReward.type === 'tts' && (
+                  <textarea
+                      className="tts-input"
+                      placeholder={t('Deine Nachricht...')}
+                      value={ttsText}
+                      onChange={e => setTtsText(e.target.value)}
+                      rows={3}
+                      maxLength={200}
+                  />
+              )}
+              <button
+                  className="btn btn-primary redeem-btn"
+                  onClick={handleRedeem}
+                  disabled={
+                      redeemLoading ||
+                      !selectedReward ||
+                      (selectedReward.type === 'tts' && !ttsText) ||
+                      (points !== null && selectedReward && points < selectedReward.cost )
+                  }
+              >
+                {redeemLoading ? t('Lädt...') : t('Jetzt einlösen')}
+              </button>
+            </div>
+        )}
+
+        {status && (
+            <div className={`${status.type}-msg`} style={{ marginTop: '12px' }}>
+              {status.msg}
+            </div>
+        )}
+      </div>
   );
 }

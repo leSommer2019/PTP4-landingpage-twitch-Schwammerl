@@ -1,155 +1,117 @@
 .points-reward-section {
   background: var(--box-gradient);
   border: 1px solid var(--box-border);
-  border-radius: 14px;
-  box-shadow: 0 6px 24px rgba(0,0,0,0.25);
-  padding: 24px 20px 20px 20px;
-  margin: 18px 0;
-  max-width: 420px;
+  border-radius: 16px;
+  padding: 20px;
+  max-width: 400px;
   width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
 }
 
-.points-reward-section.compact {
-  max-width: 340px;
-  padding: 16px 10px 12px 10px;
-  gap: 12px;
-}
-
-.points-display {
-  font-size: 1.15rem;
-  font-weight: 700;
-  color: var(--accent);
-  margin-bottom: 6px;
+.points-header {
   text-align: center;
+  margin-bottom: 16px;
 }
 
-.reward-list-scroll {
-  display: flex;
-  flex-direction: row;
+.points-header span {
+  font-size: 0.9rem;
+  color: var(--muted);
+  display: block;
+}
+
+.points-amount {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--accent);
+}
+
+/* Grid-Layout: 3 Spalten */
+.reward-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   gap: 10px;
-  overflow-x: auto;
-  padding-bottom: 4px;
-  margin-bottom: 2px;
+  max-height: 300px;
+  overflow-y: auto;
+  padding-right: 4px;
 }
 
 .reward-card {
-  min-width: 80px;
-  min-height: 80px;
-  max-width: 90px;
-  max-height: 90px;
+  aspect-ratio: 1 / 1;
   background: var(--color-btn-bg);
-  border: 2px solid transparent;
+  border: 1px solid var(--box-border);
   border-radius: 12px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: border-color 0.18s, box-shadow 0.18s;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.10);
-  font-size: 0.98rem;
-  color: var(--color-text);
-  outline: none;
-  padding: 6px 4px;
+  transition: all 0.2s ease;
+  padding: 8px;
 }
-.reward-card.selected {
+
+.reward-card:hover {
   border-color: var(--accent);
-  box-shadow: 0 0 0 2px var(--accent), 0 2px 8px rgba(124,77,255,0.10);
+  transform: translateY(-2px);
 }
+
 .reward-card-title {
-  font-weight: 700;
-  margin-bottom: 2px;
+  font-weight: 600;
+  font-size: 0.85rem;
   text-align: center;
-  font-size: 1.01rem;
+  line-height: 1.2;
+  margin-bottom: 4px;
 }
+
 .reward-card-cost {
+  font-size: 0.75rem;
   color: var(--accent);
-  font-size: 0.93rem;
-  margin-bottom: 2px;
+  opacity: 0.9;
 }
-.reward-card-type {
-  font-size: 0.8rem;
+
+/* Detail Ansicht */
+.reward-detail-view {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  animation: fadeIn 0.3s ease;
+}
+
+.back-btn {
+  background: none;
+  border: none;
   color: var(--muted);
-}
-
-.reward-redeem {
+  cursor: pointer;
+  font-size: 0.9rem;
+  padding: 0;
+  text-align: left;
   display: flex;
-  flex-direction: column;
-  gap: 10px;
-  align-items: stretch;
+  align-items: center;
+  gap: 5px;
 }
 
-.reward-redeem select,
-.reward-redeem input[type="text"] {
-  background: var(--color-btn-bg);
-  color: var(--color-text);
-  border: 1px solid var(--box-border);
-  border-radius: 8px;
-  padding: 8px 12px;
-  font-size: 1rem;
-  transition: border-color 0.2s;
-}
-
-.reward-redeem select:focus,
-.reward-redeem input[type="text"]:focus {
-  outline: none;
-  border-color: var(--accent);
-}
-
-.reward-redeem button {
-  margin-top: 4px;
-  width: 100%;
-}
-
-.success-msg {
-  color: #4ade80;
-  background: rgba(76, 175, 80, 0.08);
-  border-radius: 8px;
-  padding: 8px 12px;
+.selected-reward-info {
   text-align: center;
-  font-weight: 600;
-  font-size: 0.98rem;
+  padding: 10px;
+  background: rgba(255,255,255,0.03);
+  border-radius: 10px;
 }
 
-.error-msg {
-  color: #ef4444;
-  background: rgba(239, 68, 68, 0.08);
-  border-radius: 8px;
-  padding: 8px 12px;
-  text-align: center;
-  font-weight: 600;
-  font-size: 0.98rem;
-}
-
-.reward-action-box {
-  display: flex;
-  flex-direction: column;
-  gap: 7px;
-  margin-top: 4px;
-  align-items: stretch;
-}
 .tts-input {
+  width: 100%;
   background: var(--color-btn-bg);
   color: var(--color-text);
-  border: 1px solid var(--box-border);
-  border-radius: 8px;
-  padding: 7px 10px;
+  border: 2px solid var(--box-border);
+  border-radius: 10px;
+  padding: 12px; /* Größeres Textfeld */
   font-size: 1rem;
-  transition: border-color 0.2s;
-}
-.tts-input:focus {
-  outline: none;
-  border-color: var(--accent);
-}
-.redeem-btn {
-  width: 100%;
-  margin-top: 0;
-  font-size: 1rem;
-  padding: 8px 0;
 }
 
-/* Erfolg/Fehler-Meldungen wie gehabt */
-.success-msg, .error-msg { margin-top: 6px; }
+.tts-input:focus {
+  border-color: var(--accent);
+  outline: none;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
