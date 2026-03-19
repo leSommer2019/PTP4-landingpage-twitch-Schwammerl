@@ -4,6 +4,7 @@ import siteConfig from '../../config/siteConfig'
 import NextStream from '../NextStream/NextStream'
 import CurrentGame from '../CurrentGame/CurrentGame'
 import PointsAndRewardSection from './PointsAndRewardSection'
+import { supabase } from '../../lib/supabase'
 import './LiveSection.css'
 
 /* ── Twitch Player SDK types ── */
@@ -92,6 +93,26 @@ export default function LiveSection() {
     document.head.appendChild(script)
   }, [channel, parent])
 
+  // Fallback: Prüfe alle 30s per Supabase-Function, ob der Stream live ist
+  useEffect(() => {
+    let cancelled = false
+    type TwitchGameResponse = { isLive: boolean }
+    async function checkLiveStatus() {
+      try {
+        const { data } = await supabase.functions.invoke<TwitchGameResponse>('twitch-game')
+        if (!cancelled && data?.isLive) setIsLive(true)
+      } catch {
+        // Fehler beim Live-Check ignorieren (z.B. Netzwerkfehler)
+      }
+    }
+    checkLiveStatus()
+    const interval = setInterval(checkLiveStatus, 30000)
+    return () => {
+      cancelled = true
+      clearInterval(interval)
+    }
+  }, [])
+
   const showStream = isLive
 
   return (
@@ -142,4 +163,3 @@ export default function LiveSection() {
     </section>
   )
 }
-
