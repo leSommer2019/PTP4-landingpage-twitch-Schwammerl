@@ -38,7 +38,7 @@ export default function ModerateAccountPage() {
   const [pointsValue, setPointsValue] = useState<number>(0)
   const [banned, setBanned] = useState<string[]>([])
   const [busy, setBusy] = useState(false)
-  const { isBroadcaster } = useIsModerator()
+  const { isBroadcaster, isMod } = useIsModerator()
   const { showConfirm } = useConfirmModal()
 
   // Rewards-Logik
@@ -137,13 +137,49 @@ export default function ModerateAccountPage() {
   }, [])
 
   async function banAccount() {
-    if (!isBroadcaster) return
+    // Only moderators or broadcaster can perform bans
+    if (!isBroadcaster && !isMod) {
+      showToast('Keine Berechtigung!')
+      return
+    }
     setBusy(true)
     try {
-      // Annahme: banName ist Twitch-User-ID oder Username
-      const twitch_user_id = banName.trim()
+      // Resolve twitch id for given input (either ID or username)
+      let twitch_user_id = banName.trim()
+      if (!/^\d+$/.test(twitch_user_id)) {
+        const res = await fetch(`https://decapi.me/twitch/id/${encodeURIComponent(twitch_user_id)}`)
+        if (!res.ok) {
+          showToast('Konnte Twitch-ID nicht abrufen')
+          return
+        }
+        twitch_user_id = (await res.text()).trim()
+      }
+
+      const myTwitchId = user?.user_metadata?.provider_id || user?.user_metadata?.sub || ''
+      // Broadcaster may ban anyone except themselves
+      if (isBroadcaster) {
+        if (twitch_user_id === myTwitchId) {
+          showToast('Du kannst dich nicht selbst bannen')
+          return
+        }
+      }
+
+      // Moderators (non-broadcaster) may only ban plain users (no mods, no broadcaster)
+      if (isMod && !isBroadcaster) {
+        // Check if target is a moderator or broadcaster
+        const { data: modRow, error: modErr } = await supabase.from('moderators').select('twitch_user_id, is_broadcaster').eq('twitch_user_id', twitch_user_id).maybeSingle()
+        if (modErr) {
+          showToast('Fehler beim Prüfen des Benutzers: ' + getErrorMessage(modErr))
+          return
+        }
+        if (modRow) {
+          showToast('Moderatoren können nur normale Benutzer bannen')
+          return
+        }
+      }
+
       const display_name = banName.trim()
-      const banned_by = user?.user_metadata?.provider_id || user?.user_metadata?.sub || ''
+      const banned_by = myTwitchId
       const { error } = await supabase.from('banned_accounts').insert([{ twitch_user_id, display_name, banned_by }])
       if (error) {
         showToast('Fehler beim Bannen: ' + getErrorMessage(error))
@@ -437,12 +473,12 @@ export default function ModerateAccountPage() {
         <ul style={{margin:'8px 0',padding:0,listStyle:'none'}}>
           {rewards.length === 0 && <li style={{color:'#888'}}>{t('moderate.noRewards')}</li>}
           {rewards.map(r => (
-            <li key={r.id} style={{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'6px 0'}}>
-              <div style={{minWidth:0}}>
-                <b>{r.name || (r.nameKey ? t(r.nameKey) : '')}</b>
-                <div style={{fontSize:12, color:'var(--muted-color, #666)'}}>{r.description || (r.descKey ? t(r.descKey) : '')}</div>
+            <li key={r.id} style={{display:'flex',flexDirection: isWide ? 'row' : 'column',justifyContent: 'space-between',alignItems: isWide ? 'center' : 'stretch',padding:'6px 0'}}>
+              <div style={{minWidth:0, flex: 1}}>
+                <b style={{display:'block', wordBreak: 'break-word', overflowWrap: 'anywhere'}}>{r.name || (r.nameKey ? t(r.nameKey) : '')}</b>
+                <div style={{fontSize:12, color:'var(--muted-color, #666)', wordBreak: 'break-word', overflowWrap: 'anywhere'}}>{r.description || (r.descKey ? t(r.descKey) : '')}</div>
               </div>
-              <div style={{display:'flex',gap:8}}>
+              <div style={{display:'flex',gap:8, marginLeft: isWide ? 12 : 0, marginTop: isWide ? 0 : 8}}>
                 <button className="btn btn-sm btn-secondary" onClick={() => { setRewardEdit(r); setRewardForm(mergeRewardWithDefaults(r)); setRewardModalOpen(true); }}>{t('moderate.editRewardBtn')}</button>
                 <button className="btn btn-sm btn-danger" onClick={() => r.id && deleteReward(r.id)} disabled={rewardBusy}>{t('moderate.deleteRewardBtn')}</button>
               </div>
