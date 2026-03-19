@@ -55,6 +55,10 @@ public class TwitchBot {
         twitchClient.getEventManager().onEvent(ChannelJoinEvent.class, event -> {
             String userId = event.getUser().getId();
             String username = event.getUser().getName();
+            if (userId == null) {
+                logger.warn("User joined: {} (userId=null) – Ignoriere Event, da keine User-ID verfügbar!", username);
+                return;
+            }
             logger.info("User joined: {} ({})", username, userId);
             pointsManager.userJoined(userId, username);
         });
@@ -62,6 +66,10 @@ public class TwitchBot {
         twitchClient.getEventManager().onEvent(ChannelLeaveEvent.class, event -> {
             String userId = event.getUser().getId();
             String username = event.getUser().getName();
+            if (userId == null) {
+                logger.warn("User left: {} (userId=null) – Ignoriere Event, da keine User-ID verfügbar!", username);
+                return;
+            }
             logger.info("User left: {} ({})", username, userId);
             pointsManager.userLeft(userId);
         });
