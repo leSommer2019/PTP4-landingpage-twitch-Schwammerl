@@ -1,3 +1,4 @@
+import './PointsAndRewardSection.css';
 import { useEffect, useState } from 'react';
 import { useAuth } from '../../context/useAuth';
 import { supabase } from '../../lib/supabase';

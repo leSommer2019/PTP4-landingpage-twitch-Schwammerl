@@ -1,0 +1,71 @@
+.points-reward-section {
+  background: var(--box-gradient);
+  border: 1px solid var(--box-border);
+  border-radius: 14px;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.25);
+  padding: 24px 20px 20px 20px;
+  margin: 18px 0;
+  max-width: 420px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.points-display {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--accent);
+  margin-bottom: 6px;
+  text-align: center;
+}
+
+.reward-redeem {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: stretch;
+}
+
+.reward-redeem select,
+.reward-redeem input[type="text"] {
+  background: var(--color-btn-bg);
+  color: var(--color-text);
+  border: 1px solid var(--box-border);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 1rem;
+  transition: border-color 0.2s;
+}
+
+.reward-redeem select:focus,
+.reward-redeem input[type="text"]:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.reward-redeem button {
+  margin-top: 4px;
+  width: 100%;
+}
+
+.success-msg {
+  color: #4ade80;
+  background: rgba(76, 175, 80, 0.08);
+  border-radius: 8px;
+  padding: 8px 12px;
+  text-align: center;
+  font-weight: 600;
+  font-size: 0.98rem;
+}
+
+.error-msg {
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.08);
+  border-radius: 8px;
+  padding: 8px 12px;
+  text-align: center;
+  font-weight: 600;
+  font-size: 0.98rem;
+}
+
