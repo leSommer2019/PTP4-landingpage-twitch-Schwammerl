@@ -34,7 +34,7 @@ public class SupabaseClient {
         json.put("timestamp", System.currentTimeMillis());
 
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(supabaseUrl + "/rest/v1/" + tableName + "?user=eq." + username))
+                .uri(URI.create(supabaseUrl + "/rest/v1/" + tableName + "?twitch_user_id=eq." + username))
                 .header("apikey", apiKey)
                 .header("Authorization", "Bearer " + apiKey)
                 .header("Content-Type", "application/json")
@@ -55,7 +55,7 @@ public class SupabaseClient {
     public int getPoints(String username) {
         logger.info("getPoints: {}", username);
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(supabaseUrl + "/rest/v1/" + tableName + "?user=eq." + username))
+                .uri(URI.create(supabaseUrl + "/rest/v1/" + tableName + "?twitch_user_id=eq." + username))
                 .header("apikey", apiKey)
                 .header("Authorization", "Bearer " + apiKey)
                 .header("Accept", "application/json")
@@ -82,7 +82,7 @@ public class SupabaseClient {
     public boolean existsUser(String username) {
         logger.info("existsUser: {}", username);
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(supabaseUrl + "/rest/v1/" + tableName + "?user=eq." + username))
+                .uri(URI.create(supabaseUrl + "/rest/v1/" + tableName + "?twitch_user_id=eq." + username))
                 .header("apikey", apiKey)
                 .header("Authorization", "Bearer " + apiKey)
                 .header("Accept", "application/json")

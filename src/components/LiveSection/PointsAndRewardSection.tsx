@@ -1,17 +1,22 @@
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState } from 'react';
 import { useAuth } from '../../context/useAuth';
 import { supabase } from '../../lib/supabase';
 import { useTranslation } from 'react-i18next';
+
+// Typdefinition für Reward
+interface Reward {
+  id: string;
+  name: string;
+  cost: number;
+  type: string;
+  description: string;
+}
 
 export default function PointsAndRewardSection({ isLive }: { isLive: boolean }) {
   const { user } = useAuth();
   const { t } = useTranslation();
   const [points, setPoints] = useState<number | null>(null);
-  const rewards = useMemo(() => [
-    { id: 'reward3', name: 'TTS Nachricht', cost: 100, type: 'tts', description: 'Text to Speech' },
-    { id: 'raid_leader', name: 'RAID-Anführer', cost: 500, type: 'tts', description: 'RAID-Anführer' },
-    { id: 'reward2', name: 'YouTube Meme', cost: 200, type: 'video', description: 'YouTube Meme' },
-  ], []);
+  const [rewards, setRewards] = useState<Reward[]>([]);
   const [selectedReward, setSelectedReward] = useState<string>('');
   const [ttsText, setTtsText] = useState('');
   const [loading, setLoading] = useState(false);
@@ -20,19 +25,32 @@ export default function PointsAndRewardSection({ isLive }: { isLive: boolean }) 
 
   useEffect(() => {
     if (!user) return;
+    // Twitch-User-ID aus user.user_metadata holen
+    const twitchUserId = user.user_metadata?.provider_id || user.user_metadata?.sub;
+    if (!twitchUserId) return;
     supabase
       .from('points')
       .select('points')
-      .eq('user', user.id)
+      .eq('twitch_user_id', twitchUserId)
       .single()
       .then(({ data }) => setPoints(data?.points ?? 0));
   }, [user]);
+
+  // Rewards aus der Datenbank laden
+  useEffect(() => {
+    supabase
+      .from('rewards')
+      .select('*')
+      .then(({ data }) => {
+        setRewards(data || []);
+      });
+  }, []);
 
   const handleRedeem = async () => {
     setLoading(true);
     setError(null);
     setSuccess(null);
-    const reward = rewards.find(r => r.id === selectedReward);
+    const reward = rewards.find((r) => r.id === selectedReward);
     if (!reward) {
       setError('Kein Reward ausgewählt');
       setLoading(false);
@@ -82,13 +100,13 @@ export default function PointsAndRewardSection({ isLive }: { isLive: boolean }) 
           onChange={e => setSelectedReward(e.target.value)}
         >
           <option value="">{t('Reward auswählen')}</option>
-          {rewards.map(r => (
+          {rewards.map((r) => (
             <option key={r.id} value={r.id}>
               {r.name} ({r.cost} Punkte)
             </option>
           ))}
         </select>
-        {rewards.find(r => r.id === selectedReward)?.type === 'tts' && (
+        {rewards.find((r: { id: string; }) => r.id === selectedReward)?.type === 'tts' && (
           <input
             type="text"
             placeholder={t('TTS Nachricht eingeben')}

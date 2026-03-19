@@ -57,7 +57,7 @@ create table if not exists points (
     twitch_user_id text not null,
     points integer not null default 0,
     reason text,
-    timestamp timestamptz not null default now()
+    timestamp text
     );
 
 -- Hinweise:
