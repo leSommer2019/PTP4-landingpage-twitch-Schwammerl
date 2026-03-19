@@ -299,17 +299,19 @@ export default function ModerateAccountPage() {
 
       {/* Bann-Panel */}
       <h2>{t('moderate.banAccount')}</h2>
-      <input
-        type="text"
-        value={banName}
-        onChange={e => setBanName(e.target.value)}
-        placeholder={t('moderate.banInputPlaceholder')}
-        className="modal-input"
-        style={{ minWidth: 220, marginRight: 8 }}
-      />
-      <button className="btn btn-danger" disabled={!banName.trim() || !isBroadcaster || busy} onClick={banAccount}>
-        🚫 {t('moderate.banBtn')}
-      </button>
+      <div style={{display:'flex',alignItems:'center',gap:8}}>
+        <input
+          type="text"
+          value={banName}
+          onChange={e => setBanName(e.target.value)}
+          placeholder={t('moderate.banInputPlaceholder')}
+          className="modal-input"
+          style={{ minWidth: 220 }}
+        />
+        <button className="btn btn-danger" disabled={!banName.trim() || !isBroadcaster || busy} onClick={banAccount}>
+          🚫 {t('moderate.banBtn')}
+        </button>
+      </div>
       <div style={{marginTop:12}}>
         <b>{t('moderate.bannedAccountsTitle')}</b>
         <ul style={{margin:'8px 0'}}>
@@ -370,17 +372,6 @@ export default function ModerateAccountPage() {
       {/* Belohnungen-Panel */}
       <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginTop:32}}>
         <h2 style={{ margin:0 }}>{t('moderate.rewards')}</h2>
-        <button
-          className="btn btn-primary"
-          onClick={() => {
-            setRewardEdit(null);
-            setRewardForm({ ...defaultReward });
-            setRewardModalOpen(true);
-          }}
-          style={{marginLeft:12}}
-        >
-          {t('moderate.addRewardBtn')}
-        </button>
       </div>
       <div style={{background:'var(--box-bg)',border:'1px solid var(--box-border)',borderRadius:8,padding:16,marginBottom:24}}>
         {/* Reward-Liste */}
@@ -465,18 +456,6 @@ export default function ModerateAccountPage() {
           <li>{t('moderate.technicalHintBanned')}</li>
         </ul>
       </div>
-        {/* Floating Add Reward button (fixed position) */}
-        <button
-          className="add-reward-fab btn btn-primary"
-          onClick={() => {
-            setRewardEdit(null);
-            setRewardForm({ ...defaultReward });
-            setRewardModalOpen(true);
-          }}
-          aria-label={t('moderate.addRewardBtn')}
-        >
-          {t('moderate.addRewardBtn')}
-        </button>
       </SubPage>
   )
 }
