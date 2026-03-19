@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../context/useAuth'
+import { useConfirmModal } from '../context/useConfirmModal'
 import { useToast } from '../context/useToast'
 import { supabase } from '../lib/supabase'
 import { useIsModerator } from '../hooks/useIsModerator'
@@ -38,6 +39,7 @@ export default function ModerateAccountPage() {
   const [banned, setBanned] = useState<string[]>([])
   const [busy, setBusy] = useState(false)
   const { isBroadcaster } = useIsModerator()
+  const { showConfirm } = useConfirmModal()
 
   // Rewards-Logik
   const [rewards, setRewards] = useState<Reward[]>([])
@@ -71,6 +73,11 @@ export default function ModerateAccountPage() {
     const merged: Reward = { ...defaultReward }
     for (const key of Object.keys(defaultReward) as (keyof Reward)[]) {
       const val = r[key]
+      // Special case: if the DB contains NULL for showyoutubevideo, treat it as true (legacy behavior)
+      if (val === null && key === 'showyoutubevideo') {
+        merged.showyoutubevideo = true
+        continue
+      }
       if (val === undefined || val === null) continue
       // assign with explicit typing per known field to avoid `any`
       switch (key) {
@@ -178,9 +185,15 @@ export default function ModerateAccountPage() {
       // Twitch-ID holen, falls kein reiner Zahlenwert
       if (!/^\d+$/.test(targetUser)) {
         const res = await fetch(`https://decapi.me/twitch/id/${encodeURIComponent(targetUser)}`)
-        if (!res.ok) throw new Error('Twitch-ID konnte nicht abgerufen werden')
+        if (!res.ok) {
+          showToast('Konnte Twitch-ID nicht abrufen')
+          return
+        }
         const id = (await res.text()).trim()
-        if (!/^\d+$/.test(id)) throw new Error('Ungültige Twitch-ID erhalten')
+        if (!/^\d+$/.test(id)) {
+          showToast('Ungültige Twitch-ID erhalten')
+          return
+        }
         targetUser = id
       }
       if (pointsAction === 'reset') {
@@ -284,12 +297,24 @@ export default function ModerateAccountPage() {
 
   // Reward löschen
   async function deleteReward(id: string) {
-    if (!window.confirm('Wirklich löschen?')) return
+    const confirmed = await showConfirm({
+      title: t('moderate.deleteRewardConfirmTitle') || 'Belohnung löschen',
+      message: t('moderate.deleteRewardConfirmMessage') || 'Soll die Belohnung wirklich gelöscht werden?',
+      confirmLabel: t('moderate.deleteRewardConfirmConfirmLabel') || 'Löschen',
+      cancelLabel: t('moderate.deleteRewardConfirmCancelLabel') || 'Abbrechen'
+    })
+    if (!confirmed) return
     setRewardBusy(true)
     try {
-      const { error } = await supabase.from('rewards').delete().eq('id', id)
+      // Call RPC that enforces admin permissions server-side (handles RLS)
+      const { data, error } = await supabase.rpc('admin_delete_reward', { p_id: id })
       if (error) {
         showToast('Fehler beim Löschen: ' + getErrorMessage(error))
+        return
+      }
+      if (data && typeof data === 'object' && 'error' in data) {
+        const err = (data as { error?: string }).error
+        showToast('Fehler beim Löschen: ' + (err ?? JSON.stringify(data)))
         return
       }
       showToast('Reward gelöscht!')

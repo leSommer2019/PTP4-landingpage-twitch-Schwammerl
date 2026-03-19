@@ -55,6 +55,65 @@ create table if not exists points (
     timestamp text
     );
 
+-- Ensure new reward columns exist for frontend compatibility
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_name = 'rewards' AND column_name = 'namekey'
+  ) THEN
+    ALTER TABLE rewards ADD COLUMN nameKey text;
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_name = 'rewards' AND column_name = 'desckey'
+  ) THEN
+    ALTER TABLE rewards ADD COLUMN descKey text;
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_name = 'rewards' AND column_name = 'cooldown'
+  ) THEN
+    ALTER TABLE rewards ADD COLUMN cooldown integer DEFAULT 0;
+  END IF;
+END $$;
+
+-- Some clients (PostgREST) may request quoted camelCase column names (e.g. "descKey").
+-- Ensure quoted camelCase columns exist as well so REST calls with quoted identifiers succeed.
+ALTER TABLE rewards ADD COLUMN IF NOT EXISTS "nameKey" text;
+ALTER TABLE rewards ADD COLUMN IF NOT EXISTS "descKey" text;
+ALTER TABLE rewards ADD COLUMN IF NOT EXISTS cooldown integer DEFAULT 0;
+
+-- Ensure pgcrypto extension (for gen_random_uuid) exists and set default id for rewards
+CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+
+DO $$
+BEGIN
+  -- If rewards.id has no default, set it to a generated uuid cast to text
+  IF (SELECT column_default FROM information_schema.columns WHERE table_name='rewards' AND column_name='id') IS NULL THEN
+    ALTER TABLE rewards ALTER COLUMN id SET DEFAULT gen_random_uuid()::text;
+  END IF;
+END $$;
+
+-- Trigger: ensure id is set even if client explicitly sends null
+CREATE OR REPLACE FUNCTION public.ensure_rewards_id()
+RETURNS trigger LANGUAGE plpgsql AS $$
+BEGIN
+  IF NEW.id IS NULL OR NEW.id = '' THEN
+    NEW.id := gen_random_uuid()::text;
+  END IF;
+  RETURN NEW;
+END;
+$$;
+
+DROP TRIGGER IF EXISTS trg_ensure_rewards_id ON rewards;
+CREATE TRIGGER trg_ensure_rewards_id
+  BEFORE INSERT ON rewards
+  FOR EACH ROW
+  EXECUTE FUNCTION public.ensure_rewards_id();
+
 -- 1. RLS für die Tabelle aktivieren
 ALTER TABLE points ENABLE ROW LEVEL SECURITY;
 
@@ -108,6 +167,46 @@ USING (
     AND is_broadcaster = true
   )
 );
+
+-- Allow moderators or broadcaster (or service_role) to delete rewards
+CREATE POLICY "Moderatoren/Broadcaster können Rewards löschen" ON rewards
+  FOR DELETE
+  USING (
+    current_setting('request.jwt.claim.role', true) = 'service_role'
+    OR public.is_moderator_role()
+    OR public.is_broadcaster_role()
+  );
+
+-- RPC: admin_delete_reward(p_id text)
+-- Security definer function that allows moderators or broadcaster (or service_role) to delete a reward
+CREATE OR REPLACE FUNCTION public.admin_delete_reward(p_id text)
+RETURNS jsonb
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+  v_caller uuid := auth.uid();
+BEGIN
+  -- allow service_role bypass
+  IF current_setting('request.jwt.claim.role', true) = 'service_role' THEN
+    DELETE FROM rewards WHERE id = p_id;
+    RETURN jsonb_build_object('success', true);
+  END IF;
+
+  -- check moderator/broadcaster via helper functions
+  IF NOT (public.is_moderator_role() OR public.is_broadcaster_role() OR public.is_moderator()) THEN
+    RETURN jsonb_build_object('error', 'forbidden');
+  END IF;
+
+  DELETE FROM rewards WHERE id = p_id;
+  IF NOT FOUND THEN
+    RETURN jsonb_build_object('error', 'not_found');
+  END IF;
+  RETURN jsonb_build_object('success', true);
+END;
+$$;
+
+GRANT EXECUTE ON FUNCTION public.admin_delete_reward(text) TO authenticated;
 
 -- Hinweise:
 -- - Rewards werden in rewards.json gepflegt und mit obigem Befehl in die DB übernommen.
