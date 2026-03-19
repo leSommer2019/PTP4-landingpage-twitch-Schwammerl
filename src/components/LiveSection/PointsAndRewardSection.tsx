@@ -98,7 +98,7 @@ export default function PointsAndRewardSection({ isLive }: { isLive: boolean }) 
     // Insert in redeemed_rewards
     const { error: insertError } = await supabase.from('redeemed_rewards').insert([
       {
-        user: user.id,
+        twitch_user_id: user.id,
         reward_id: reward.id,
         description: reward.type === 'tts' ? ttsText : reward.description,
         cost: reward.cost,
