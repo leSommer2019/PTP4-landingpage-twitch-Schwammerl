@@ -63,6 +63,7 @@ export default function ModerateAccountPage() {
   const [rewardForm, setRewardForm] = useState<Reward>(defaultReward)
   const [rewardModalOpen, setRewardModalOpen] = useState(false);
   const [rewardBusy, setRewardBusy] = useState(false)
+  const [isWide, setIsWide] = useState<boolean>(false)
 
   // Merge a reward from DB with defaults, but don't let null values override defaults
   function mergeRewardWithDefaults(r?: Reward) {
@@ -119,6 +120,14 @@ export default function ModerateAccountPage() {
 
   // Initial fetch
   React.useEffect(() => { fetchBanned() }, [])
+
+  // Responsive: detect wide (desktop) screens to use 3-column layout
+  useEffect(() => {
+    const onResize = () => setIsWide(typeof window !== 'undefined' && window.innerWidth >= 1024)
+    onResize()
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [])
 
   async function banAccount() {
     if (!isBroadcaster) return
@@ -408,9 +417,9 @@ export default function ModerateAccountPage() {
         {rewardModalOpen && (
           <div className="confirm-modal is-open">
             <div className="modal-backdrop" onClick={() => setRewardModalOpen(false)} />
-            <div className="modal-card" style={{zIndex:10051}}>
+            <div className="modal-card" style={{zIndex:10051, maxHeight: '80vh', overflow: 'auto', width: isWide ? 980 : 680}}>
               <b style={{fontSize:'1.2em'}}>{rewardEdit ? t('moderate.editRewardTitle') : t('moderate.newRewardTitle')}</b>
-              <form style={{display:'grid',gridTemplateColumns:'repeat(2,1fr)',gap:18,marginTop:16}} onSubmit={e => {e.preventDefault();saveReward();setRewardModalOpen(false);}}>
+              <form style={{display:'grid',gridTemplateColumns: isWide ? 'repeat(3,1fr)' : 'repeat(2,1fr)',gap:18,marginTop:16}} onSubmit={e => {e.preventDefault();saveReward();setRewardModalOpen(false);}}>
                 {/* name / i18n key */}
                 <div style={{display:'flex',flexDirection:'column',gap:6}}>
                   <label htmlFor="rewardName" style={{fontWeight:'bold'}}>{t('moderate.rewardNameLabel') || 'Name'}</label>
@@ -422,7 +431,7 @@ export default function ModerateAccountPage() {
                 </div>
 
                 {/* description / i18n descKey */}
-                <div style={{display:'flex',flexDirection:'column',gap:6,gridColumn:'span 2'}}>
+                <div style={{display:'flex',flexDirection:'column',gap:6,gridColumn: isWide ? 'span 3' : 'span 2'}}>
                   <label htmlFor="rewardDescription" style={{fontWeight:'bold'}}>{t('moderate.rewardDescriptionLabel') || 'Beschreibung'}</label>
                   <textarea id="rewardDescription" className="modal-input" placeholder={t('moderate.rewardDescriptionPlaceholder') || ''} value={rewardForm.description} onChange={e => setRewardForm((f: Reward) => ({...f, description: e.target.value}))} style={{minHeight:80}} />
                 </div>
@@ -452,7 +461,7 @@ export default function ModerateAccountPage() {
                 </div>
 
                 {/* show youtube video */}
-                <div style={{display:'flex',flexDirection:'column',gap:6}}>
+                <div style={{display:'flex',flexDirection:'column',gap:6, gridColumn: isWide ? 'span 1' : 'span 2'}}>
                   <label style={{fontWeight:'bold'}}>{t('moderate.rewardShowYoutubeVideoLabel') || 'YouTube abspielen'}</label>
                   <label style={{display:'flex',alignItems:'center',gap:8}}>
                     <input type="checkbox" checked={!!rewardForm.showyoutubevideo} onChange={e => setRewardForm((f: Reward) => ({...f, showyoutubevideo: e.target.checked}))} />
@@ -475,7 +484,7 @@ export default function ModerateAccountPage() {
                   <label htmlFor="rewardDuration" style={{fontWeight:'bold'}}>{t('moderate.rewardDurationLabel') || 'Duration (s)'}</label>
                   <input id="rewardDuration" type="number" className="modal-input" placeholder={t('moderate.rewardDurationPlaceholder') || ''} value={rewardForm.duration} min={0} onChange={e => setRewardForm((f: Reward) => ({...f, duration: Number(e.target.value)}))} />
                 </div>
-                <div style={{display:'flex',flexDirection:'column',gap:6}}>
+                <div style={{display:'flex',flexDirection:'column',gap:6, gridColumn: isWide ? 'span 1' : 'span 2'}}>
                   <label style={{fontWeight:'bold'}}>{t('moderate.rewardOncePerStreamLabel') || 'Einmal pro Stream'}</label>
                   <label style={{display:'flex',alignItems:'center',gap:8}}>
                     <input type="checkbox" checked={!!rewardForm.onceperstream} onChange={e => setRewardForm((f: Reward) => ({...f, onceperstream: e.target.checked}))} />
@@ -489,7 +498,7 @@ export default function ModerateAccountPage() {
                   <input id="rewardCooldown" type="number" className="modal-input" placeholder={t('moderate.rewardCooldownPlaceholder')} title={t('moderate.rewardCooldownHint')} value={rewardForm.cooldown} min={0} onChange={e => setRewardForm((f: Reward) => ({...f, cooldown: Number(e.target.value)}))} />
                 </div>
 
-                <div style={{display:'flex',flexDirection:'row',gap:12,alignItems:'center',marginTop:18,gridColumn:'span 2'}}>
+                <div style={{display:'flex',flexDirection:'row',gap:12,alignItems:'center',marginTop:18,gridColumn: isWide ? 'span 3' : 'span 2'}}>
                   <button className="btn btn-primary" type="submit" disabled={rewardBusy || (!rewardForm.name && !rewardForm.nameKey) || !rewardForm.type}>{t('moderate.saveRewardBtn')}</button>
                   <button className="btn btn-secondary" type="button" onClick={() => { setRewardEdit(null); setRewardForm({ ...defaultReward }); setRewardModalOpen(false); }}>{t('moderate.cancelRewardBtn')}</button>
                 </div>

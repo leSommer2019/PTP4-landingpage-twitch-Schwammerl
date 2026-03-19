@@ -68,6 +68,21 @@ FOR SELECT
                twitch_user_id = (auth.jwt() -> 'user_metadata' ->> 'provider_id')
                );
 
+-- Allow moderators / broadcaster (or service_role) to insert, update and delete points
+-- Uses helper functions defined in supa_onlybart_setup.sql: is_moderator_role(), is_broadcaster_role()
+CREATE POLICY "Moderatoren können Punkte verwalten" ON points
+  FOR ALL
+  USING (
+    current_setting('request.jwt.claim.role', true) = 'service_role'
+    OR public.is_moderator_role()
+    OR public.is_broadcaster_role()
+  )
+  WITH CHECK (
+    current_setting('request.jwt.claim.role', true) = 'service_role'
+    OR public.is_moderator_role()
+    OR public.is_broadcaster_role()
+  );
+
 
 -- RLS für Rewards
 ALTER TABLE rewards ENABLE ROW LEVEL SECURITY;
