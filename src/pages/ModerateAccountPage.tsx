@@ -361,10 +361,16 @@ export default function ModerateAccountPage() {
         </ul>
       </div>
 
-      {/* Kanalpunkte-Panel */}
+      {/* Kanalpunkte-Panel (responsive) */}
       <h2 style={{ marginTop: 32 }}>{t('moderate.channelPoints')}</h2>
-      <div style={{display:'flex',alignItems:'center',gap:16,marginBottom:8}}>
-        <div style={{display:'flex',flexDirection:'column',gap:4}}>
+      <div style={{
+        display: 'flex',
+        flexDirection: isWide ? 'row' : 'column',
+        alignItems: isWide ? 'center' : 'stretch',
+        gap: 12,
+        marginBottom: 8
+      }}>
+        <div style={{display:'flex',flexDirection:'column',gap:6, width: isWide ? 'auto' : '100%'}}>
           <label htmlFor="pointsName" style={{fontWeight:'bold'}}>{t('moderate.pointsInputLabel')}</label>
           <input
             id="pointsName"
@@ -373,18 +379,20 @@ export default function ModerateAccountPage() {
             onChange={e => setPointsName(e.target.value)}
             placeholder={t('moderate.pointsInputPlaceholder')}
             className="modal-input"
-            style={{ minWidth:180 }}
+            style={{ width: isWide ? 220 : '100%' }}
           />
         </div>
-        <div style={{display:'flex',flexDirection:'column',gap:4}}>
+
+        <div style={{display:'flex',flexDirection:'column',gap:6, width: isWide ? 160 : '100%'}}>
           <label htmlFor="pointsAction" style={{fontWeight:'bold'}}>{t('moderate.pointsActionLabel')}</label>
-          <select id="pointsAction" className="modal-input" value={pointsAction} onChange={e => setPointsAction(e.target.value as 'reset' | 'give')} style={{ minWidth:120 }}>
+          <select id="pointsAction" className="modal-input" value={pointsAction} onChange={e => setPointsAction(e.target.value as 'reset' | 'give')} style={{ width: '100%' }}>
             <option value="reset">{t('moderate.resetPoints')}</option>
             <option value="give">{t('moderate.givePoints')}</option>
           </select>
         </div>
+
         {pointsAction === 'give' && (
-          <div style={{display:'flex',flexDirection:'column',gap:4}}>
+          <div style={{display:'flex',flexDirection:'column',gap:6, width: isWide ? 120 : '100%'}}>
             <label htmlFor="pointsValue" style={{fontWeight:'bold'}}>{t('moderate.pointsValueLabel')}</label>
             <input
               id="pointsValue"
@@ -394,13 +402,16 @@ export default function ModerateAccountPage() {
               onChange={e => setPointsValue(Number(e.target.value))}
               placeholder={t('moderate.pointsValuePlaceholder')}
               className="modal-input"
-              style={{ width: 100 }}
+              style={{ width: '100%' }}
             />
           </div>
         )}
-        <button className="btn btn-primary" style={{marginTop:22}} disabled={!pointsName.trim() || (pointsAction==='give' && (!pointsValue || pointsValue<=0)) || busy} onClick={handlePoints}>
-          {pointsAction === 'reset' ? '🗑️' : '➕'} {pointsAction === 'reset' ? t('moderate.resetPoints') : t('moderate.givePoints')}
-        </button>
+
+        <div style={{ width: isWide ? 'auto' : '100%' }}>
+          <button className="btn btn-primary" style={{ marginTop: isWide ? 0 : 8, width: isWide ? 'auto' : '100%' }} disabled={!pointsName.trim() || (pointsAction==='give' && (!pointsValue || pointsValue<=0)) || busy} onClick={handlePoints}>
+            {pointsAction === 'reset' ? '🗑️' : '➕'} {pointsAction === 'reset' ? t('moderate.resetPoints') : t('moderate.givePoints')}
+          </button>
+        </div>
       </div>
 
       {/* Belohnungen-Panel */}
@@ -533,21 +544,7 @@ export default function ModerateAccountPage() {
         )}
       </div>
 
-      {/* Anleitung */}
-      <div style={{background:'var(--box-bg)',border:'1px solid var(--box-border)',borderRadius:8,padding:16,marginBottom:32}}>
-        <h2 style={{marginTop:0}}>{t('moderate.instructionsTitle')}</h2>
-        <ul style={{marginBottom:8}}>
-          <li><b>{t('moderate.instructionsBan')}</b> {t('moderate.instructionsBanDesc')}</li>
-          <li><b>{t('moderate.instructionsPoints')}</b> {t('moderate.instructionsPointsDesc')}</li>
-          <li><b>{t('moderate.instructionsRewards')}</b> {t('moderate.instructionsRewardsDesc')}</li>
-        </ul>
-        <b>{t('moderate.technicalHint')}</b>
-        <ul>
-          <li>{t('moderate.technicalHintPoints')}</li>
-          <li>{t('moderate.technicalHintRewards')}</li>
-          <li>{t('moderate.technicalHintBanned')}</li>
-        </ul>
-      </div>
+      {/* Anleitung entfernt auf Wunsch des Moderators */}
       </SubPage>
   )
 }

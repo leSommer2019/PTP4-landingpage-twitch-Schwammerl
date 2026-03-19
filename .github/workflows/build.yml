@@ -3,7 +3,6 @@ name: Build TwitchAddon EXE
 on:
   push:
     branches:
-      - master
       - main
 permissions:
   contents: write
