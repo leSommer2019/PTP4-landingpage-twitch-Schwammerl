@@ -5,6 +5,7 @@ import com.github.twitch4j.events.ChannelGoOfflineEvent;
 import com.github.twitch4j.chat.events.channel.ChannelJoinEvent;
 import com.github.twitch4j.chat.events.channel.ChannelLeaveEvent;
 import com.github.philippheuer.credentialmanager.domain.OAuth2Credential;
+import com.github.twitch4j.helix.domain.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,6 +34,7 @@ public class TwitchBot {
         try {
             // HINWEIS: Der oauthToken MUSS ein Token deines Broadcaster-Accounts sein (z.B. aus .env oder Umgebungsvariable)
             // Beispiel für .env: TWITCH_OAUTH_TOKEN=oauth:dein_token
+            assert oauthToken != null;
             OAuth2Credential credential = new OAuth2Credential("twitch", oauthToken);
             this.twitchClient = TwitchClientBuilder.builder()
                     .withEnableChat(true)
@@ -54,9 +56,25 @@ public class TwitchBot {
         // Join Event
         twitchClient.getEventManager().onEvent(ChannelJoinEvent.class, event -> {
             String user = event.getUser().getName();
-            String userid = event.getUser().getId();
             logger.info("User joined: {}", user);
-            pointsManager.userJoined(user, userid);
+            String userId = null;
+            try {
+                // Twitch-User-ID über Helix-API abfragen
+                userId = twitchClient.getHelix()
+                        .getUsers(null, null, java.util.Collections.singletonList(user))
+                        .execute()
+                        .getUsers()
+                        .stream()
+                        .findFirst()
+                        .map(User::getId)
+                        .orElse(null);
+                if (userId == null) {
+                    logger.error("Konnte Twitch-User-ID für {} nicht über Helix-API ermitteln!", user);
+                }
+            } catch (Exception e) {
+                logger.error("Fehler beim Abfragen der Twitch-User-ID für {}: {}", user, e.getMessage(), e);
+            }
+            pointsManager.userJoined(user, userId);
         });
         // Part/Leave Event
         twitchClient.getEventManager().onEvent(ChannelLeaveEvent.class, event -> {
