@@ -80,8 +80,16 @@ BEGIN
     VALUES (p_twitch_user_id, p_reward_id, now(), p_cost, p_description, p_ttstext)
     RETURNING id INTO v_redeemed_id;
 
-    INSERT INTO redeemed_global (reward_id, redeemed_by, redeemed_at, stream_id, is_active, meta)
-    VALUES (p_reward_id, p_twitch_user_id, now(), p_stream_id, true, v_meta)
+    INSERT INTO redeemed_global (reward_id, redeemed_by, redeemed_at, expires_at, stream_id, is_active, meta)
+    VALUES (
+      p_reward_id,
+      p_twitch_user_id,
+      now(),
+      CASE WHEN v_cooldown > 0 THEN now() + (v_cooldown || ' seconds')::interval ELSE NULL END,
+      p_stream_id,
+      true,
+      v_meta
+    )
     RETURNING id INTO v_global_id;
 
     RETURN jsonb_build_object('success', true, 'redeemed_id', v_redeemed_id, 'global_id', v_global_id);

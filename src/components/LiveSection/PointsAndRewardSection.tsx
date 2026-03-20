@@ -55,17 +55,17 @@ export default function PointsAndRewardSection({ isLive }: { isLive: boolean }) 
       // Lade letzte Einlösung für diesen User und Reward
       const { data, error } = await supabase
         .from('redeemed_rewards')
-        .select('created_at')
+        .select('timestamp')
         .eq('twitch_user_id', twitchUserId)
         .eq('reward_id', selectedRewardId)
-        .order('created_at', { ascending: false })
+        .order('timestamp', { ascending: false })
         .limit(1)
         .maybeSingle();
       if (error) return;
       const reward = rewards.find(r => r.id === selectedRewardId);
       if (!reward || !reward.cooldown) return;
-      if (data && data.created_at) {
-        const last = new Date(data.created_at).getTime();
+      if (data && data.timestamp) {
+        const last = new Date(data.timestamp).getTime();
         const now = Date.now();
         const cooldownMs = reward.cooldown * 1000;
         const remaining = last + cooldownMs - now;
