@@ -51,7 +51,7 @@ jobs:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
           VITE_TWITCH_CLIENT_ID: ${{ secrets.VITE_TWITCH_CLIENT_ID }}
-          VITE_CHANNEL_NAME: ${{ secrets.VITE_CHANNEL_NAME }}
+          VITE_CHANNEL_NAME: ${{ secrets.CHANNEL_NAME }}
 
       # SPA Fallback: kopiere index.html → 404.html
       # GitHub Pages liefert 404.html bei unbekannten Pfaden aus,
