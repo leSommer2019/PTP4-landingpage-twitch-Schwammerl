@@ -25,6 +25,8 @@ public class TwitchBot {
     private final String clientId;
     private final String clientSecret;
     private final String refreshToken;
+    // Aktuelle Stream-Session-ID (stream_sessions.id)
+    private String currentStreamSessionId = null;
 
     public TwitchBot(String oauthToken, String clientId, String clientSecret, String refreshToken, String channelName, UserPointsManager pointsManager) {
         this(oauthToken, clientId, clientSecret, refreshToken, channelName, pointsManager, 10000);
@@ -94,6 +96,19 @@ public class TwitchBot {
         // Online Event (GoLive)
         twitchClient.getEventManager().onEvent(ChannelGoLiveEvent.class, event -> {
             logger.info("Stream ist online!");
+            // Erstelle eine neue Stream-Session in der DB
+            try {
+                String streamIdentifier = channelName + "-" + System.currentTimeMillis();
+                String sessionId = pointsManager.createStreamSession(streamIdentifier);
+                if (sessionId != null) {
+                    currentStreamSessionId = sessionId;
+                    logger.info("Neue Stream-Session erstellt: {} (identifier={})", sessionId, streamIdentifier);
+                } else {
+                    logger.warn("Konnte keine Stream-Session erstellen.");
+                }
+            } catch (Exception e) {
+                logger.error("Fehler beim Erstellen der Stream-Session: {}", e.getMessage(), e);
+            }
             startTimer();
         });
         // Offline Event
@@ -107,6 +122,22 @@ public class TwitchBot {
                     pointsManager.addPoints(session.username, session.userid, 250, "Bis zum Ende geblieben");
                     session.hasReceivedStayTillEndPoints = true;
                 }
+            }
+            // Beende Stream-Session und deaktiviere globale Einlösungen für diese Session
+            try {
+                if (currentStreamSessionId != null) {
+                    boolean deact = pointsManager.deactivateGlobalRedemptionsForSession(currentStreamSessionId);
+                    logger.info("redeemed_global Einträge für Session {} deaktiviert: {}", currentStreamSessionId, deact);
+                    boolean ended = pointsManager.endStreamSession(currentStreamSessionId);
+                    logger.info("Stream-Session {} als beendet markiert: {}", currentStreamSessionId, ended);
+                    currentStreamSessionId = null;
+                } else {
+                    // Fallback: deaktiviere alle aktiven globalen Einlösungen
+                    boolean deactAll = pointsManager.deactivateAllActiveGlobalRedemptions();
+                    logger.info("Alle aktiven redeemed_global Einträge deaktiviert: {}", deactAll);
+                }
+            } catch (Exception e) {
+                logger.error("Fehler beim Beenden der Stream-Session / Deaktivieren globaler Einlösungen: {}", e.getMessage(), e);
             }
             stopTimer();
         });

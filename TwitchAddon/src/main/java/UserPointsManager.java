@@ -58,4 +58,21 @@ public class UserPointsManager {
     public Map<String, UserSession> getAllSessions() {
         return sessions;
     }
+
+    // --- Stream session / global redemption helpers (wrappers around SupabaseClient)
+    public String createStreamSession(String streamIdentifier) {
+        return supabaseClient.createStreamSession(streamIdentifier);
+    }
+
+    public boolean endStreamSession(String sessionId) {
+        return supabaseClient.endStreamSession(sessionId);
+    }
+
+    public boolean deactivateGlobalRedemptionsForSession(String sessionId) {
+        return supabaseClient.deactivateGlobalRedemptionsForStream(sessionId);
+    }
+
+    public boolean deactivateAllActiveGlobalRedemptions() {
+        return supabaseClient.deactivateAllActiveGlobalRedemptions();
+    }
 }

@@ -62,18 +62,56 @@ public class OverlayApiServer {
                 int cooldown = supabaseClient.getRewardCooldownFromDb(rewardId); // Sekunden
                 long now = System.currentTimeMillis();
                 long elapsed = (now - timestamp) / 1000L;
-                if (cooldown > 0 && elapsed < cooldown) {
-                    // Cooldown noch aktiv, nicht löschen
-                    JSONObject resp = new JSONObject();
-                    resp.put("success", false);
-                    resp.put("cooldown", cooldown);
-                    resp.put("remaining", cooldown - elapsed);
-                    String respStr = resp.toString();
-                    exchange.getResponseHeaders().add("Content-Type", "application/json");
-                    exchange.sendResponseHeaders(429, respStr.length());
-                    exchange.getResponseBody().write(respStr.getBytes());
-                    exchange.getResponseBody().close();
-                    return;
+
+                // 1) Prüfe once-per-stream auf Reward-Definition
+                boolean oncePerStream = supabaseClient.isRewardOncePerStream(rewardId);
+                if (oncePerStream) {
+                    // Prüfe, ob es einen aktiven globalen Eintrag für diese Belohnung in redeemed_global gibt (stream_id kann null sein)
+                    boolean activeGlobal = supabaseClient.hasActiveGlobalRedemption(rewardId, null);
+                    if (activeGlobal) {
+                        JSONObject resp = new JSONObject();
+                        resp.put("success", false);
+                        resp.put("error", "once_per_stream_active");
+                        String respStr = resp.toString();
+                        exchange.getResponseHeaders().add("Content-Type", "application/json");
+                        exchange.sendResponseHeaders(429, respStr.length());
+                        exchange.getResponseBody().write(respStr.getBytes());
+                        exchange.getResponseBody().close();
+                        return;
+                    }
+                }
+
+                // 2) Prüfe globalen Cooldown: Wenn ein globaler Eintrag existiert, verwende dessen Zeitstempel
+                long lastGlobal = supabaseClient.getLastGlobalRedemptionTimestamp(rewardId);
+                if (lastGlobal > 0) {
+                    long globalElapsed = (now - lastGlobal) / 1000L;
+                    if (cooldown > 0 && globalElapsed < cooldown) {
+                        JSONObject resp = new JSONObject();
+                        resp.put("success", false);
+                        resp.put("error", "cooldown_active");
+                        resp.put("cooldown", cooldown);
+                        resp.put("remaining", cooldown - globalElapsed);
+                        String respStr = resp.toString();
+                        exchange.getResponseHeaders().add("Content-Type", "application/json");
+                        exchange.sendResponseHeaders(429, respStr.length());
+                        exchange.getResponseBody().write(respStr.getBytes());
+                        exchange.getResponseBody().close();
+                        return;
+                    }
+                } else {
+                    // Fallback: benutze timestamp aus redeemed_rewards (alte Logik)
+                    if (cooldown > 0 && elapsed < cooldown) {
+                        JSONObject resp = new JSONObject();
+                        resp.put("success", false);
+                        resp.put("cooldown", cooldown);
+                        resp.put("remaining", cooldown - elapsed);
+                        String respStr = resp.toString();
+                        exchange.getResponseHeaders().add("Content-Type", "application/json");
+                        exchange.sendResponseHeaders(429, respStr.length());
+                        exchange.getResponseBody().write(respStr.getBytes());
+                        exchange.getResponseBody().close();
+                        return;
+                    }
                 }
                 // Cooldown abgelaufen, jetzt löschen
                 boolean success = supabaseClient.deleteRedeemedReward(id);

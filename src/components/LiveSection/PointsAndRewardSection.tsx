@@ -19,6 +19,15 @@ interface Reward {
   istts?: boolean;
 }
 
+interface RedeemRewardParams {
+  p_twitch_user_id: string;
+  p_reward_id: string;
+  p_description?: string | null;
+  p_cost?: number | null;
+  p_ttstext?: string | null;
+  p_stream_id?: string | null;
+}
+
 export default function PointsAndRewardSection({ isLive }: { isLive: boolean }) {
   const { user, loading } = useAuth();
   const { t } = useTranslation();
@@ -143,26 +152,61 @@ export default function PointsAndRewardSection({ isLive }: { isLive: boolean }) 
       return replaceNamePlaceholders(reward.description);
     })();
 
-    const { error: insertError } = await supabase.from('redeemed_rewards').insert([
-      {
-        twitch_user_id: twitchUserId,
-        reward_id: reward.id,
-        description: descriptionToInsert,
-        cost: reward.cost,
-      },
-    ]);
-    if (insertError) {
-      setStatus({ type: 'error', msg: t('Fehler beim Einlösen: {{msg}}', { msg: insertError.message }) });
-    } else {
-      setStatus({ type: 'success', msg: t('Erfolgreich eingelöst!') });
-      if (points !== null) setPoints(points - reward.cost);
-      setTtsText('');
-      setCooldownActive(true);
-      setCooldownRemaining(reward.cooldown || 0);
-      setTimeout(() => {
-        setSelectedRewardId(null);
-        setStatus(null);
-      }, 2000);
+    // Verwende serverseitige RPC-Funktion 'redeem_reward' statt direktem Insert,
+    // damit Cooldown / once-per-stream zentral auf dem Server geprüft werden können.
+    try {
+      // Versuche aktive Stream-Session aus der DB zu lesen und übergebe deren id an die RPC
+      let streamId: string | null = null;
+      try {
+        const { data: sessions } = await supabase
+          .from('stream_sessions')
+          .select('id')
+          .eq('is_active', true)
+          .order('started_at', { ascending: false })
+          .limit(1);
+        if (sessions && Array.isArray(sessions) && sessions.length > 0) {
+          streamId = sessions[0].id || null;
+        }
+      } catch {
+        // ignore errors — RPC hat bereits Fallback, RPC selbst versucht ebenfalls, aktive Session zu ermitteln
+      }
+
+      const rpcParams: RedeemRewardParams = {
+        p_twitch_user_id: twitchUserId,
+        p_reward_id: reward.id,
+        p_description: descriptionToInsert,
+        p_cost: reward.cost,
+        p_ttstext: ttsText || null,
+        p_stream_id: streamId
+      };
+      const { data, error: rpcError } = await supabase.rpc('redeem_reward', rpcParams as object);
+      if (rpcError) {
+        setStatus({ type: 'error', msg: t('Fehler beim Einlösen: {{msg}}', { msg: rpcError.message }) });
+      } else if (data && Array.isArray(data) && data.length > 0 && data[0].error) {
+        // Die Funktion gibt kontrollierte Fehler zurück (z.B. cooldown_active)
+        const info = data[0];
+        if (info.error === 'cooldown_active') {
+          const rem = info.remaining || 0;
+          setStatus({ type: 'error', msg: t('Cooldown aktiv. Noch {{sec}}s', { sec: rem }) });
+        } else if (info.error === 'once_per_stream_active') {
+          setStatus({ type: 'error', msg: t('Diese Belohnung kann nur einmal pro Stream eingelöst werden.') });
+        } else {
+          setStatus({ type: 'error', msg: t('Ein unbekannter Fehler ist aufgetreten.') });
+        }
+      } else {
+        setStatus({ type: 'success', msg: t('Erfolgreich eingelöst!') });
+        if (points !== null) setPoints(points - reward.cost);
+        setTtsText('');
+        setCooldownActive(true);
+        setCooldownRemaining(reward.cooldown || 0);
+        setTimeout(() => {
+          setSelectedRewardId(null);
+          setStatus(null);
+        }, 2000);
+      }
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : String(e);
+      setStatus({ type: 'error', msg: t('Fehler beim Einlösen: {{msg}}', { msg }) });
     }
     setRedeemLoading(false);
   };
