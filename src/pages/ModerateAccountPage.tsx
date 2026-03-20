@@ -388,7 +388,9 @@ export default function ModerateAccountPage() {
       <div style={{
         display: 'flex',
         flexDirection: isWide ? 'row' : 'column',
-        alignItems: isWide ? 'center' : 'stretch',
+        // On wide screens align children to the bottom so the action button
+        // sits on the same vertical level as the input fields (not the labels)
+        alignItems: isWide ? 'flex-end' : 'stretch',
         gap: 12,
         marginBottom: 8
       }}>
