@@ -485,6 +485,9 @@
     "rpcMissingAndDeleteFailedShort": "Fähler: RPC-Funktion `admin_delete_reward` fehlt und Direktlöschung isch fehlgschlage. Bitte `supabase/db_anleitung_allgemein.sql` usführe.",
     "errorDeletingReward": "Fähler bim Lösche vo de Reward: {{msg}}",
     "rewardDeleted": "Reward glöscht!"
+    ,
+    "rlsBanPolicy": "Fähler: Direkti Iifüegig wird dur RLS blockiert. Bitte d'RPC `admin_ban_account` i de DB aalege oder d'Policies aapasse.",
+    "rlsUnbanPolicy": "Fähler: Direkti Löschung wird dur RLS blockiert. Bitte d'RPC `admin_unban_account` i de DB aalege oder d'Policies aapasse."
   },
   "clipVotingPage": {
     "title": "Clip vom Monet – Voting",

@@ -496,6 +496,9 @@
     "rpcMissingAndDeleteFailedShort": "Error: RPC function `admin_delete_reward` missing and direct delete failed. Run the SQL in `supabase/db_anleitung_allgemein.sql`.",
     "errorDeletingReward": "Error deleting reward: {{msg}}",
     "rewardDeleted": "Reward deleted!"
+    ,
+    "rlsBanPolicy": "Error: direct insert blocked by RLS. Please create the RPC `admin_ban_account` in the DB or adjust policies.",
+    "rlsUnbanPolicy": "Error: direct delete blocked by RLS. Please create the RPC `admin_unban_account` in the DB or adjust policies."
   },
   "clipVotingPage": {
     "title": "Clip of the Month – Voting",

@@ -8,6 +8,11 @@ import { useIsModerator } from '../hooks/useIsModerator'
 import SubPage from '../components/SubPage/SubPage'
 import { getErrorMessage } from '../lib/utils'
 
+// Type guard to safely inspect error objects for a Postgres error code.
+function isErrorWithCode(e: unknown): e is { code?: string | number } {
+  return typeof e === 'object' && e !== null && 'code' in e && (typeof (e as Record<string, unknown>).code === 'string' || typeof (e as Record<string, unknown>).code === 'number')
+}
+
 
 interface Reward {
     id?: string;
@@ -166,10 +171,29 @@ export default function ModerateAccountPage() {
 
       const display_name = banName.trim()
       const banned_by = myTwitchId
-      const { error } = await supabase.from('banned_accounts').insert([{ twitch_user_id, display_name, banned_by }])
-      if (error) {
-        showToast((t('moderate.errorBanning') || 'Fehler beim Bannen: ') + getErrorMessage(error))
-        return
+
+      // Prefer a secure RPC that runs with elevated DB rights (handles RLS).
+      // If the RPC is not present, fall back to a direct insert (may fail due to RLS).
+      const { error: rpcError } = await supabase.rpc('admin_ban_account', { p_twitch_user_id: twitch_user_id, p_display_name: display_name, p_banned_by: banned_by })
+      if (rpcError) {
+        const e = rpcError as { code?: string; message?: string } | null
+        const msg = getErrorMessage(rpcError)
+        if (e?.code === 'PGRST202' || (e?.message && e.message.includes('Could not find the function')) || msg.includes('Could not find the function')) {
+          // RPC missing — try direct insert (may still fail due to RLS)
+          const { error } = await supabase.from('banned_accounts').insert([{ twitch_user_id, display_name, banned_by }])
+          if (error) {
+            // If the insert failed due to Row Level Security, give a helpful hint
+            if (isErrorWithCode(error) && String(error.code) === '42501') {
+              showToast(t('moderate.rlsBanPolicy') || 'Fehler: Direkte Einfügung blockiert (RLS). Bitte die RPC-Funktion `admin_ban_account` in der DB anlegen oder entsprechende Policies anpassen.')
+            } else {
+              showToast((t('moderate.errorBanning') || 'Fehler beim Bannen: ') + getErrorMessage(error))
+            }
+            return
+          }
+        } else {
+          showToast((t('moderate.errorBanning') || 'Fehler beim Bannen: ') + msg)
+          return
+        }
       }
       showToast(t('moderate.accountBanned') || 'Account gebannt!')
       setBanName('')
@@ -202,10 +226,25 @@ export default function ModerateAccountPage() {
         }
       }
 
-      const { error } = await supabase.from('banned_accounts').delete().eq('twitch_user_id', twitch_user_id)
-      if (error) {
-        showToast((t('moderate.errorUnbanning') || 'Fehler beim Entbannen: ') + getErrorMessage(error))
-        return
+      // Prefer RPC to perform the unban (handles RLS). Fall back to direct delete if RPC missing.
+      const { error: rpcErr } = await supabase.rpc('admin_unban_account', { p_twitch_user_id: twitch_user_id })
+      if (rpcErr) {
+        const e = rpcErr as { code?: string; message?: string } | null
+        const msg = getErrorMessage(rpcErr)
+        if (e?.code === 'PGRST202' || (e?.message && e.message.includes('Could not find the function')) || msg.includes('Could not find the function')) {
+          const { error } = await supabase.from('banned_accounts').delete().eq('twitch_user_id', twitch_user_id)
+          if (error) {
+            if (isErrorWithCode(error) && String(error.code) === '42501') {
+              showToast(t('moderate.rlsUnbanPolicy') || 'Fehler: Direkte Löschung blockiert (RLS). Bitte die RPC-Funktion `admin_unban_account` in der DB anlegen oder entsprechende Policies anpassen.')
+            } else {
+              showToast((t('moderate.errorUnbanning') || 'Fehler beim Entbannen: ') + getErrorMessage(error))
+            }
+            return
+          }
+        } else {
+          showToast((t('moderate.errorUnbanning') || 'Fehler beim Entbannen: ') + msg)
+          return
+        }
       }
       showToast(t('moderate.accountUnbanned') || 'Account entbannt!')
       fetchBanned()

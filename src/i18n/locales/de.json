@@ -498,6 +498,9 @@
     "rpcMissingAndDeleteFailedShort": "Fehler: Die RPC-Funktion `admin_delete_reward` ist nicht vorhanden und Direktlöschung ist fehlgeschlagen. Bitte die SQL-Funktion aus `supabase/db_anleitung_allgemein.sql` in deiner Supabase-DB ausführen.",
     "errorDeletingReward": "Fehler beim Löschen: {{msg}}",
     "rewardDeleted": "Reward gelöscht!"
+    ,
+    "rlsBanPolicy": "Fehler: Direkte Einfügung blockiert (RLS). Bitte die RPC-Funktion `admin_ban_account` in der DB anlegen oder entsprechende Policies anpassen.",
+    "rlsUnbanPolicy": "Fehler: Direkte Löschung blockiert (RLS). Bitte die RPC-Funktion `admin_unban_account` in der DB anlegen oder entsprechende Policies anpassen."
   },
   "clipVotingPage": {
     "title": "Clip des Monats – Voting",
