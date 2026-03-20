@@ -63,6 +63,28 @@ export default function PointsAndRewardSection({ isLive }: { isLive: boolean }) 
         .maybeSingle();
       if (error) return;
       const reward = rewards.find(r => r.id === selectedRewardId);
+      // Zusätzlich: prüfe globalen Lock (redeemed_global) für dieses Reward
+      try {
+        const { data: globalData } = await supabase
+          .from('redeemed_global')
+          .select('id, redeemed_at, expires_at, is_active, stream_id')
+          .eq('reward_id', selectedRewardId)
+          .eq('is_active', true)
+          .limit(1)
+        if (globalData && globalData.length > 0) {
+          const g = globalData[0] as any
+          const expires = g.expires_at
+          const now = Date.now()
+          if (!expires || new Date(expires).getTime() > now) {
+            // global lock active
+            setCooldownActive(true)
+            setCooldownRemaining(0)
+            return
+          }
+        }
+      } catch {
+        // ignore
+      }
       if (!reward || !reward.cooldown) return;
       if (data && data.timestamp) {
         const last = new Date(data.timestamp).getTime();

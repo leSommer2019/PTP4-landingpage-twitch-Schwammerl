@@ -24,6 +24,8 @@ DECLARE
   v_global_id uuid;
   v_active_session uuid;
   v_meta jsonb := jsonb_build_object('description', p_description);
+  v_expires timestamptz;
+  v_stream_end timestamptz;
 BEGIN
   -- Lade Reward als JSON, um unterschiedliche Spaltennamen tolerant zu behandeln
   SELECT to_jsonb(r.*) INTO v_reward FROM rewards r WHERE r.id = p_reward_id LIMIT 1;
@@ -55,12 +57,13 @@ BEGIN
   END IF;
 
   IF v_once THEN
+    -- Consider expired entries as not active
     IF p_stream_id IS NOT NULL THEN
-      IF EXISTS(SELECT 1 FROM redeemed_global WHERE reward_id = p_reward_id AND stream_id = p_stream_id AND is_active = true) THEN
+      IF EXISTS(SELECT 1 FROM redeemed_global WHERE reward_id = p_reward_id AND stream_id = p_stream_id AND is_active = true AND (expires_at IS NULL OR expires_at > now())) THEN
         RETURN jsonb_build_object('error','once_per_stream_active');
       END IF;
     ELSE
-      IF EXISTS(SELECT 1 FROM redeemed_global WHERE reward_id = p_reward_id AND is_active = true) THEN
+      IF EXISTS(SELECT 1 FROM redeemed_global WHERE reward_id = p_reward_id AND is_active = true AND (expires_at IS NULL OR expires_at > now())) THEN
         RETURN jsonb_build_object('error','once_per_stream_active');
       END IF;
     END IF;
@@ -74,6 +77,35 @@ BEGIN
     END IF;
   END IF;
 
+  -- Berechne expires_at abhängig von cooldown / once-per-stream
+  v_expires := NULL;
+  IF v_cooldown > 0 THEN
+    v_expires := now() + (v_cooldown || ' seconds')::interval;
+  ELSIF v_once THEN
+    IF p_stream_id IS NOT NULL THEN
+      -- Wenn eine Stream-Session referenziert wird, versuchen wir, das Ende der Session als Ablaufzeit zu verwenden
+      BEGIN
+        SELECT ended_at INTO v_stream_end FROM stream_sessions WHERE id = p_stream_id::uuid LIMIT 1;
+      EXCEPTION WHEN others THEN
+        v_stream_end := NULL;
+      END;
+      -- Wenn ended_at bekannt ist, setze expires darauf; ist die Session noch aktiv, lasse expires NULL
+      IF v_stream_end IS NOT NULL THEN
+        v_expires := v_stream_end;
+      ELSE
+        v_expires := NULL;
+      END IF;
+    ELSE
+      -- Kein Stream kontext: setze eine moderate TTL, damit ein einmal pro Stream-Flag nicht permanent blockiert
+      v_expires := now() + interval '24 hours';
+    END IF;
+  END IF;
+
+  -- Safety: never set expires more than 30 days into the future
+  IF v_expires IS NOT NULL THEN
+    v_expires := LEAST(v_expires, now() + interval '30 days');
+  END IF;
+
   -- Alles okay: führe Inserts in einer Transaktion (SECURITY DEFINER erlaubt INSERT in Tabellen)
   BEGIN
     INSERT INTO redeemed_rewards (twitch_user_id, reward_id, timestamp, cost, description, ttsText)
@@ -85,7 +117,7 @@ BEGIN
       p_reward_id,
       p_twitch_user_id,
       now(),
-      CASE WHEN v_cooldown > 0 THEN now() + (v_cooldown || ' seconds')::interval ELSE NULL END,
+      v_expires,
       p_stream_id,
       true,
       v_meta

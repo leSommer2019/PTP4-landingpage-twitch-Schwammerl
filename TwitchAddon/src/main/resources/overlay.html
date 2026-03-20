@@ -80,6 +80,24 @@
     }
     async function playAndDeleteReward(redeemed) {
       console.log('[Overlay] Starte playAndDeleteReward für:', redeemed);
+      // Vor Wiedergabe: prüfe am Overlay-Server, ob die Einlösung erlaubt ist (kein globaler Lock / cooldown)
+      try {
+        const checkResp = await fetch(`/api/redeem_check?id=${redeemed.id}`);
+        if (checkResp.ok) {
+          const checkJson = await checkResp.json();
+          if (!checkJson.allowed) {
+            console.warn('[Overlay] Redeem nicht erlaubt, überspringe Wiedergabe:', checkJson);
+            // Polling fortsetzen
+            isPlaying = false;
+            pollTimeoutId = setTimeout(pollRedeemedRewards, 1000);
+            return;
+          }
+        } else {
+          console.warn('[Overlay] Redeem-Check fehlgeschlagen, fahre trotzdem fort (status:', checkResp.status, ')');
+        }
+      } catch (e) {
+        console.warn('[Overlay] Redeem-Check Fehler:', e);
+      }
       const rewards = await fetchRewards();
       const reward = rewards.find(r => String(r.id) === String(redeemed.reward_id));
       const mediaDiv = document.getElementById('media');

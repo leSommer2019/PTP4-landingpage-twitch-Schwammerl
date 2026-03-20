@@ -17,6 +17,7 @@ public class OverlayApiServer {
         HttpServer server = HttpServer.create(new java.net.InetSocketAddress(8081), 0);
         server.createContext("/api/redeemed_rewards", new RedeemedRewardsHandler());
         server.createContext("/api/rewards", new RewardsHandler());
+        server.createContext("/api/redeem_check", new RedeemCheckHandler());
         // server.createContext("/api/rewards.json", new RewardsJsonHandler()); // entfernt
         // server.createContext("/api/redeem_reward", new RedeemRewardHandler()); // entfernt, Redeems laufen nur noch über Supabase
         server.createContext("/overlay.html", new StaticFileHandler("overlay.html", "text/html"));
@@ -60,6 +61,8 @@ public class OverlayApiServer {
                 String rewardId = redeemedReward.getString("reward_id");
                 long timestamp = redeemedReward.getLong("timestamp");
                 int cooldown = supabaseClient.getRewardCooldownFromDb(rewardId); // Sekunden
+                String redeemedBy = redeemedReward.optString("twitch_user_id", null);
+                int redeemedCost = redeemedReward.optInt("cost", 0);
                 long now = System.currentTimeMillis();
                 long elapsed = (now - timestamp) / 1000L;
 
@@ -69,12 +72,25 @@ public class OverlayApiServer {
                     // Prüfe, ob es einen aktiven globalen Eintrag für diese Belohnung in redeemed_global gibt (stream_id kann null sein)
                     boolean activeGlobal = supabaseClient.hasActiveGlobalRedemption(rewardId, null);
                     if (activeGlobal) {
+                        // Wenn bereits eine globale Einlösung aktiv ist: lösche den eingelösten Eintrag und erstatte Punkte
+                        // Hinweis: SupabaseClient.deleteRedeemedReward löscht aus redeemed_rewards
+                        boolean deleted = supabaseClient.deleteRedeemedReward(id);
+                        // Refund points if we know who redeemed and cost
+                        boolean refunded = false;
+                        if (redeemedBy != null && redeemedCost > 0) {
+                            supabaseClient.addOrUpdatePoints(redeemedBy, redeemedBy, redeemedCost, "Refund blocked redemption");
+                            refunded = true;
+                        }
+                        // Rückgabe: informiere Caller, dass Reward nicht ausgeführt wurde und Punkte zurückerstattet wurden
                         JSONObject resp = new JSONObject();
                         resp.put("success", false);
                         resp.put("error", "once_per_stream_active");
+                        resp.put("action", "refunded_and_deleted");
+                        resp.put("deleted", deleted);
+                        resp.put("refunded", refunded);
                         String respStr = resp.toString();
                         exchange.getResponseHeaders().add("Content-Type", "application/json");
-                        exchange.sendResponseHeaders(429, respStr.length());
+                        exchange.sendResponseHeaders(200, respStr.length());
                         exchange.getResponseBody().write(respStr.getBytes());
                         exchange.getResponseBody().close();
                         return;
@@ -86,14 +102,24 @@ public class OverlayApiServer {
                 if (lastGlobal > 0) {
                     long globalElapsed = (now - lastGlobal) / 1000L;
                     if (cooldown > 0 && globalElapsed < cooldown) {
+                        // Auch hier: wenn globaler Lock existiert => lösche eingelösten Reward und refund
+                        boolean deleted = supabaseClient.deleteRedeemedReward(id);
+                        boolean refunded = false;
+                        if (redeemedBy != null && redeemedCost > 0) {
+                            supabaseClient.addOrUpdatePoints(redeemedBy, redeemedBy, redeemedCost, "Refund blocked redemption");
+                            refunded = true;
+                        }
                         JSONObject resp = new JSONObject();
                         resp.put("success", false);
                         resp.put("error", "cooldown_active");
                         resp.put("cooldown", cooldown);
                         resp.put("remaining", cooldown - globalElapsed);
+                        resp.put("action", "refunded_and_deleted");
+                        resp.put("deleted", deleted);
+                        resp.put("refunded", refunded);
                         String respStr = resp.toString();
                         exchange.getResponseHeaders().add("Content-Type", "application/json");
-                        exchange.sendResponseHeaders(429, respStr.length());
+                        exchange.sendResponseHeaders(200, respStr.length());
                         exchange.getResponseBody().write(respStr.getBytes());
                         exchange.getResponseBody().close();
                         return;
@@ -101,13 +127,22 @@ public class OverlayApiServer {
                 } else {
                     // Fallback: benutze timestamp aus redeemed_rewards (alte Logik)
                     if (cooldown > 0 && elapsed < cooldown) {
+                        boolean deleted = supabaseClient.deleteRedeemedReward(id);
+                        boolean refunded = false;
+                        if (redeemedBy != null && redeemedCost > 0) {
+                            supabaseClient.addOrUpdatePoints(redeemedBy, redeemedBy, redeemedCost, "Refund blocked redemption");
+                            refunded = true;
+                        }
                         JSONObject resp = new JSONObject();
                         resp.put("success", false);
                         resp.put("cooldown", cooldown);
                         resp.put("remaining", cooldown - elapsed);
+                        resp.put("action", "refunded_and_deleted");
+                        resp.put("deleted", deleted);
+                        resp.put("refunded", refunded);
                         String respStr = resp.toString();
                         exchange.getResponseHeaders().add("Content-Type", "application/json");
-                        exchange.sendResponseHeaders(429, respStr.length());
+                        exchange.sendResponseHeaders(200, respStr.length());
                         exchange.getResponseBody().write(respStr.getBytes());
                         exchange.getResponseBody().close();
                         return;
@@ -125,6 +160,103 @@ public class OverlayApiServer {
                 exchange.sendResponseHeaders(405, 0);
                 exchange.getResponseBody().close();
             }
+        }
+    }
+
+    class RedeemCheckHandler implements HttpHandler {
+        @Override
+        public void handle(HttpExchange exchange) throws IOException {
+            if (!exchange.getRequestMethod().equalsIgnoreCase("GET")) {
+                exchange.sendResponseHeaders(405, 0);
+                exchange.getResponseBody().close();
+                return;
+            }
+            String query = exchange.getRequestURI().getQuery();
+            String id = null;
+            if (query != null) {
+                for (String param : query.split("&")) {
+                    if (param.startsWith("id=")) {
+                        id = param.substring(3);
+                        break;
+                    }
+                }
+            }
+            if (id == null) {
+                exchange.sendResponseHeaders(400, 0);
+                exchange.getResponseBody().close();
+                return;
+            }
+            JSONObject redeemedReward = supabaseClient.getRedeemedRewardById(id);
+            if (redeemedReward == null) {
+                exchange.sendResponseHeaders(404, 0);
+                exchange.getResponseBody().close();
+                return;
+            }
+            String rewardId = redeemedReward.optString("reward_id", null);
+            String redeemedBy = redeemedReward.optString("twitch_user_id", null);
+            int redeemedCost = redeemedReward.optInt("cost", 0);
+
+            // Check once-per-stream
+            boolean oncePerStream = supabaseClient.isRewardOncePerStream(rewardId);
+            if (oncePerStream) {
+                boolean activeGlobal = supabaseClient.hasActiveGlobalRedemption(rewardId, null);
+                if (activeGlobal) {
+                    boolean deleted = supabaseClient.deleteRedeemedReward(id);
+                    boolean refunded = false;
+                    if (redeemedBy != null && redeemedCost > 0) {
+                        supabaseClient.addOrUpdatePoints(redeemedBy, redeemedBy, redeemedCost, "Refund blocked redemption");
+                        refunded = true;
+                    }
+                    JSONObject resp = new JSONObject();
+                    resp.put("allowed", false);
+                    resp.put("error", "once_per_stream_active");
+                    resp.put("deleted", deleted);
+                    resp.put("refunded", refunded);
+                    String respStr = resp.toString();
+                    exchange.getResponseHeaders().add("Content-Type", "application/json");
+                    exchange.sendResponseHeaders(200, respStr.length());
+                    exchange.getResponseBody().write(respStr.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+            }
+
+            // Check global cooldown
+            long lastGlobal = supabaseClient.getLastGlobalRedemptionTimestamp(rewardId);
+            int cooldown = supabaseClient.getRewardCooldownFromDb(rewardId);
+            long now = System.currentTimeMillis();
+            if (lastGlobal > 0) {
+                long globalElapsed = (now - lastGlobal) / 1000L;
+                if (cooldown > 0 && globalElapsed < cooldown) {
+                    boolean deleted = supabaseClient.deleteRedeemedReward(id);
+                    boolean refunded = false;
+                    if (redeemedBy != null && redeemedCost > 0) {
+                        supabaseClient.addOrUpdatePoints(redeemedBy, redeemedBy, redeemedCost, "Refund blocked redemption");
+                        refunded = true;
+                    }
+                    JSONObject resp = new JSONObject();
+                    resp.put("allowed", false);
+                    resp.put("error", "cooldown_active");
+                    resp.put("remaining", cooldown - globalElapsed);
+                    resp.put("deleted", deleted);
+                    resp.put("refunded", refunded);
+                    String respStr = resp.toString();
+                    exchange.getResponseHeaders().add("Content-Type", "application/json");
+                    exchange.sendResponseHeaders(200, respStr.length());
+                    exchange.getResponseBody().write(respStr.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
+            }
+
+            // No block -> allowed
+            JSONObject ok = new JSONObject();
+            ok.put("allowed", true);
+            String okStr = ok.toString();
+            exchange.getResponseHeaders().add("Content-Type", "application/json");
+            exchange.sendResponseHeaders(200, okStr.length());
+            exchange.getResponseBody().write(okStr.getBytes());
+            exchange.getResponseBody().close();
         }
     }
 

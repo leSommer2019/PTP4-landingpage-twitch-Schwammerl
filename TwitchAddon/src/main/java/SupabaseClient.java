@@ -403,7 +403,22 @@ public class SupabaseClient {
             HttpResponse<String> response = client.send(request, BodyHandlers.ofString());
             if (response.statusCode() >= 200 && response.statusCode() < 300 && response.body() != null) {
                 JSONArray arr = new JSONArray(response.body());
-                return !arr.isEmpty();
+                if (arr.isEmpty()) return false;
+                // Check expires_at: consider entry active only if expires_at is null or in the future
+                for (int i = 0; i < arr.length(); i++) {
+                    JSONObject obj = arr.getJSONObject(i);
+                    if (!obj.has("expires_at") || obj.isNull("expires_at")) {
+                        return true;
+                    }
+                    String expires = obj.optString("expires_at", null);
+                    if (expires != null) {
+                        java.time.OffsetDateTime odt = java.time.OffsetDateTime.parse(expires);
+                        if (odt.toInstant().isAfter(java.time.Instant.now())) {
+                            return true;
+                        }
+                    }
+                }
+                return false;
             }
         } catch (Exception e) {
             logger.error("Fehler beim Supabase GET redeemed_global (hasActiveGlobalRedemption): {}", e.getMessage(), e);
