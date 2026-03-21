@@ -23,5 +23,5 @@ jobs:
           TWITCH_CLIENT_SECRET: ${{ secrets.TWITCH_CLIENT_SECRET }}
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-          TWITCH_CHANNEL: hd1920x1080
+          TWITCH_CHANNEL: ${{ secrets.CHANNEL_NAME }}
         run: node .github/scripts/fetch-clips.mjs
