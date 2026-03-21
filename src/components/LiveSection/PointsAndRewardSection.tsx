@@ -73,13 +73,13 @@ export default function PointsAndRewardSection({ isLive }: { isLive: boolean }) 
           .limit(1)
         if (globalData && globalData.length > 0) {
           const g = globalData[0] as { id?: string; redeemed_at?: string | null; expires_at?: string | null; is_active?: boolean; stream_id?: string | null };
-          const expires = g.expires_at
-          const now = Date.now()
-          if (!expires || new Date(expires).getTime() > now) {
+          const expires = g.expires_at;
+          const now = Date.now();
+          if (expires && new Date(expires).getTime() > now) {
             // global lock active
-            setCooldownActive(true)
-            setCooldownRemaining(0)
-            return
+            setCooldownActive(true);
+            setCooldownRemaining(Math.ceil((new Date(expires).getTime() - now) / 1000));
+            return;
           }
         }
       } catch {
