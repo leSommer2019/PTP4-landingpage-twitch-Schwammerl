@@ -135,16 +135,29 @@
             utter.volume = 1;
             utter.rate = 1;
             utter.pitch = 1;
-            utter.onend = afterPlayback;
-            utter.onerror = function(e) {
-              console.error('[Overlay] TTS Fehler:', e);
-              mediaDiv.innerHTML += '<div style=\"color:red;font-size:1em;\">TTS-Fehler: ' + e.error + '</div>';
+
+            // Sicherheits-Fallback: Falls TTS blockiert wird, nach X Sekunden weitermachen
+            const safetyTimeout = setTimeout(() => {
+              console.warn('[Overlay] TTS Sicherheits-Fallback ausgelöst (Browser blockiert evtl.)');
+              afterPlayback();
+            }, (duration * 1000) + 500);
+
+            utter.onend = () => {
+              clearTimeout(safetyTimeout);
+              console.log('[Overlay] TTS erfolgreich beendet');
               afterPlayback();
             };
+
+            utter.onerror = (e) => {
+              clearTimeout(safetyTimeout);
+              console.error('[Overlay] TTS Fehler:', e);
+              afterPlayback();
+            };
+
+            console.log('[Overlay] Starte TTS: ' + text);
             window.speechSynthesis.speak(utter);
           } catch (e) {
             console.error('[Overlay] TTS Exception:', e);
-            mediaDiv.innerHTML += '<div style=\"color:red;font-size:1em;\">TTS konnte nicht abgespielt werden.</div>';
             setTimeout(afterPlayback, duration * 1000);
           }
         } else {

@@ -75,4 +75,8 @@ public class UserPointsManager {
     public boolean deactivateAllActiveGlobalRedemptions() {
         return supabaseClient.deactivateAllActiveGlobalRedemptions();
     }
+
+    public boolean deleteAllRedeemedRewards() {
+        return supabaseClient.deleteAllRedeemedRewards();
+    }
 }

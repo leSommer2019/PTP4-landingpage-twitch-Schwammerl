@@ -72,20 +72,28 @@ export default function PointsAndRewardSection({ isLive }: { isLive: boolean }) 
           .from('redeemed_global')
           .select('id, redeemed_at, expires_at, is_active, stream_id')
           .eq('reward_id', selectedRewardId)
+          .eq('is_active', true)
           .limit(1);
         if (globalData && globalData.length > 0) {
-          setGlobalLockActive(true);
-          // Prüfe weiterhin, ob ein aktiver globaler Lock besteht (wie bisher)
           const g = globalData[0] as { id?: string; redeemed_at?: string | null; expires_at?: string | null; is_active?: boolean; stream_id?: string | null };
           const expires = g.expires_at;
           const now = new Date().getTime(); // GMT
-          if (g.is_active && expires) {
+          
+          // Wenn expires_at gesetzt ist, prüfe ob es in der Zukunft liegt
+          if (expires) {
             const expiresTime = new Date(expires).getTime(); // GMT
             if (expiresTime > now) {
+              setGlobalLockActive(true);
               setCooldownActive(true);
               setCooldownRemaining(Math.ceil((expiresTime - now) / 1000));
               return;
             }
+          } else {
+            // Kein Ablaufdatum = once-per-stream: blockiert bis Stream-Ende
+            setGlobalLockActive(true);
+            setCooldownActive(true);
+            setCooldownRemaining(9999); // Große Zahl für unbekannte Dauer
+            return;
           }
         }
       } catch {
@@ -221,27 +229,33 @@ export default function PointsAndRewardSection({ isLive }: { isLive: boolean }) 
       const { data, error: rpcError } = await supabase.rpc('redeem_reward', rpcParams as object);
       if (rpcError) {
         setStatus({ type: 'error', msg: t('Fehler beim Einlösen: {{msg}}', { msg: rpcError.message }) });
-      } else if (data && Array.isArray(data) && data.length > 0 && data[0].error) {
-        // Die Funktion gibt kontrollierte Fehler zurück (z.B. cooldown_active)
-        const info = data[0];
-        if (info.error === 'cooldown_active') {
-          const rem = info.remaining || 0;
-          setStatus({ type: 'error', msg: t('Cooldown aktiv. Noch {{sec}}s', { sec: rem }) });
-        } else if (info.error === 'once_per_stream_active') {
-          setStatus({ type: 'error', msg: t('Diese Belohnung kann nur einmal pro Stream eingelöst werden.') });
+      } else if (data && typeof data === 'object') {
+        // Die RPC-Funktion gibt direkt ein JSON-Objekt zurück (nicht ein Array)
+        if (data.error) {
+          // Die Funktion gibt kontrollierte Fehler zurück (z.B. cooldown_active)
+          if (data.error === 'cooldown_active') {
+            const rem = data.remaining || 0;
+            setStatus({ type: 'error', msg: t('Cooldown aktiv. Noch {{sec}}s', { sec: rem }) });
+          } else if (data.error === 'once_per_stream_active') {
+            setStatus({ type: 'error', msg: t('Diese Belohnung kann nur einmal pro Stream eingelöst werden.') });
+          } else {
+            setStatus({ type: 'error', msg: t('Ein unbekannter Fehler ist aufgetreten: {{err}}', { err: data.error }) });
+          }
+        } else if (data.success) {
+          setStatus({ type: 'success', msg: t('Erfolgreich eingelöst!') });
+          if (points !== null) setPoints(points - reward.cost);
+          setTtsText('');
+          setCooldownActive(true);
+          setCooldownRemaining(reward.cooldown || 0);
+          setTimeout(() => {
+            setSelectedRewardId(null);
+            setStatus(null);
+          }, 2000);
         } else {
-          setStatus({ type: 'error', msg: t('Ein unbekannter Fehler ist aufgetreten.') });
+          setStatus({ type: 'error', msg: t('Unbekannte Response von Server') });
         }
       } else {
-        setStatus({ type: 'success', msg: t('Erfolgreich eingelöst!') });
-        if (points !== null) setPoints(points - reward.cost);
-        setTtsText('');
-        setCooldownActive(true);
-        setCooldownRemaining(reward.cooldown || 0);
-        setTimeout(() => {
-          setSelectedRewardId(null);
-          setStatus(null);
-        }, 2000);
+        setStatus({ type: 'error', msg: t('Ungültige Response vom Server') });
       }
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : String(e);

@@ -28,15 +28,19 @@ public class SupabaseClient {
     public void addOrUpdatePoints(String username, String userid, int points, String reason) {
         logger.info("addOrUpdatePoints: {} | {} | {}", username, points, reason);
         int finalPoints = points;
-        // Bei Refund-Gründen: Punkte addieren, nicht setzen
+
+        // Wenn der Grund "Refund" enthält, addiere die absoluten Punkte (statt zu setzen)
+        // Das ist NUR für Refunds gedacht, nicht für normale Additions
         if (reason != null && reason.toLowerCase().contains("refund")) {
             int current = getPoints(username, userid);
-            finalPoints = current + Math.abs(points);
-            logger.info("Refund detected, add points: {} (current: {} + refund: {})", finalPoints, current, points);
+            // Bei Refund: addiere die anzurechnenden Punkte (können positiv oder negativ sein)
+            finalPoints = current + points;
+            logger.info("Refund detected, add points: {} (current: {} + points: {})", finalPoints, current, points);
         }
+
         JSONObject json = new JSONObject();
         json.put("twitch_user_id", userid);
-        json.put("points", Math.abs(finalPoints));
+        json.put("points", finalPoints);  // IMMER den finalPoints verwenden
         json.put("reason", reason);
         json.put("timestamp", System.currentTimeMillis());
 
@@ -607,6 +611,27 @@ public class SupabaseClient {
             return response.statusCode() >= 200 && response.statusCode() < 300;
         } catch (Exception e) {
             logger.error("Fehler beim Deaktivieren aller aktiven redeemed_global Einträge: {}", e.getMessage(), e);
+        }
+        return false;
+    }
+
+    /**
+     * Löscht alle Einträge aus redeemed_rewards (z.B. am Stream-Ende für Cleanup).
+     */
+    public boolean deleteAllRedeemedRewards() {
+        try {
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(supabaseUrl + "/rest/v1/redeemed_rewards"))
+                    .header("apikey", apiKey)
+                    .header("Authorization", "Bearer " + apiKey)
+                    .method("DELETE", BodyPublishers.noBody())
+                    .timeout(Duration.ofSeconds(10))
+                    .build();
+            HttpResponse<String> response = client.send(request, BodyHandlers.ofString());
+            logger.info("Supabase DELETE all redeemed_rewards Status: {}", response.statusCode());
+            return response.statusCode() >= 200 && response.statusCode() < 300;
+        } catch (Exception e) {
+            logger.error("Fehler beim Löschen aller redeemed_rewards: {}", e.getMessage(), e);
         }
         return false;
     }

@@ -108,7 +108,7 @@ BEGIN
 
   -- Alles okay: führe Inserts in einer Transaktion (SECURITY DEFINER erlaubt INSERT in Tabellen)
   BEGIN
-    INSERT INTO redeemed_rewards (twitch_user_id, reward_id, timestamp, cost, description, ttsText)
+    INSERT INTO redeemed_rewards (twitch_user_id, reward_id, timestamp, cost, description, ttstext)
     VALUES (p_twitch_user_id, p_reward_id, now(), p_cost, p_description, p_ttstext)
     RETURNING id INTO v_redeemed_id;
 

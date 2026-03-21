@@ -136,6 +136,9 @@ public class TwitchBot {
                     boolean deactAll = pointsManager.deactivateAllActiveGlobalRedemptions();
                     logger.info("Alle aktiven redeemed_global Einträge deaktiviert: {}", deactAll);
                 }
+                // Leere redeemed_rewards für neuen Stream
+                boolean deletedRewards = pointsManager.deleteAllRedeemedRewards();
+                logger.info("Alle redeemed_rewards gelöscht: {}", deletedRewards);
             } catch (Exception e) {
                 logger.error("Fehler beim Beenden der Stream-Session / Deaktivieren globaler Einlösungen: {}", e.getMessage(), e);
             }
@@ -228,6 +231,15 @@ public class TwitchBot {
                 pointsManager.addPoints(session.username, session.userid,250, "Bis zum Ende geblieben");
                 session.hasReceivedStayTillEndPoints = true;
             }
+        }
+        // Leere redeemed_rewards und deaktiviere alle globalen Einlösungen
+        try {
+            boolean deletedRewards = pointsManager.deleteAllRedeemedRewards();
+            logger.info("[Polling] Alle redeemed_rewards gelöscht: {}", deletedRewards);
+            boolean deactAll = pointsManager.deactivateAllActiveGlobalRedemptions();
+            logger.info("[Polling] Alle aktiven redeemed_global Einträge deaktiviert: {}", deactAll);
+        } catch (Exception e) {
+            logger.error("[Polling] Fehler beim Cleanup nach Stream-Ende: {}", e.getMessage(), e);
         }
         stopTimer();
     }
