@@ -93,30 +93,16 @@
     });
 
     function testTTSManual() {
-      console.log('[DEBUG] Starte manuellen TTS-Test');
-      if (!window.speechSynthesis) {
-        console.error('❌ speechSynthesis nicht verfügbar!');
-        return;
-      }
-      window.speechSynthesis.cancel();
-      const utter = new window.SpeechSynthesisUtterance('Test Text eins zwei drei');
-      utter.lang = 'de-DE';
-      utter.volume = 1;
-      utter.rate = 1;
-      utter.pitch = 1;
+      console.log('[DEBUG] Starte TTS über Java-Backend-Proxy...');
+      const testText = "Dies ist ein Test über den neuen Proxy.";
 
-      const voices = window.speechSynthesis.getVoices();
-      const germanVoice = voices.find(v => v.lang.startsWith('de'));
-      if (germanVoice) {
-        utter.voice = germanVoice;
-        console.log('✅ Deutsche Stimme: ' + germanVoice.name);
-      }
+      // Wir rufen jetzt DEINEN Server auf (Port 8081)
+      const url = `/api/tts?text=${encodeURIComponent(testText)}`;
 
-      utter.onstart = () => console.log('▶️ TTS gestartet');
-      utter.onend = () => console.log('✅ TTS beendet');
-      utter.onerror = (e) => console.error('❌ TTS Fehler: ' + e.error);
-
-      window.speechSynthesis.speak(utter);
+      const audio = new Audio(url);
+      audio.play()
+              .then(() => console.log("✅ TTS Sound wird abgespielt!"))
+              .catch(e => console.error("❌ Fehler beim Abspielen:", e));
     }
   </script>
 
@@ -220,68 +206,53 @@
       if (reward.istts) {
         let text;
         console.log('[Overlay] TTS Reward erkannt. redeemed.ttstext:', redeemed.ttstext);
+
+        // Text-Logik beibehalten
         if (reward.id === 'raid_leader' || reward.id === '11') {
           const username = redeemed.user || redeemed.twitch_user_name || '';
           const target = redeemed.ttstext || redeemed.tts_text || redeemed.ttsText || redeemed.description || '';
           text = `RAID-Anführer ${username} zu ${target}`;
-          console.log('[Overlay] RAID-Anführer erkannt, Text:', text);
         } else {
           text = redeemed.ttstext || redeemed.tts_text || redeemed.ttsText || redeemed.description || reward.description || 'Text to Speech';
-          console.log('[Overlay] Standard TTS Text:', text);
         }
+
+        // 1. Text anzeigen
         mediaDiv.innerHTML = getRewardTextHtml(text);
-        if ('speechSynthesis' in window && text && String(text).trim().length > 0) {
-          try {
-            // OBS Browser Fix: Stelle sicher dass Audio-Kontext aktiv ist
-            initAudioContext();
 
-            window.speechSynthesis.cancel();
-            const utter = new window.SpeechSynthesisUtterance(text);
-            utter.lang = 'de-DE';
-            utter.volume = 1;
-            utter.rate = 1;
-            utter.pitch = 1;
+        // 2. Audio über deinen neuen Proxy abspielen
+        console.log('[Overlay] Starte Proxy-TTS: ' + text);
+        const ttsUrl = `/api/tts?text=${encodeURIComponent(text)}`;
+        const audio = new Audio(ttsUrl);
+        audio.volume = 1.0;
 
-            // Versuche deutsche Stimme zu finden
-            if (window.speechSynthesis.getVoices) {
-              const voices = window.speechSynthesis.getVoices();
-              const germanVoice = voices.find(v => v.lang.startsWith('de'));
-              if (germanVoice) {
-                utter.voice = germanVoice;
-                console.log('[Overlay] Deutsche Stimme gefunden:', germanVoice.name);
-              }
-            }
+        // Sicherheits-Fallback: Falls das Audio gar nicht lädt/spielt
+        const safetyTimeout = setTimeout(() => {
+          console.warn('[Overlay] TTS Proxy-Fallback ausgelöst (Timeout)');
+          afterPlayback();
+        }, (duration * 1000) + 1000);
 
-            // Sicherheits-Fallback: Falls TTS blockiert wird, nach X Sekunden weitermachen
-            const safetyTimeout = setTimeout(() => {
-              console.warn('[Overlay] TTS Sicherheits-Fallback ausgelöst (Browser blockiert evtl.)');
-              afterPlayback();
-            }, (duration * 1000) + 500);
+        audio.onplay = () => {
+          console.log('[Overlay] Proxy-TTS spielt ab...');
+        };
 
-            utter.onend = () => {
-              clearTimeout(safetyTimeout);
-              console.log('[Overlay] TTS erfolgreich beendet');
-              afterPlayback();
-            };
+        audio.onended = () => {
+          clearTimeout(safetyTimeout);
+          console.log('[Overlay] Proxy-TTS erfolgreich beendet');
+          afterPlayback();
+        };
 
-            utter.onerror = (e) => {
-              clearTimeout(safetyTimeout);
-              console.error('[Overlay] TTS Fehler:', e);
-              afterPlayback();
-            };
+        audio.onerror = (e) => {
+          clearTimeout(safetyTimeout);
+          console.error('[Overlay] Proxy-TTS Fehler:', e);
+          afterPlayback(); // Trotz Fehler weitermachen, damit die Queue nicht hakt
+        };
 
-            console.log('[Overlay] Starte TTS: ' + text);
-            window.speechSynthesis.speak(utter);
-          } catch (e) {
-            console.error('[Overlay] TTS Exception:', e);
-            setTimeout(afterPlayback, duration * 1000);
-          }
-        } else {
-          console.warn('[Overlay] TTS nicht verfügbar oder Text leer.');
-          mediaDiv.innerHTML += '<div style=\"color:red;font-size:1em;\">TTS nicht verfügbar oder Text leer.</div>';
+        audio.play().catch(err => {
+          console.error("[Overlay] Autoplay-Error beim Proxy-TTS:", err);
+          // Wenn Autoplay blockiert wird, nach der eingestellten Dauer weitermachen
           setTimeout(afterPlayback, duration * 1000);
-        }
-        console.log('[Overlay] TTS Reward:', text);
+        });
+
       } else if (mediaUrl) {
         if (isYouTube) {
           const ytIdMatch = mediaUrl.match(/(?:v=|youtu\.be\/)([A-Za-z0-9_-]{6,})/);
