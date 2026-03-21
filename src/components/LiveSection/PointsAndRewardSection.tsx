@@ -41,6 +41,8 @@ export default function PointsAndRewardSection({ isLive }: { isLive: boolean }) 
   const [status, setStatus] = useState<{type: 'success' | 'error', msg: string} | null>(null);
   const [cooldownActive, setCooldownActive] = useState(false);
   const [cooldownRemaining, setCooldownRemaining] = useState<number>(0);
+  // Neuer State für globalen Lock
+  const [globalLockActive, setGlobalLockActive] = useState(false);
 
   const selectedReward = rewards.find(r => r.id === selectedRewardId) ?? null;
 
@@ -50,6 +52,7 @@ export default function PointsAndRewardSection({ isLive }: { isLive: boolean }) 
     async function checkCooldown() {
       setCooldownActive(false);
       setCooldownRemaining(0);
+      setGlobalLockActive(false);
       if (!selectedRewardId || !user) return;
       const twitchUserId = user.user_metadata?.provider_id || user.user_metadata?.sub || user.id;
       // Lade letzte Einlösung für diesen User und Reward
@@ -63,23 +66,26 @@ export default function PointsAndRewardSection({ isLive }: { isLive: boolean }) 
         .maybeSingle();
       if (error) return;
       const reward = rewards.find(r => r.id === selectedRewardId);
-      // Zusätzlich: prüfe globalen Lock (redeemed_global) für dieses Reward
+      // Prüfe, ob überhaupt ein Eintrag in redeemed_global für dieses Reward existiert
       try {
         const { data: globalData } = await supabase
           .from('redeemed_global')
           .select('id, redeemed_at, expires_at, is_active, stream_id')
           .eq('reward_id', selectedRewardId)
-          .eq('is_active', true)
-          .limit(1)
+          .limit(1);
         if (globalData && globalData.length > 0) {
+          setGlobalLockActive(true);
+          // Prüfe weiterhin, ob ein aktiver globaler Lock besteht (wie bisher)
           const g = globalData[0] as { id?: string; redeemed_at?: string | null; expires_at?: string | null; is_active?: boolean; stream_id?: string | null };
           const expires = g.expires_at;
-          const now = Date.now();
-          if (expires && new Date(expires).getTime() > now) {
-            // global lock active
-            setCooldownActive(true);
-            setCooldownRemaining(Math.ceil((new Date(expires).getTime() - now) / 1000));
-            return;
+          const now = new Date().getTime(); // GMT
+          if (g.is_active && expires) {
+            const expiresTime = new Date(expires).getTime(); // GMT
+            if (expiresTime > now) {
+              setCooldownActive(true);
+              setCooldownRemaining(Math.ceil((expiresTime - now) / 1000));
+              return;
+            }
           }
         }
       } catch {
@@ -91,6 +97,17 @@ export default function PointsAndRewardSection({ isLive }: { isLive: boolean }) 
         const now = Date.now();
         const cooldownMs = reward.cooldown * 1000;
         const remaining = last + cooldownMs - now;
+        // Debug-Logging für Cooldown-Check
+        console.log('[Cooldown-Check]', {
+          rewardId: selectedRewardId,
+          timestamp: data.timestamp,
+          last,
+          now,
+          cooldown: reward.cooldown,
+          cooldownMs,
+          remaining,
+          diffSec: Math.ceil(remaining / 1000)
+        });
         if (remaining > 0) {
           setCooldownActive(true);
           setCooldownRemaining(Math.ceil(remaining / 1000));
@@ -292,14 +309,17 @@ export default function PointsAndRewardSection({ isLive }: { isLive: boolean }) 
                       !selectedReward ||
                       (selectedReward.istts && !ttsText) ||
                       (points !== null && selectedReward && points < selectedReward.cost ) ||
-                      cooldownActive
+                      cooldownActive ||
+                      globalLockActive
                   }
               >
                 {redeemLoading
                   ? t('Lädt...')
-                  : cooldownActive
-                    ? t('Cooldown: {{sec}}s', { sec: cooldownRemaining })
-                    : t('Jetzt einlösen')}
+                  : globalLockActive
+                    ? t('Global gesperrt')
+                    : cooldownActive
+                      ? t('Cooldown: {{sec}}s', { sec: cooldownRemaining })
+                      : t('Jetzt einlösen')}
               </button>
             </div>
         )}
