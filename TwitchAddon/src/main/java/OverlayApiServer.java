@@ -46,6 +46,14 @@ public class OverlayApiServer {
                         }
                     }
                 }
+                if (id == null || id.isEmpty()) {
+                    System.err.println("[OverlayApiServer] DELETE-Request: Keine ID übergeben!");
+                    String resp = "{\"error\":\"missing_id\"}";
+                    exchange.sendResponseHeaders(400, resp.length());
+                    exchange.getResponseBody().write(resp.getBytes());
+                    exchange.getResponseBody().close();
+                    return;
+                }
                 System.out.println("[OverlayApiServer] DELETE-Request für redeemed_reward id=" + id);
                 JSONObject redeemedReward = supabaseClient.getRedeemedRewardById(id);
                 if (redeemedReward == null) {
@@ -146,7 +154,7 @@ public class OverlayApiServer {
                 // Cooldown abgelaufen, jetzt löschen
                 boolean success = supabaseClient.deleteRedeemedReward(id);
                 System.out.println("[OverlayApiServer] DELETE-Result für id=" + id + ": " + (success ? "deleted" : "not found"));
-                String response = success ? "deleted" : "not found";
+                String response = success ? "deleted" : "not found or delete failed (siehe Server-Log)";
                 exchange.sendResponseHeaders(success ? 200 : 404, response.length());
                 OutputStream os = exchange.getResponseBody();
                 os.write(response.getBytes());

@@ -163,7 +163,10 @@ public class SupabaseClient {
      * Löscht einen Reward aus redeemed_rewards anhand der ID.
      */
     public boolean deleteRedeemedReward(String id) {
-        if (id == null) return false;
+        if (id == null) {
+            logger.error("deleteRedeemedReward: ID ist null!");
+            return false;
+        }
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(supabaseUrl + "/rest/v1/redeemed_rewards?id=eq." + id))
                 .header("apikey", apiKey)
@@ -174,6 +177,10 @@ public class SupabaseClient {
                 .build();
         try {
             HttpResponse<String> response = client.send(request, BodyHandlers.ofString());
+            logger.info("Supabase DELETE redeemed_reward Status: {} | Body: {}", response.statusCode(), response.body());
+            if (response.statusCode() < 200 || response.statusCode() >= 300) {
+                logger.error("Supabase DELETE fehlgeschlagen: {} {}", response.statusCode(), response.body());
+            }
             return response.statusCode() >= 200 && response.statusCode() < 300;
         } catch (IOException | InterruptedException e) {
             logger.error("Fehler beim Supabase DELETE redeemed_reward: {}", e.getMessage(), e);
