@@ -108,10 +108,15 @@ BEGIN
 
   -- Alles okay: führe Inserts in einer Transaktion (SECURITY DEFINER erlaubt INSERT in Tabellen)
   BEGIN
+    -- 1. Debitiere Punkte vom User
+    UPDATE points SET points = points - p_cost WHERE twitch_user_id = p_twitch_user_id;
+
+    -- 2. Füge Reward-Einlösung ein
     INSERT INTO redeemed_rewards (twitch_user_id, reward_id, timestamp, cost, description, ttstext)
     VALUES (p_twitch_user_id, p_reward_id, now(), p_cost, p_description, p_ttstext)
     RETURNING id INTO v_redeemed_id;
 
+    -- 3. Registriere globale Einlösung für Cooldown/Once-Per-Stream
     INSERT INTO redeemed_global (reward_id, redeemed_by, redeemed_at, expires_at, stream_id, is_active, meta)
     VALUES (
       p_reward_id,

@@ -28,7 +28,100 @@
 </head>
 <body>
   <div id="media"></div>
+
+  <!-- Debug-Panel -->
+  <div id="debugPanel" style="position: fixed; top: 10px; right: 10px; width: 400px; max-height: 400px; background: rgba(0,0,0,0.9); color: #0f0; font-family: monospace; font-size: 11px; padding: 10px; border: 1px solid #0f0; border-radius: 5px; overflow-y: auto; z-index: 10000; display: none;">
+    <div style="margin-bottom: 10px;">
+      <button onclick="document.getElementById('debugPanel').style.display='none'" style="background: #f00; color: white; border: none; padding: 5px 10px; cursor: pointer;">✕ Schließen</button>
+      <button onclick="clearDebugLogs()" style="background: #ff0; color: black; border: none; padding: 5px 10px; cursor: pointer; margin-left: 5px;">Clear</button>
+      <button onclick="testTTSManual()" style="background: #0f0; color: black; border: none; padding: 5px 10px; cursor: pointer; margin-left: 5px;">🔊 Test TTS</button>
+    </div>
+    <pre id="debugLog" style="margin: 0; white-space: pre-wrap; word-wrap: break-word;"></pre>
+  </div>
+
   <script>
+    // Debug-System
+    const debugLogs = [];
+    const originalLog = console.log;
+    const originalError = console.error;
+    const originalWarn = console.warn;
+
+    function addDebugLog(message) {
+      debugLogs.push(message);
+      if (debugLogs.length > 100) debugLogs.shift();
+      updateDebugPanel();
+    }
+
+    function updateDebugPanel() {
+      const panel = document.getElementById('debugLog');
+      if (panel) {
+        panel.textContent = debugLogs.join('\n');
+        panel.parentElement.scrollTop = panel.parentElement.scrollHeight;
+      }
+    }
+
+    function clearDebugLogs() {
+      debugLogs.length = 0;
+      updateDebugPanel();
+    }
+
+    // Intercept console logs
+    console.log = function(...args) {
+      const msg = args.map(a => typeof a === 'object' ? JSON.stringify(a) : String(a)).join(' ');
+      addDebugLog('[LOG] ' + msg);
+      originalLog.apply(console, args);
+    };
+
+    console.error = function(...args) {
+      const msg = args.map(a => typeof a === 'object' ? JSON.stringify(a) : String(a)).join(' ');
+      addDebugLog('[ERR] ' + msg);
+      originalError.apply(console, args);
+    };
+
+    console.warn = function(...args) {
+      const msg = args.map(a => typeof a === 'object' ? JSON.stringify(a) : String(a)).join(' ');
+      addDebugLog('[WARN] ' + msg);
+      originalWarn.apply(console, args);
+    };
+
+    // Zeige Debug-Panel auf Druck von 'd'
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'd' || e.key === 'D') {
+        const panel = document.getElementById('debugPanel');
+        panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+      }
+    });
+
+    function testTTSManual() {
+      console.log('[DEBUG] Starte manuellen TTS-Test');
+      if (!window.speechSynthesis) {
+        console.error('❌ speechSynthesis nicht verfügbar!');
+        return;
+      }
+      window.speechSynthesis.cancel();
+      const utter = new window.SpeechSynthesisUtterance('Test Text eins zwei drei');
+      utter.lang = 'de-DE';
+      utter.volume = 1;
+      utter.rate = 1;
+      utter.pitch = 1;
+
+      const voices = window.speechSynthesis.getVoices();
+      const germanVoice = voices.find(v => v.lang.startsWith('de'));
+      if (germanVoice) {
+        utter.voice = germanVoice;
+        console.log('✅ Deutsche Stimme: ' + germanVoice.name);
+      }
+
+      utter.onstart = () => console.log('▶️ TTS gestartet');
+      utter.onend = () => console.log('✅ TTS beendet');
+      utter.onerror = (e) => console.error('❌ TTS Fehler: ' + e.error);
+
+      window.speechSynthesis.speak(utter);
+    }
+  </script>
+
+  <script>
+
     async function fetchRewards() {
       console.log('[Overlay] Lade Rewards aus DB ...');
       const response = await fetch('/api/rewards');
@@ -81,6 +174,13 @@
       console.log('[Overlay] Starte playAndDeleteReward für:', redeemed);
       const rewards = await fetchRewards();
       const reward = rewards.find(r => String(r.id) === String(redeemed.reward_id));
+      console.log('[Overlay] Gefundener Reward:', reward);
+      if (!reward) {
+        console.error('[Overlay] ❌ Reward NICHT gefunden! reward_id:', redeemed.reward_id);
+        console.log('[Overlay] Verfügbare Reward-IDs:', rewards.map(r => r.id));
+        return;
+      }
+      console.log('[Overlay] reward.istts:', reward?.istts, 'typeof:', typeof reward?.istts);
       const mediaDiv = document.getElementById('media');
       mediaDiv.innerHTML = '';
       let duration = reward.duration ? parseInt(reward.duration, 10) : 10; // Standard 10 Sekunden
@@ -117,14 +217,17 @@
         isPlaying = false;
         pollTimeoutId = setTimeout(pollRedeemedRewards, 5000);
       }
-      if (reward.istts) {
+      if (reward.istts === true || reward.istts === 'true' || reward.istts === 1) {
         let text;
-        if (reward.id === 'raid_leader') {
+        console.log('[Overlay] TTS Reward erkannt. redeemed.ttstext:', redeemed.ttstext);
+        if (reward.id === 'raid_leader' || reward.id === '11') {
           const username = redeemed.user || redeemed.twitch_user_name || '';
           const target = redeemed.ttstext || redeemed.tts_text || redeemed.ttsText || redeemed.description || '';
           text = `RAID-Anführer ${username} zu ${target}`;
+          console.log('[Overlay] RAID-Anführer erkannt, Text:', text);
         } else {
           text = redeemed.ttstext || redeemed.tts_text || redeemed.ttsText || redeemed.description || reward.description || 'Text to Speech';
+          console.log('[Overlay] Standard TTS Text:', text);
         }
         mediaDiv.innerHTML = getRewardTextHtml(text);
         if ('speechSynthesis' in window && text && String(text).trim().length > 0) {
@@ -135,6 +238,16 @@
             utter.volume = 1;
             utter.rate = 1;
             utter.pitch = 1;
+
+            // Versuche deutsche Stimme zu finden
+            if (window.speechSynthesis.getVoices) {
+              const voices = window.speechSynthesis.getVoices();
+              const germanVoice = voices.find(v => v.lang.startsWith('de'));
+              if (germanVoice) {
+                utter.voice = germanVoice;
+                console.log('[Overlay] Deutsche Stimme gefunden:', germanVoice.name);
+              }
+            }
 
             // Sicherheits-Fallback: Falls TTS blockiert wird, nach X Sekunden weitermachen
             const safetyTimeout = setTimeout(() => {
