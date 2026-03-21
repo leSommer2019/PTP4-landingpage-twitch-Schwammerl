@@ -476,33 +476,6 @@ public class SupabaseClient {
     }
 
     /**
-     * Fügt eine globale Einlösung in redeemed_global ein. Erwartet ein JSON-Objekt mit passenden Feldern.
-     * Beispiel-Felder: reward_id, redeemed_by, stream_id, meta
-     * Fügt NUR ein, wenn expires_at NICHT null ist!
-     */
-    public boolean insertGlobalRedemption(JSONObject usage) {
-        try {
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(supabaseUrl + "/rest/v1/redeemed_global"))
-                    .header("apikey", apiKey)
-                    .header("Authorization", "Bearer " + apiKey)
-                    .header("Content-Type", "application/json")
-                    .POST(BodyPublishers.ofString("[" + usage.toString() + "]"))
-                    .timeout(Duration.ofSeconds(10))
-                    .build();
-            HttpResponse<String> response = client.send(request, BodyHandlers.ofString());
-            if (response.statusCode() >= 200 && response.statusCode() < 300) {
-                return true;
-            } else {
-                logger.error("Supabase INSERT redeemed_global fehlgeschlagen: {} {}", response.statusCode(), response.body());
-            }
-        } catch (Exception e) {
-            logger.error("Fehler beim Supabase INSERT redeemed_global: {}", e.getMessage(), e);
-        }
-        return false;
-    }
-
-    /**
      * Erstellt eine neue Stream-Session in `stream_sessions` und gibt die erzeugte ID zurück (oder null bei Fehler).
      */
     public String createStreamSession(String streamIdentifier) {

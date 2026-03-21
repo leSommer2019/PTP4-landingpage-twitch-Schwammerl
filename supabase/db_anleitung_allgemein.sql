@@ -227,3 +227,39 @@ SELECT cron.schedule('delete_expired_redeemed_global',
 -- - Die Felder cost, timestamp etc. können optional mitgegeben werden.
 -- - User-Punkte werden in der Tabelle points gepflegt (z.B. für ein Shop-System).
 -- - Ein Reward-Kauf kann über eine Funktion wie buy_reward atomar umgesetzt werden (siehe separate Anleitung).
+CREATE OR REPLACE FUNCTION handle_global_cooldown()
+RETURNS TRIGGER AS $$
+DECLARE
+v_cooldown INTEGER;
+BEGIN
+  -- Hole den Cooldown-Wert aus der rewards Tabelle basierend auf der reward_id
+SELECT cooldown INTO v_cooldown
+FROM rewards
+WHERE id = NEW.reward_id;
+
+-- Prüfen, ob der Cooldown existiert und ungleich 0 ist
+IF v_cooldown IS NOT NULL AND v_cooldown != 0 THEN
+    INSERT INTO redeemed_global (
+      reward_id,
+      redeemed_at,
+      redeemed_by,
+      expires_at,
+      is_active
+    )
+    VALUES (
+      NEW.reward_id,
+      NEW.timestamp,                               -- Übernimmt Zeitstempel der Einlösung
+      NEW.twitch_user_id,                          -- Wer hat es eingelöst
+      NEW.timestamp + (v_cooldown * INTERVAL '1 second'), -- Berechnet Ablaufzeitpunkt
+      TRUE
+    );
+END IF;
+
+RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trigger_redeem_global_cooldown
+    AFTER INSERT ON redeemed_rewards
+    FOR EACH ROW
+    EXECUTE FUNCTION handle_global_cooldown();

@@ -88,7 +88,6 @@ public class OverlayApiServer {
                             globalLock.put("expires_at", expires.toString());
                         }
 
-                        supabaseClient.insertGlobalRedemption(globalLock);
                         System.out.println("[OverlayApiServer] Globaler Lock gesetzt für Reward: " + rewardId);
                     }
                 }
