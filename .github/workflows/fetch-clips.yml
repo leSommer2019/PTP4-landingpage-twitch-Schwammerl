@@ -2,7 +2,7 @@ name: Fetch Twitch Clips & Start Round 1
 
 on:
   schedule:
-    - cron: '59 23 21 * *'        
+    - cron: '00 23 21 * *'        
   workflow_dispatch:               
 
 jobs:
