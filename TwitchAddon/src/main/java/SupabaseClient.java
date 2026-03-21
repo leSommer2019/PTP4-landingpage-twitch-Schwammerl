@@ -31,12 +31,12 @@ public class SupabaseClient {
         // Bei Refund-Gründen: Punkte addieren, nicht setzen
         if (reason != null && reason.toLowerCase().contains("refund")) {
             int current = getPoints(username, userid);
-            finalPoints = current + points;
+            finalPoints = current + Math.abs(points);
             logger.info("Refund detected, add points: {} (current: {} + refund: {})", finalPoints, current, points);
         }
         JSONObject json = new JSONObject();
         json.put("twitch_user_id", userid);
-        json.put("points", finalPoints);
+        json.put("points", Math.abs(finalPoints));
         json.put("reason", reason);
         json.put("timestamp", System.currentTimeMillis());
 

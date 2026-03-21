@@ -80,14 +80,16 @@
     }
     async function playAndDeleteReward(redeemed) {
       console.log('[Overlay] Starte playAndDeleteReward für:', redeemed);
-      // Vor Wiedergabe: prüfe am Overlay-Server, ob die Einlösung erlaubt ist (kein globaler Lock / cooldown)
+      // 1. Prüfe, ob Reward erlaubt ist (kein Cooldown, kein globaler Lock)
+      let allowed = false;
       try {
         const checkResp = await fetch(`/api/redeem_check?id=${redeemed.id}`);
         if (checkResp.ok) {
           const checkJson = await checkResp.json();
-          if (!checkJson.allowed) {
-            console.warn('[Overlay] Redeem nicht erlaubt, überspringe Wiedergabe:', checkJson);
-            // Polling fortsetzen
+          if (checkJson.allowed) {
+            allowed = true;
+          } else {
+            console.warn('[Overlay] Reward nicht erlaubt, überspringe:', checkJson);
             isPlaying = false;
             pollTimeoutId = setTimeout(pollRedeemedRewards, 1000);
             return;
@@ -98,34 +100,54 @@
       } catch (e) {
         console.warn('[Overlay] Redeem-Check Fehler:', e);
       }
+      if (!allowed) {
+        isPlaying = false;
+        pollTimeoutId = setTimeout(pollRedeemedRewards, 1000);
+        return;
+      }
+      // 2. Lösche Reward aus DB
+      let deleteOk = false;
+      try {
+        const delResp = await fetch(`/api/redeemed_rewards?id=${redeemed.id}`, { method: 'DELETE' });
+        const delText = await delResp.text();
+        if (delResp.ok) {
+          console.log('[Overlay] Reward nach Freigabe gelöscht:', redeemed.id, '| Status:', delResp.status, '| Antwort:', delText);
+          deleteOk = true;
+        } else {
+          console.error('[Overlay] Fehler beim Löschen nach Freigabe:', delResp.status, delResp.statusText, '| Antwort:', delText);
+        }
+      } catch (e) {
+        console.error('[Overlay] Fehler beim Löschen nach Freigabe (Netzwerk/JS):', e);
+      }
+      if (!deleteOk) {
+        isPlaying = false;
+        pollTimeoutId = setTimeout(pollRedeemedRewards, 2000);
+        return;
+      }
+      // 3. Jetzt abspielen
       const rewards = await fetchRewards();
       const reward = rewards.find(r => String(r.id) === String(redeemed.reward_id));
       const mediaDiv = document.getElementById('media');
       mediaDiv.innerHTML = '';
-
       let duration = reward.duration ? parseInt(reward.duration, 10) : 10; // Standard 10 Sekunden
       let timeoutId;
       console.log(`[Overlay] Zeige Reward: ${reward.id}, Dauer: ${duration}s`);
-
       // Neue Feldstruktur: mediaurl, showmedia, imageurl, text, istts, onceperstream
       const mediaUrl = reward.mediaurl || '';
       const imageUrl = reward.imageurl || '';
       const textContent = reward.text || reward.description || '';
-
       // Helper to detect media type
       const lower = (mediaUrl || '').toLowerCase();
       const isYouTube = /youtube\.com|youtu\.be/.test(lower);
       const isAudio = /\.(mp3|wav|ogg|m4a)(\?|$)/.test(lower);
       const isImage = /\.(png|jpe?g|gif|webp)(\?|$)/.test(lower) || imageUrl;
-
       // Zeige reward-text NUR wenn textContent nicht leer ist
       function getRewardTextHtml(textContent) {
         if (textContent && String(textContent).trim().length > 0) {
-          return `<div class="reward-text">${textContent}</div>`;
+          return `<div class=\"reward-text\">${textContent}</div>`;
         }
         return '';
       }
-
       if (reward.istts) {
         // TTS
         let text;
@@ -138,11 +160,32 @@
         }
         mediaDiv.innerHTML = getRewardTextHtml(text);
         if ('speechSynthesis' in window && text && String(text).trim().length > 0) {
-          const utter = new window.SpeechSynthesisUtterance(text);
-          window.speechSynthesis.speak(utter);
+          try {
+            window.speechSynthesis.cancel(); // Stoppe evtl. laufende TTS
+            const utter = new window.SpeechSynthesisUtterance(text);
+            utter.lang = 'de-DE'; // Sprache explizit setzen
+            utter.volume = 1; // Maximale Lautstärke
+            utter.rate = 1; // Normale Geschwindigkeit
+            utter.pitch = 1; // Normale Tonhöhe
+            window.speechSynthesis.speak(utter);
+            utter.onerror = function(e) {
+              console.error('[Overlay] TTS Fehler:', e);
+              mediaDiv.innerHTML += '<div style=\"color:red;font-size:1em;\">TTS-Fehler: ' + e.error + '</div>';
+            };
+          } catch (e) {
+            console.error('[Overlay] TTS Exception:', e);
+            mediaDiv.innerHTML += '<div style=\"color:red;font-size:1em;\">TTS konnte nicht abgespielt werden.</div>';
+          }
+        } else {
+          console.warn('[Overlay] TTS nicht verfügbar oder Text leer.');
+          mediaDiv.innerHTML += '<div style=\"color:red;font-size:1em;\">TTS nicht verfügbar oder Text leer.</div>';
         }
         console.log('[Overlay] TTS Reward:', text);
-        timeoutId = setTimeout(clearAndDelete, duration * 1000);
+        timeoutId = setTimeout(() => {
+          mediaDiv.innerHTML = '';
+          isPlaying = false;
+          pollTimeoutId = setTimeout(pollRedeemedRewards, 5000);
+        }, duration * 1000);
       } else if (mediaUrl) {
         // YouTube handling
         if (isYouTube) {
@@ -151,13 +194,17 @@
           const ytId = ytIdMatch ? ytIdMatch[1] : '';
           if (reward.showmedia === false) {
             let imgHtml = '';
-            if (imageUrl) imgHtml = `<img src="${imageUrl}" alt="Reward-Bild" style="max-width:60vw;max-height:60vh;" />`;
+            if (imageUrl) imgHtml = `<img src=\"${imageUrl}\" alt=\"Reward-Bild\" style=\"max-width:60vw;max-height:60vh;\" />`;
             mediaDiv.innerHTML = `<div style='display:flex;flex-direction:column;align-items:center;justify-content:center;'>
-              <iframe width="1" height="1" style="opacity:0;position:absolute;left:-9999px;pointer-events:none;" src="https://www.youtube.com/embed/${ytId}?autoplay=1" allow="autoplay; encrypted-media"></iframe>
+              <iframe width=\"1\" height=\"1\" style=\"opacity:0;position:absolute;left:-9999px;pointer-events:none;\" src=\"https://www.youtube.com/embed/${ytId}?autoplay=1\" allow=\"autoplay; encrypted-media\"></iframe>
               ${imgHtml}${getRewardTextHtml(textContent)}
             </div>`;
             console.log('[Overlay] YouTube-Video ausgeblendet, Ton läuft, zeige stattdessen Bild/Text:', imageUrl, textContent);
-            timeoutId = setTimeout(clearAndDelete, duration * 1000);
+            timeoutId = setTimeout(() => {
+              mediaDiv.innerHTML = '';
+              isPlaying = false;
+              pollTimeoutId = setTimeout(pollRedeemedRewards, 5000);
+            }, duration * 1000);
           } else {
             // embed YouTube player via API
             if (!window.YT) {
@@ -166,7 +213,7 @@
               document.body.appendChild(tag);
             }
             function onYouTubeIframeAPIReadyWrapper() {
-              mediaDiv.innerHTML = `<div id="ytplayer"></div>`;
+              mediaDiv.innerHTML = `<div id=\"ytplayer\"></div>`;
               let player = new window.YT.Player('ytplayer', {
                 height: '315',
                 width: '560',
@@ -179,14 +226,18 @@
                     }
                     if (event.data === window.YT.PlayerState.ENDED) {
                       console.log('[Overlay] YouTube-Video ENDED:', mediaUrl);
-                      clearAndDelete();
+                      mediaDiv.innerHTML = '';
+                      isPlaying = false;
+                      pollTimeoutId = setTimeout(pollRedeemedRewards, 5000);
                     }
                   }
                 }
               });
               timeoutId = setTimeout(() => {
                 console.warn('[Overlay] YouTube-Timeout als Fallback ausgelöst!');
-                clearAndDelete();
+                mediaDiv.innerHTML = '';
+                isPlaying = false;
+                pollTimeoutId = setTimeout(pollRedeemedRewards, 5000);
               }, duration * 1000);
               console.log('[Overlay] YouTube-Video eingebettet (API):', mediaUrl);
             }
@@ -198,58 +249,50 @@
           }
         } else if (isAudio) {
           // local audio file
-          mediaDiv.innerHTML = `<audio id="rewardAudio" src="${mediaUrl}" controls autoplay></audio>`;
+          mediaDiv.innerHTML = `<audio id=\"rewardAudio\" src=\"${mediaUrl}\" controls autoplay></audio>`;
           console.log('[Overlay] Audio-Element erzeugt:', mediaUrl);
           const audio = document.getElementById('rewardAudio');
           if (audio) {
             audio.onloadedmetadata = () => {
               if (!reward.duration) duration = Math.ceil(audio.duration);
-              timeoutId = setTimeout(clearAndDelete, duration * 1000);
+              timeoutId = setTimeout(() => {
+                mediaDiv.innerHTML = '';
+                isPlaying = false;
+                pollTimeoutId = setTimeout(pollRedeemedRewards, 5000);
+              }, duration * 1000);
               console.log('[Overlay] Sound geladen, Dauer:', audio.duration);
             };
           }
         } else if (isImage) {
           const imgSrc = imageUrl || mediaUrl;
-          mediaDiv.innerHTML = `<div style='display:flex;flex-direction:column;align-items:center;justify-content:center;'><img src="${imgSrc}" alt="Reward-Bild" style="max-width:60vw;max-height:60vh;" />${getRewardTextHtml(textContent)}</div>`;
+          mediaDiv.innerHTML = `<div style='display:flex;flex-direction:column;align-items:center;justify-content:center;'><img src=\"${imgSrc}\" alt=\"Reward-Bild\" style=\"max-width:60vw;max-height:60vh;\" />${getRewardTextHtml(textContent)}</div>`;
           console.log('[Overlay] Image+Text Reward:', imgSrc, textContent);
-          timeoutId = setTimeout(clearAndDelete, duration * 1000);
+          timeoutId = setTimeout(() => {
+            mediaDiv.innerHTML = '';
+            isPlaying = false;
+            pollTimeoutId = setTimeout(pollRedeemedRewards, 5000);
+          }, duration * 1000);
         } else {
           // Unbekannter Media-Typ: fallback zu Text
           mediaDiv.innerHTML = getRewardTextHtml(textContent || reward.description || '');
           console.log('[Overlay] Unbekannter Media-Typ, zeige Text:', textContent || reward.description || '');
-          timeoutId = setTimeout(clearAndDelete, duration * 1000);
+          timeoutId = setTimeout(() => {
+            mediaDiv.innerHTML = '';
+            isPlaying = false;
+            pollTimeoutId = setTimeout(pollRedeemedRewards, 5000);
+          }, duration * 1000);
         }
       } else {
         // Kein Media: zeige Text/Description nur wenn vorhanden
         mediaDiv.innerHTML = getRewardTextHtml(textContent || reward.description || '');
         console.log('[Overlay] Fallback Reward:', reward.description);
-        timeoutId = setTimeout(clearAndDelete, duration * 1000);
-      }
-      function clearAndDelete() {
-        if (reward.oncePerStream) {
-          console.log('[Overlay] oncePerStream: Reward bleibt in DB:', reward.id);
+        timeoutId = setTimeout(() => {
           mediaDiv.innerHTML = '';
           isPlaying = false;
           pollTimeoutId = setTimeout(pollRedeemedRewards, 5000);
-          return;
-        }
-        // Nach der Wiedergabe: Lösche Reward aus DB
-        fetch(`/api/redeemed_rewards?id=${redeemed.id}`, { method: 'DELETE' })
-          .then(async response => {
-            const text = await response.text();
-            if (response.ok) {
-              console.log('[Overlay] Reward nach Wiedergabe gelöscht:', redeemed.id, '| Status:', response.status, '| Antwort:', text);
-            } else {
-              console.error('[Overlay] Fehler beim Löschen nach Wiedergabe:', response.status, response.statusText, '| Antwort:', text);
-            }
-          })
-          .catch(e => {
-            console.error('[Overlay] Fehler beim Löschen nach Wiedergabe (Netzwerk/JS):', e);
-          });
-        mediaDiv.innerHTML = '';
-        isPlaying = false;
-        pollTimeoutId = setTimeout(pollRedeemedRewards, 5000);
+        }, duration * 1000);
       }
+    }
     }
     let lastRedeemTime = 0;
     const MIN_REDEEM_INTERVAL = 5000;

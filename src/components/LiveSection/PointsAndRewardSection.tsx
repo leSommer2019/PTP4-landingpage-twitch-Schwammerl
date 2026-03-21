@@ -78,11 +78,14 @@ export default function PointsAndRewardSection({ isLive }: { isLive: boolean }) 
           // Prüfe weiterhin, ob ein aktiver globaler Lock besteht (wie bisher)
           const g = globalData[0] as { id?: string; redeemed_at?: string | null; expires_at?: string | null; is_active?: boolean; stream_id?: string | null };
           const expires = g.expires_at;
-          const now = Date.now();
-          if (g.is_active && expires && new Date(expires).getTime() > now) {
-            setCooldownActive(true);
-            setCooldownRemaining(Math.ceil((new Date(expires).getTime() - now) / 1000));
-            return;
+          const now = new Date().getTime(); // GMT
+          if (g.is_active && expires) {
+            const expiresTime = new Date(expires).getTime(); // GMT
+            if (expiresTime > now) {
+              setCooldownActive(true);
+              setCooldownRemaining(Math.ceil((expiresTime - now) / 1000));
+              return;
+            }
           }
         }
       } catch {
@@ -94,6 +97,17 @@ export default function PointsAndRewardSection({ isLive }: { isLive: boolean }) 
         const now = Date.now();
         const cooldownMs = reward.cooldown * 1000;
         const remaining = last + cooldownMs - now;
+        // Debug-Logging für Cooldown-Check
+        console.log('[Cooldown-Check]', {
+          rewardId: selectedRewardId,
+          timestamp: data.timestamp,
+          last,
+          now,
+          cooldown: reward.cooldown,
+          cooldownMs,
+          remaining,
+          diffSec: Math.ceil(remaining / 1000)
+        });
         if (remaining > 0) {
           setCooldownActive(true);
           setCooldownRemaining(Math.ceil(remaining / 1000));
