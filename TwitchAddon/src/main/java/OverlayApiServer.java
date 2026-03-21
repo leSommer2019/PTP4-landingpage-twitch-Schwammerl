@@ -17,6 +17,7 @@ public class OverlayApiServer {
         server.createContext("/api/rewards", new RewardsHandler());
         server.createContext("/api/redeem_check", new RedeemCheckHandler());
         server.createContext("/overlay.html", new StaticFileHandler("overlay.html", "text/html"));
+        server.createContext("/tts-test.html", new StaticFileHandler("tts-test.html", "text/html"));
         server.createContext("/media", new StaticDirHandler("media"));
         server.setExecutor(null);
         server.start();

@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>TTS Test</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; background: #222; color: #fff; }
+    .container { max-width: 600px; margin: 0 auto; }
+    input, button { padding: 10px; font-size: 14px; }
+    button { background: #007bff; color: white; border: none; cursor: pointer; border-radius: 5px; }
+    button:hover { background: #0056b3; }
+    .log { background: #333; padding: 10px; margin-top: 20px; border-radius: 5px; max-height: 300px; overflow-y: auto; }
+    .log pre { margin: 0; }
+    .voice-list { background: #333; padding: 10px; margin: 10px 0; border-radius: 5px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>TTS Test</h1>
+
+    <div>
+      <h2>Test Text:</h2>
+      <input type="text" id="testText" value="Hallo Welt, das ist ein Test." style="width: 100%; padding: 10px;">
+      <button onclick="testTTS()">TTS Abspielen</button>
+      <button onclick="stopTTS()">Stoppen</button>
+    </div>
+
+    <div>
+      <h2>Verfügbare Stimmen:</h2>
+      <button onclick="listVoices()">Stimmen laden</button>
+      <div id="voiceList" class="voice-list" style="display: none;"></div>
+    </div>
+
+    <div>
+      <h2>Browser Informationen:</h2>
+      <pre id="browserInfo"></pre>
+    </div>
+
+    <div class="log">
+      <h3>Logs:</h3>
+      <pre id="logOutput"></pre>
+    </div>
+  </div>
+
+  <script>
+    function log(message) {
+      const logEl = document.getElementById('logOutput');
+      const timestamp = new Date().toLocaleTimeString();
+      logEl.textContent += `[${timestamp}] ${message}\n`;
+      logEl.parentElement.scrollTop = logEl.parentElement.scrollHeight;
+    }
+
+    function checkBrowserInfo() {
+      const info = {
+        'User Agent': navigator.userAgent,
+        'speechSynthesis verfügbar': !!window.speechSynthesis,
+        'Browser': getBrowserName(),
+        'Sprache': navigator.language,
+      };
+
+      document.getElementById('browserInfo').textContent = JSON.stringify(info, null, 2);
+
+      if (!window.speechSynthesis) {
+        log('⚠️ speechSynthesis NICHT verfügbar! TTS wird nicht funktionieren!');
+      } else {
+        log('✅ speechSynthesis verfügbar');
+      }
+    }
+
+    function getBrowserName() {
+      if (navigator.userAgent.indexOf('Firefox') > -1) return 'Firefox';
+      if (navigator.userAgent.indexOf('Chrome') > -1) return 'Chrome';
+      if (navigator.userAgent.indexOf('Safari') > -1) return 'Safari';
+      if (navigator.userAgent.indexOf('Edge') > -1) return 'Edge';
+      return 'Unbekannt';
+    }
+
+    function listVoices() {
+      log('Lade Stimmen...');
+      if (!window.speechSynthesis) {
+        log('❌ speechSynthesis nicht verfügbar');
+        return;
+      }
+
+      const voices = window.speechSynthesis.getVoices();
+      if (voices.length === 0) {
+        log('⚠️ Keine Stimmen gefunden. Versuche nach 100ms nochmal...');
+        setTimeout(listVoices, 100);
+        return;
+      }
+
+      log(`✅ ${voices.length} Stimmen gefunden:`);
+
+      let html = '<h4>Deutsche Stimmen:</h4>';
+      const germanVoices = voices.filter(v => v.lang.startsWith('de'));
+      if (germanVoices.length > 0) {
+        html += '<ul>';
+        germanVoices.forEach(v => {
+          html += `<li>${v.name} (${v.lang}) ${v.default ? '⭐' : ''}</li>`;
+        });
+        html += '</ul>';
+      } else {
+        html += '<p>Keine deutschen Stimmen gefunden!</p>';
+      }
+
+      html += '<h4>Alle Stimmen:</h4><ul>';
+      voices.forEach(v => {
+        html += `<li>${v.name} (${v.lang})</li>`;
+      });
+      html += '</ul>';
+
+      document.getElementById('voiceList').innerHTML = html;
+      document.getElementById('voiceList').style.display = 'block';
+    }
+
+    function testTTS() {
+      const text = document.getElementById('testText').value;
+
+      if (!text.trim()) {
+        log('❌ Text ist leer!');
+        return;
+      }
+
+      if (!window.speechSynthesis) {
+        log('❌ speechSynthesis nicht verfügbar!');
+        return;
+      }
+
+      log(`Starte TTS mit Text: "${text}"`);
+
+      window.speechSynthesis.cancel();
+      const utter = new window.SpeechSynthesisUtterance(text);
+
+      utter.lang = 'de-DE';
+      utter.volume = 1;
+      utter.rate = 1;
+      utter.pitch = 1;
+
+      // Versuche deutsche Stimme zu finden
+      if (window.speechSynthesis.getVoices) {
+        const voices = window.speechSynthesis.getVoices();
+        const germanVoice = voices.find(v => v.lang.startsWith('de'));
+        if (germanVoice) {
+          utter.voice = germanVoice;
+          log(`✅ Deutsche Stimme gesetzt: ${germanVoice.name}`);
+        } else {
+          log(`⚠️ Keine deutsche Stimme gefunden, verwende Default`);
+        }
+      }
+
+      utter.onstart = () => {
+        log('▶️ TTS gestartet');
+      };
+
+      utter.onend = () => {
+        log('✅ TTS beendet');
+      };
+
+      utter.onerror = (e) => {
+        log(`❌ TTS Fehler: ${e.error}`);
+      };
+
+      utter.onpause = () => {
+        log('⏸️ TTS pausiert');
+      };
+
+      utter.onresume = () => {
+        log('▶️ TTS fortgesetzt');
+      };
+
+      try {
+        window.speechSynthesis.speak(utter);
+      } catch (e) {
+        log(`❌ Exception: ${e.message}`);
+      }
+    }
+
+    function stopTTS() {
+      if (window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+        log('🛑 TTS gestoppt');
+      }
+    }
+
+    // Beim Laden
+    window.addEventListener('load', () => {
+      checkBrowserInfo();
+      // Stimmen nach kurzer Verzögerung laden (manche Browser brauchen das)
+      setTimeout(() => {
+        if (window.speechSynthesis && window.speechSynthesis.onvoiceschanged !== undefined) {
+          window.speechSynthesis.onvoiceschanged = listVoices;
+        }
+      }, 100);
+    });
+  </script>
+</body>
+</html>
+
