@@ -525,7 +525,10 @@
       "already_voted": "Du häsch in dere Runde scho abgstimmt.",
       "clip_not_in_round": "Dä Clip ghört nöd zur aktuälle Runde.",
       "round_not_found": "Runde nöd gfunde."
-    }
+    },
+    "confirmVote": "Bisch sicher, dass du für dä Clip wotsch abstimme?",
+    "confirm": "Bestätige",
+    "cancel": "Abbreche"
   },
   "bartclicker": {
     "stats": {

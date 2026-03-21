@@ -538,7 +538,10 @@
       "already_voted": "Du hast in dieser Runde bereits abgestimmt.",
       "clip_not_in_round": "Dieser Clip gehört nicht zur aktuellen Runde.",
       "round_not_found": "Runde nicht gefunden."
-    }
+    },
+    "confirmVote": "Bist du sicher, dass du für diesen Clip abstimmen möchtest?",
+    "confirm": "Bestätigen",
+    "cancel": "Abbrechen"
   },
   "bartclicker": {
     "stats": {

@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next'
+import { useState } from 'react'
 import ClipEmbed from './ClipEmbed'
 import type { ClipWithVotes } from '../../types/clipVoting'
 
@@ -22,6 +23,20 @@ export default function ClipCard({
   onVote,
 }: ClipCardProps) {
   const { t } = useTranslation()
+  const [showConfirm, setShowConfirm] = useState(false)
+
+  const handleVoteClick = () => {
+    setShowConfirm(true)
+  }
+
+  const handleConfirm = () => {
+    setShowConfirm(false)
+    onVote()
+  }
+
+  const handleCancel = () => {
+    setShowConfirm(false)
+  }
 
   return (
     <div className={`clip-card${isVoted ? ' clip-card--voted' : ''}`}>
@@ -44,13 +59,32 @@ export default function ClipCard({
       </div>
 
       {showVoteBtn && (
-        <button
-          className={`clip-card__vote-btn${isVoted ? ' clip-card__vote-btn--active' : ''}`}
-          disabled={!canVote && !isVoted}
-          onClick={onVote}
-        >
-          {isVoted ? `✓ ${t('clipVoting.voted')}` : t('clipVoting.vote')}
-        </button>
+        <>
+          <button
+            className={`clip-card__vote-btn${isVoted ? ' clip-card__vote-btn--active' : ''}`}
+            disabled={!canVote && !isVoted}
+            onClick={handleVoteClick}
+          >
+            {isVoted ? `✓ ${t('clipVoting.voted')}` : t('clipVoting.vote')}
+          </button>
+          {showConfirm && (
+            <div className="clip-card__confirm-modal">
+              <div className="clip-card__confirm-modal-content">
+                <div className="clip-card__confirm-modal-text">
+                  {t('clipVoting.confirmVote')}
+                </div>
+                <div className="clip-card__confirm-modal-actions">
+                  <button className="clip-card__confirm-btn" onClick={handleConfirm}>
+                    {t('clipVoting.confirm')}
+                  </button>
+                  <button className="clip-card__cancel-btn" onClick={handleCancel}>
+                    {t('clipVoting.cancel')}
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+        </>
       )}
     </div>
   )

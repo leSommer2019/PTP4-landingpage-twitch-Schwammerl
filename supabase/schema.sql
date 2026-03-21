@@ -128,7 +128,7 @@ CREATE OR REPLACE FUNCTION cast_vote(p_round_id uuid, p_clip_id uuid)
 RETURNS jsonb
 LANGUAGE plpgsql
 SECURITY DEFINER
-SET search_path = public
+SET search_path = clipvoting, public
 AS $$
 DECLARE
   v_user_id uuid;
@@ -333,7 +333,7 @@ BEGIN
     RETURN jsonb_build_object('error', 'forbidden');
   END IF;
 
-  SELECT * INTO v_round FROM voting_rounds
+  SELECT * INTO v_round FROM clipvoting.voting_rounds
   WHERE type = 'round2' AND status = 'pending'
   ORDER BY created_at DESC LIMIT 1;
 
@@ -341,7 +341,7 @@ BEGIN
     RETURN jsonb_build_object('error', 'no_pending_round2');
   END IF;
 
-  UPDATE voting_rounds SET
+  UPDATE clipvoting.voting_rounds SET
     status = 'active',
     starts_at = now(),
     ends_at = now() + interval '24 hours'
@@ -367,7 +367,7 @@ BEGIN
     RETURN jsonb_build_object('error', 'forbidden');
   END IF;
 
-  SELECT * INTO v_round FROM voting_rounds
+  SELECT * INTO v_round FROM clipvoting.voting_rounds
   WHERE type = 'round2' AND status = 'active'
   ORDER BY created_at DESC LIMIT 1;
 
@@ -375,7 +375,7 @@ BEGIN
     RETURN jsonb_build_object('error', 'no_active_round2');
   END IF;
 
-  UPDATE voting_rounds SET status = 'completed' WHERE id = v_round.id;
+  UPDATE clipvoting.voting_rounds SET status = 'completed' WHERE id = v_round.id;
 
   -- Gewinner ermitteln
   SELECT rc.clip_id INTO v_winner
@@ -415,14 +415,14 @@ BEGIN
   END IF;
 
   -- Prüfen ob bereits existiert
-  SELECT * INTO v_round FROM voting_rounds
+  SELECT * INTO v_round FROM clipvoting.voting_rounds
   WHERE type = 'yearly' AND year = v_year LIMIT 1;
   IF v_round IS NOT NULL THEN
     RETURN jsonb_build_object('error', 'yearly_already_exists');
   END IF;
 
   -- Runde erstellen
-  INSERT INTO voting_rounds (type, status, year, starts_at, ends_at)
+  INSERT INTO clipvoting.voting_rounds (type, status, year, starts_at, ends_at)
   VALUES ('yearly', 'active', v_year, now(), now() + interval '7 days')
   RETURNING * INTO v_round;
 
@@ -454,7 +454,7 @@ BEGIN
     RETURN jsonb_build_object('error', 'forbidden');
   END IF;
 
-  SELECT * INTO v_round FROM voting_rounds
+  SELECT * INTO v_round FROM clipvoting.voting_rounds
   WHERE type = 'yearly' AND status = 'active'
   ORDER BY created_at DESC LIMIT 1;
 
@@ -462,7 +462,7 @@ BEGIN
     RETURN jsonb_build_object('error', 'no_active_yearly');
   END IF;
 
-  UPDATE voting_rounds SET status = 'completed' WHERE id = v_round.id;
+  UPDATE clipvoting.voting_rounds SET status = 'completed' WHERE id = v_round.id;
 
   SELECT rc.clip_id INTO v_winner
   FROM round_clips rc
