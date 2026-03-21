@@ -120,11 +120,11 @@
       if (reward.istts) {
         let text;
         if (reward.id === 'raid_leader') {
-          const username = redeemed.user || '';
-          const target = redeemed.ttsText || redeemed.description || '';
+          const username = redeemed.user || redeemed.twitch_user_name || '';
+          const target = redeemed.ttstext || redeemed.tts_text || redeemed.ttsText || redeemed.description || '';
           text = `RAID-Anführer ${username} zu ${target}`;
         } else {
-          text = redeemed.ttsText || redeemed.description || reward.description || 'Text to Speech';
+          text = redeemed.ttstext || redeemed.tts_text || redeemed.ttsText || redeemed.description || reward.description || 'Text to Speech';
         }
         mediaDiv.innerHTML = getRewardTextHtml(text);
         if ('speechSynthesis' in window && text && String(text).trim().length > 0) {
@@ -161,8 +161,7 @@
             let imgHtml = '';
             if (imageUrl) imgHtml = `<img src=\"${imageUrl}\" alt=\"Reward-Bild\" style=\"max-width:60vw;max-height:60vh;\" />`;
             mediaDiv.innerHTML = `<div style='display:flex;flex-direction:column;align-items:center;justify-content:center;'>
-              <iframe width=\"1\" height=\"1\" style=\"opacity:0;position:absolute;left:-9999px;pointer-events:none;\" src=\"https://www.youtube.com/embed/${ytId}?autoplay=1\" allow=\"autoplay; encrypted-media\"></iframe>
-              ${imgHtml}${getRewardTextHtml(textContent)}
+            <iframe width="1" height="1" style="opacity:0;position:absolute;left:-9999px;pointer-events:none;" src="https://www.youtube.com/embed/${ytId}?autoplay=1" allow="autoplay; encrypted-media"></iframe>              ${imgHtml}${getRewardTextHtml(textContent)}
             </div>`;
             console.log('[Overlay] YouTube-Video ausgeblendet, Ton läuft, zeige stattdessen Bild/Text:', imageUrl, textContent);
             setTimeout(afterPlayback, duration * 1000);

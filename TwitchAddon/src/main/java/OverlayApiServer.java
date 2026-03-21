@@ -46,116 +46,53 @@ public class OverlayApiServer {
                         }
                     }
                 }
+
                 if (id == null || id.isEmpty()) {
-                    System.err.println("[OverlayApiServer] DELETE-Request: Keine ID übergeben!");
                     String resp = "{\"error\":\"missing_id\"}";
                     exchange.sendResponseHeaders(400, resp.length());
                     exchange.getResponseBody().write(resp.getBytes());
                     exchange.getResponseBody().close();
                     return;
                 }
-                System.out.println("[OverlayApiServer] DELETE-Request für redeemed_reward id=" + id);
+
                 JSONObject redeemedReward = supabaseClient.getRedeemedRewardById(id);
                 if (redeemedReward == null) {
                     exchange.sendResponseHeaders(404, 0);
                     exchange.getResponseBody().close();
                     return;
                 }
+
                 String rewardId = redeemedReward.getString("reward_id");
-                long timestamp = redeemedReward.getLong("timestamp");
-                int cooldown = supabaseClient.getRewardCooldownFromDb(rewardId); // Sekunden
                 String redeemedBy = redeemedReward.optString("twitch_user_id", null);
-                int redeemedCost = redeemedReward.optInt("cost", 0);
-                long now = System.currentTimeMillis();
-                long elapsed = (now - timestamp) / 1000L;
 
-                // 1) Prüfe once-per-stream auf Reward-Definition
-                boolean oncePerStream = supabaseClient.isRewardOncePerStream(rewardId);
-                if (oncePerStream) {
-                    // Prüfe, ob es einen aktiven globalen Eintrag für diese Belohnung in redeemed_global gibt (stream_id kann null sein)
-                    boolean activeGlobal = supabaseClient.hasActiveGlobalRedemption(rewardId, null);
-                    if (activeGlobal) {
-                        // Wenn bereits eine globale Einlösung aktiv ist: lösche den eingelösten Eintrag und erstatte Punkte
-                        // Hinweis: SupabaseClient.deleteRedeemedReward löscht aus redeemed_rewards
-                        boolean deleted = supabaseClient.deleteRedeemedReward(id);
-                        // Refund points if we know who redeemed and cost
-                        boolean refunded = false;
-                        if (redeemedBy != null && redeemedCost > 0) {
-                            supabaseClient.addOrUpdatePoints(redeemedBy, redeemedBy, redeemedCost, "Refund blocked redemption");
-                            refunded = true;
-                        }
-                        // Rückgabe: informiere Caller, dass Reward nicht ausgeführt wurde und Punkte zurückerstattet wurden
-                        JSONObject resp = new JSONObject();
-                        resp.put("success", false);
-                        resp.put("error", "once_per_stream_active");
-                        resp.put("action", "refunded_and_deleted");
-                        resp.put("deleted", deleted);
-                        resp.put("refunded", refunded);
-                        String respStr = resp.toString();
-                        exchange.getResponseHeaders().add("Content-Type", "application/json");
-                        exchange.sendResponseHeaders(200, respStr.length());
-                        exchange.getResponseBody().write(respStr.getBytes());
-                        exchange.getResponseBody().close();
-                        return;
-                    }
-                }
-
-                // 2) Prüfe globalen Cooldown: Wenn ein globaler Eintrag existiert, verwende dessen Zeitstempel
-                long lastGlobal = supabaseClient.getLastGlobalRedemptionTimestamp(rewardId);
-                if (lastGlobal > 0) {
-                    long globalElapsed = (now - lastGlobal) / 1000L;
-                    if (cooldown > 0 && globalElapsed < cooldown) {
-                        // Auch hier: wenn globaler Lock existiert => lösche eingelösten Reward und refund
-                        boolean deleted = supabaseClient.deleteRedeemedReward(id);
-                        boolean refunded = false;
-                        if (redeemedBy != null && redeemedCost > 0) {
-                            supabaseClient.addOrUpdatePoints(redeemedBy, redeemedBy, redeemedCost, "Refund blocked redemption");
-                            refunded = true;
-                        }
-                        JSONObject resp = new JSONObject();
-                        resp.put("success", false);
-                        resp.put("error", "cooldown_active");
-                        resp.put("cooldown", cooldown);
-                        resp.put("remaining", cooldown - globalElapsed);
-                        resp.put("action", "refunded_and_deleted");
-                        resp.put("deleted", deleted);
-                        resp.put("refunded", refunded);
-                        String respStr = resp.toString();
-                        exchange.getResponseHeaders().add("Content-Type", "application/json");
-                        exchange.sendResponseHeaders(200, respStr.length());
-                        exchange.getResponseBody().write(respStr.getBytes());
-                        exchange.getResponseBody().close();
-                        return;
-                    }
-                } else {
-                    // Fallback: benutze timestamp aus redeemed_rewards (alte Logik)
-                    if (cooldown > 0 && elapsed < cooldown) {
-                        boolean deleted = supabaseClient.deleteRedeemedReward(id);
-                        boolean refunded = false;
-                        if (redeemedBy != null && redeemedCost > 0) {
-                            supabaseClient.addOrUpdatePoints(redeemedBy, redeemedBy, redeemedCost, "Refund blocked redemption");
-                            refunded = true;
-                        }
-                        JSONObject resp = new JSONObject();
-                        resp.put("success", false);
-                        resp.put("cooldown", cooldown);
-                        resp.put("remaining", cooldown - elapsed);
-                        resp.put("action", "refunded_and_deleted");
-                        resp.put("deleted", deleted);
-                        resp.put("refunded", refunded);
-                        String respStr = resp.toString();
-                        exchange.getResponseHeaders().add("Content-Type", "application/json");
-                        exchange.sendResponseHeaders(200, respStr.length());
-                        exchange.getResponseBody().write(respStr.getBytes());
-                        exchange.getResponseBody().close();
-                        return;
-                    }
-                }
-                // Cooldown abgelaufen, jetzt löschen
+                // 1. Einfach und ohne Wenn und Aber aus der Warteschlange löschen!
                 boolean success = supabaseClient.deleteRedeemedReward(id);
-                System.out.println("[OverlayApiServer] DELETE-Result für id=" + id + ": " + (success ? "deleted" : "not found"));
-                String response = success ? "deleted" : "not found or delete failed (siehe Server-Log)";
-                exchange.sendResponseHeaders(success ? 200 : 404, response.length());
+
+                // 2. redeemed_global per Plugin setzen, sobald es erfolgreich verarbeitet wurde
+                if (success) {
+                    boolean oncePerStream = supabaseClient.isRewardOncePerStream(rewardId);
+                    int cooldown = supabaseClient.getRewardCooldownFromDb(rewardId);
+
+                    if (oncePerStream || cooldown > 0) {
+                        JSONObject globalLock = new JSONObject();
+                        globalLock.put("reward_id", rewardId);
+                        globalLock.put("redeemed_by", redeemedBy);
+                        globalLock.put("is_active", true);
+
+                        // Wenn oncePerStream, läuft es bis zum Stream-Ende (wo dein TwitchBot es ohnehin löscht).
+                        // Falls es nur ein Cooldown ist, setzen wir die genaue Ablaufzeit.
+                        if (!oncePerStream && cooldown > 0) {
+                            java.time.OffsetDateTime expires = java.time.OffsetDateTime.now().plusSeconds(cooldown);
+                            globalLock.put("expires_at", expires.toString());
+                        }
+
+                        supabaseClient.insertGlobalRedemption(globalLock);
+                        System.out.println("[OverlayApiServer] Globaler Lock gesetzt für Reward: " + rewardId);
+                    }
+                }
+
+                String response = success ? "deleted" : "delete failed";
+                exchange.sendResponseHeaders(success ? 200 : 500, response.length());
                 OutputStream os = exchange.getResponseBody();
                 os.write(response.getBytes());
                 os.close();

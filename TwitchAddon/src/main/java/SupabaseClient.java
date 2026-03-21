@@ -478,11 +478,6 @@ public class SupabaseClient {
      */
     public boolean insertGlobalRedemption(JSONObject usage) {
         try {
-            // Wenn expires_at fehlt oder null ist, KEIN Insert!
-            if (!usage.has("expires_at") || usage.isNull("expires_at")) {
-                logger.info("Kein Insert in redeemed_global, da expires_at null ist.");
-                return false;
-            }
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(supabaseUrl + "/rest/v1/redeemed_global"))
                     .header("apikey", apiKey)
