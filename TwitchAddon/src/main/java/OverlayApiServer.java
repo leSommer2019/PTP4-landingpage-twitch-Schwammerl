@@ -6,8 +6,6 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 public class OverlayApiServer {
     private final SupabaseClient supabaseClient;
@@ -18,8 +16,6 @@ public class OverlayApiServer {
         server.createContext("/api/redeemed_rewards", new RedeemedRewardsHandler());
         server.createContext("/api/rewards", new RewardsHandler());
         server.createContext("/api/redeem_check", new RedeemCheckHandler());
-        // server.createContext("/api/rewards.json", new RewardsJsonHandler()); // entfernt
-        // server.createContext("/api/redeem_reward", new RedeemRewardHandler()); // entfernt, Redeems laufen nur noch über Supabase
         server.createContext("/overlay.html", new StaticFileHandler("overlay.html", "text/html"));
         server.createContext("/media", new StaticDirHandler("media"));
         server.setExecutor(null);
