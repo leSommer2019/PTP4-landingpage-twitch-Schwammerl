@@ -30,7 +30,7 @@ declare global {
 
 export default function LiveSection() {
     const {t} = useTranslation()
-    const {channel, chatFallbackUrl} = siteConfig.twitch
+    const {channel} = siteConfig.twitch
     const parent =
         typeof window !== 'undefined' ? window.location.hostname : 'localhost'
 
