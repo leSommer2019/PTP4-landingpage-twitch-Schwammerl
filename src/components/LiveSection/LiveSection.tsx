@@ -49,6 +49,7 @@ export default function LiveSection() {
                 return
             playerCreated.current = true
 
+            console.log('Player wird erstellt', playerContainerRef.current, window.Twitch?.Player)
             const player = new window.Twitch.Player(playerContainerRef.current, {
                 channel,
                 parent: [parent],
@@ -56,13 +57,16 @@ export default function LiveSection() {
                 height: '100%',
                 autoplay: true,
             })
+            console.log('Player Instanz:', player)
 
-            player.addEventListener(window.Twitch.Player.ONLINE, () =>
-                setIsLive(true),
-            )
-            player.addEventListener(window.Twitch.Player.OFFLINE, () =>
-                setIsLive(false),
-            )
+            player.addEventListener(window.Twitch.Player.ONLINE, () => {
+                console.log('Twitch Player ONLINE Event')
+                setIsLive(true)
+            })
+            player.addEventListener(window.Twitch.Player.OFFLINE, () => {
+                console.log('Twitch Player OFFLINE Event')
+                setIsLive(false)
+            })
         }
 
         // SDK already available
@@ -137,32 +141,25 @@ export default function LiveSection() {
                 <CurrentGame isLive={showStream}/>
                 <p></p>
                 {/* ── Player + Chat nur wenn live ── */}
-                {showStream && (
-                    <div className="embed-row">
-                        <div
-                            className="embed-player"
-                            ref={playerContainerRef}
-                            style={{ minHeight: 400 }}
-                        >
-                        </div>
+                {/* Entferne das {showStream && ( ... )} um die embed-row */}
+                <div className={`embed-row ${!showStream ? 'embed-row--hidden' : ''}`}>
+                    <div
+                        className="embed-player"
+                        ref={playerContainerRef}
+                        style={{ minHeight: 400 }}
+                    ></div>
+
+                    {/* Der Chat kann bedingt bleiben, da er ein einfaches Iframe ist */}
+                    {showStream && (
                         <div className="embed-chat">
                             <iframe
                                 src={`https://www.twitch.tv/embed/${channel}/chat?parent=${parent}&darkpopout`}
                                 title="Twitch Chat"
                                 allow="autoplay; fullscreen"
                             />
-                            <div className="chat-fallback">
-                                <a
-                                    href={chatFallbackUrl}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                >
-                                    {t('live.chatFallback')}
-                                </a>
-                            </div>
                         </div>
-                    </div>
-                )}
+                    )}
+                </div>
                 <p></p>
                 {/* Punkte & Rewards auf exakt gleicher Breite wie embed-row */}
                 <div className="points-reward-section-wrapper">
