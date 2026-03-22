@@ -47,10 +47,10 @@
   color: var(--accent);
 }
 
-/* Grid-Layout: 3 Spalten */
+/* Grid-Layout: 4 Spalten auf Desktop */
 .reward-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 10px;
   max-height: 300px;
   overflow-y: auto;
@@ -59,13 +59,13 @@
 
 @media (max-width: 900px) {
   .reward-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(3, 1fr);
   }
 }
 
 @media (max-width: 600px) {
   .reward-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
