@@ -71,7 +71,12 @@
 
 /* ── Hidden state (player stays loaded for online/offline detection) ── */
 .embed-row--hidden {
-  display: none !important;
+  visibility: hidden;
+  opacity: 0;
+  width: 320px;
+  height: 180px;
+  overflow: hidden;
+  pointer-events: none;
 }
 
 /* ── Responsive ── */
