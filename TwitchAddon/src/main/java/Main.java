@@ -70,6 +70,9 @@ public class Main {
         System.out.println("Bot läuft. Punkte werden in Supabase gespeichert.");
 
         // Broadcaster automatisch maximale Punkte geben
+        if (!supabaseClient.existsUser(channelName, broadcasterId)) {
+            supabaseClient.createUser(channelName, broadcasterId);
+        }
         pointsManager.addPoints(channelName, broadcasterId, 2_147_483_647, "max für broadcaster");
         System.out.println("[Main] Broadcaster " + channelName + " (" + broadcasterId + ") erhält maximale Punkte.");
     }
