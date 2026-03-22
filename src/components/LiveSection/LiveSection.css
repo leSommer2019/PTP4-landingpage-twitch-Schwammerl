@@ -70,11 +70,21 @@
 }
 
 .embed-row--hidden {
-  position: absolute; /* Nimmt das Element aus dem Layout-Fluss */
-  left: -9999px;      /* Schiebt es weit aus dem Sichtfeld */
-  visibility: hidden;
+  /* Anstatt position: absolute nutzen wir ein kontrolliertes Verstecken */
+  height: 0;
+  min-height: 0 !important;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
   opacity: 0;
   pointer-events: none;
+  visibility: hidden;
+}
+
+/* WICHTIG: Auch der Player-Container darin muss klein werden */
+.embed-row--hidden .embed-player {
+  min-height: 0 !important;
+  height: 0;
 }
 
 /* ── Responsive ── */
@@ -119,12 +129,9 @@
 }
 
 .points-reward-section-wrapper {
-  max-width: 100%;
-  margin: 0 auto;
-  /* Gleiche Breite wie .embed-row (Stream+Chat) */
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
+  width: 100%;
+  display: block; /* Sicherer als flex, wenn es nur ein Container ist */
+  margin-top: 20px; /* Erzwingt Abstand nach oben, auch wenn der Player weg ist */
 }
 
 @media (min-width: 901px) {

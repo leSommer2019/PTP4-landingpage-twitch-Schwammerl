@@ -143,13 +143,7 @@ export default function LiveSection() {
                 {/* ── Player + Chat nur wenn live ── */}
                 {/* Entferne das {showStream && ( ... )} um die embed-row */}
                 <div className={`embed-row ${!showStream ? 'embed-row--hidden' : ''}`}>
-                    <div
-                        className="embed-player"
-                        ref={playerContainerRef}
-                        style={{ minHeight: 400 }}
-                    ></div>
-
-                    {/* Der Chat kann bedingt bleiben, da er ein einfaches Iframe ist */}
+                    <div className="embed-player" ref={playerContainerRef} style={{ minHeight: 400 }}></div>
                     {showStream && (
                         <div className="embed-chat">
                             <iframe
@@ -160,8 +154,10 @@ export default function LiveSection() {
                         </div>
                     )}
                 </div>
+
                 <p></p>
-                {/* Punkte & Rewards auf exakt gleicher Breite wie embed-row */}
+
+                {/* Diese Sektion muss IMMER da stehen, unabhängig von isLive */}
                 <div className="points-reward-section-wrapper">
                     <PointsAndRewardSection isLive={showStream}/>
                 </div>
