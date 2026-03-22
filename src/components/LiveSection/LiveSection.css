@@ -69,13 +69,11 @@
   color: var(--accent);
 }
 
-/* ── Hidden state (player stays loaded for online/offline detection) ── */
 .embed-row--hidden {
+  position: absolute; /* Nimmt das Element aus dem Layout-Fluss */
+  left: -9999px;      /* Schiebt es weit aus dem Sichtfeld */
   visibility: hidden;
   opacity: 0;
-  width: 320px;
-  height: 180px;
-  overflow: hidden;
   pointer-events: none;
 }
 
