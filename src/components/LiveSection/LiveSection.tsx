@@ -137,13 +137,11 @@ export default function LiveSection() {
         {/* ── Player + Chat nur wenn live ── */}
         {showStream && (
           <div className="embed-row">
-            <div className="embed-player" ref={playerContainerRef}>
-              {/* Fallback Overlay falls Player nicht lädt */}
-              <noscript>
-                <div style={{color: '#fff', textAlign: 'center', padding: '1rem'}}>
-                  {t('live.playerNoJS', 'Bitte aktiviere JavaScript, um den Stream zu sehen.')}
-                </div>
-              </noscript>
+            <div
+              className="embed-player"
+              ref={playerContainerRef}
+              style={{ minHeight: 400 }}
+            >
             </div>
             <div className="embed-chat">
               <iframe
@@ -163,6 +161,7 @@ export default function LiveSection() {
             </div>
           </div>
         )}
+        <p></p>
         {/* Punkte & Rewards direkt unter dem Chat anzeigen */}
         <PointsAndRewardSection isLive={showStream} />
       </div>
