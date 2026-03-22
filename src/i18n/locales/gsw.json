@@ -285,7 +285,6 @@
     "requiredTitle": "Login nötig",
     "requiredMsg": "Bitte logg di i, zum wyterzmache."
   },
-
   "error": {
     "title": "Zuegriff verweigert",
     "forbidden": "Die Siite isch für di nöd verfiegbar."
@@ -400,40 +399,28 @@
     "newRewardTitle": "Neui Belohnig",
     "rewardNameKeyPlaceholder": "Name-Key iigä",
     "rewardDescKeyPlaceholder": "Beschrieb-Key iigä",
-
     "rewardNameLabel": "Name",
     "rewardNamePlaceholder": "Aazeigte Name iigä",
-
     "rewardDescriptionLabel": "Beschrieb",
     "rewardDescriptionPlaceholder": "Beschribig vo de Belohnig iigä",
-
     "rewardSourceLabel": "Quell",
     "rewardSourcePlaceholder": "z.B. 'local', 'youtube' oder 'tts'",
-
     "rewardMediaurlLabel": "Media-URL",
     "rewardMediaurlPlaceholder": "URL zu Audio/Video (falls vorhanden)",
-
     "rewardShowMediaLabel": "Medium aazeige",
     "rewardShowMediaHint": "Wenn aktiviert, wird s'Medium (z.B. YouTube-Video) aazeigt / abgspielt (wenn unterstützt)",
-
     "rewardImageLabel": "Bild-URL",
     "rewardImagePlaceholder": "URL für e Bild eifüege",
-
     "rewardIsTtsLabel": "Text-to-Speech",
     "rewardIsTtsHint": "Wenn aktiviert, wird dr Text per TTS abgspielt",
-
     "rewardShowYoutubeVideoLabel": "YouTube-Video aazeige",
     "rewardShowYoutubeVideoHint": "Wenn aktiviert, wird s'YouTube-Video im Stream/Overlay aazeigt/abgspielt (wenn unterstützt)",
-
     "rewardCustomImageLabel": "Custom Image URL",
     "rewardCustomImagePlaceholder": "URL für es benutzerdefinierts Bild",
-
     "rewardTextLabel": "Text",
     "rewardTextPlaceholder": "Text iigä (z.B. für TTS)",
-
     "rewardDurationLabel": "Dauer (Sekunde)",
     "rewardDurationPlaceholder": "Dauer i Sekunde (z.B. 60)",
-
     "rewardOncePerStreamLabel": "Nur einisch pro Stream",
     "rewardOncePerStreamHint": "Wenn aktiviert, cha d'Belohnig pro Stream nume einisch iiglöst wäre",
     "rewardCostPlaceholder": "Kosten iigä",
@@ -466,8 +453,7 @@
     "technicalHint": "Technischer Hinweis:",
     "technicalHintPoints": "Punkte werde direkt i de Datenbank ändere.",
     "technicalHintRewards": "Belohnige werde sofort überno.",
-    "technicalHintBanned": "Gspärri Accounts chönd jederziit entsperrt werde."
-    ,
+    "technicalHintBanned": "Gspärri Accounts chönd jederziit entsperrt werde.",
     "noPermission": "Kei Berechtigig",
     "couldNotFetchTwitchId": "Konnte Twitch-ID nöd abrufe",
     "cannotBanYourself": "Du chasch di selber nöd sperre",
@@ -492,8 +478,7 @@
     "rpcMissingAndDeleteFailed": "Fähler: RPC-Funktion `admin_delete_reward` nöd in de DB gfundä und Direktlöschung isch fehlgschlage. Bitte üs de SQL i `supabase/db_anleitung_allgemein.sql` usführe oder DB-Administrator kontakte.",
     "rpcMissingAndDeleteFailedShort": "Fähler: RPC-Funktion `admin_delete_reward` fehlt und Direktlöschung isch fehlgschlage. Bitte `supabase/db_anleitung_allgemein.sql` usführe.",
     "errorDeletingReward": "Fähler bim Lösche vo de Reward: {{msg}}",
-    "rewardDeleted": "Reward glöscht!"
-    ,
+    "rewardDeleted": "Reward glöscht!",
     "rlsBanPolicy": "Fähler: Direkti Iifüegig wird dur RLS blockiert. Bitte d'RPC `admin_ban_account` i de DB aalege oder d'Policies aapasse.",
     "rlsUnbanPolicy": "Fähler: Direkti Löschung wird dur RLS blockiert. Bitte d'RPC `admin_unban_account` i de DB aalege oder d'Policies aapasse."
   },
@@ -550,16 +535,16 @@
       "relicsUnlocked": "Relikte freiggschaltet",
       "rebirthMultiplier": "Rebirth Multiplikator"
     },
-        "units": {
-          "thousand": "Tausend",
-          "thousandShort": "Tsd.",
-          "million": "Million",
-          "millionShort": "Mio.",
-          "billion": "Milliarde",
-          "billionShort": "Mrd.",
-          "trillion": "Billion",
-          "trillionShort": "Bio."
-        },
+    "units": {
+      "thousand": "Tausend",
+      "thousandShort": "Tsd.",
+      "million": "Million",
+      "millionShort": "Mio.",
+      "billion": "Milliarde",
+      "billionShort": "Mrd.",
+      "trillion": "Billion",
+      "trillionShort": "Bio."
+    },
     "tabs": {
       "shop": "🛒 Shop",
       "leaderboard": "🏆 Leaderboard",

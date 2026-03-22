@@ -296,7 +296,6 @@
     "requiredTitle": "Authentication required",
     "requiredMsg": "Please log in to continue."
   },
-
   "error": {
     "title": "Access denied",
     "forbidden": "This page is not available to you."
@@ -411,40 +410,28 @@
     "newRewardTitle": "New Reward",
     "rewardNameKeyPlaceholder": "Enter name key",
     "rewardDescKeyPlaceholder": "Enter description key",
-
     "rewardNameLabel": "Name",
     "rewardNamePlaceholder": "Enter displayed name",
-
     "rewardDescriptionLabel": "Description",
     "rewardDescriptionPlaceholder": "Enter reward description",
-
     "rewardSourceLabel": "Source",
     "rewardSourcePlaceholder": "e.g. 'local', 'youtube' or 'tts'",
-
     "rewardMediaurlLabel": "Media URL",
     "rewardMediaurlPlaceholder": "URL to audio/video (if any)",
-
     "rewardShowMediaLabel": "Show media",
     "rewardShowMediaHint": "If enabled, the media (e.g. YouTube video) will be shown/played (if supported)",
-
     "rewardImageLabel": "Image URL",
     "rewardImagePlaceholder": "Enter an image URL",
-
     "rewardIsTtsLabel": "Text-to-Speech",
     "rewardIsTtsHint": "If enabled, the text will be played via TTS",
-
     "rewardShowYoutubeVideoLabel": "Show YouTube Video",
     "rewardShowYoutubeVideoHint": "If enabled, the YouTube video will be shown/played in the stream/overlay (if supported)",
-
     "rewardCustomImageLabel": "Custom Image URL",
     "rewardCustomImagePlaceholder": "URL for a custom image",
-
     "rewardTextLabel": "Text",
     "rewardTextPlaceholder": "Enter text (e.g. for TTS)",
-
     "rewardDurationLabel": "Duration (seconds)",
     "rewardDurationPlaceholder": "Duration in seconds (e.g. 60)",
-
     "rewardOncePerStreamLabel": "Once per stream",
     "rewardOncePerStreamHint": "If enabled, the reward can only be redeemed once per stream",
     "rewardCostPlaceholder": "Enter cost",
@@ -477,8 +464,7 @@
     "technicalHint": "Technical hint:",
     "technicalHintPoints": "Points are changed directly in the database.",
     "technicalHintRewards": "Rewards are applied immediately.",
-    "technicalHintBanned": "Banned accounts can be unbanned at any time."
-    ,
+    "technicalHintBanned": "Banned accounts can be unbanned at any time.",
     "noPermission": "No permission",
     "couldNotFetchTwitchId": "Could not fetch Twitch ID",
     "cannotBanYourself": "You cannot ban yourself",
@@ -503,8 +489,7 @@
     "rpcMissingAndDeleteFailed": "Error: RPC function `admin_delete_reward` not found in DB and direct delete failed. Run the SQL in `supabase/db_anleitung_allgemein.sql` or contact the DB admin.",
     "rpcMissingAndDeleteFailedShort": "Error: RPC function `admin_delete_reward` missing and direct delete failed. Run the SQL in `supabase/db_anleitung_allgemein.sql`.",
     "errorDeletingReward": "Error deleting reward: {{msg}}",
-    "rewardDeleted": "Reward deleted!"
-    ,
+    "rewardDeleted": "Reward deleted!",
     "rlsBanPolicy": "Error: direct insert blocked by RLS. Please create the RPC `admin_ban_account` in the DB or adjust policies.",
     "rlsUnbanPolicy": "Error: direct delete blocked by RLS. Please create the RPC `admin_unban_account` in the DB or adjust policies."
   },

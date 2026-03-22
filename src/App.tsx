@@ -34,6 +34,7 @@ const RedirectToHtml: React.FC<{ to: string }> = ({ to }) => {
     return null
 }
 const {channel} = siteConfig.twitch
+const {impressum} = siteConfig
 const getLink = (platform: string) => siteConfig.links.find(l => l.id === platform)?.url || "/";
 const externalRedirects: Record<string, string> = {
     "/insta": getLink("instagram"),
@@ -81,6 +82,7 @@ function App() {
                 <div className="auth-gate-icon" style={{ fontSize: 48 }}>⛔</div>
                 <h1>{t('banned.title', 'Account gesperrt')}</h1>
                 <p>{t('banned.message', 'Dein Account wurde gesperrt. Bei Fragen wende dich bitte an den Support.')}</p>
+                <a href={`mailto:${impressum.email}?subject=Gebannt`} style={{ color: '#007bff', textDecoration: 'underline' }}>Support</a>
             </div>
         );
     }
