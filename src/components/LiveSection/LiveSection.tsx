@@ -142,7 +142,7 @@ export default function LiveSection() {
                         <div
                             className="embed-player"
                             ref={playerContainerRef}
-                            style={{minHeight: 400}}
+                            style={{ minHeight: 400 }}
                         >
                             {/* Fallback Overlay falls Player nicht lädt */}
                             <noscript>
