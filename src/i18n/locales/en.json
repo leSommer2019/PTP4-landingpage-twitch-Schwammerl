@@ -710,7 +710,9 @@
     "rewardCustomImageUrlLabel": "Custom Image URL",
     "rewardTextLabel": "TTS Text",
     "rewardDurationLabel": "Duration (seconds)",
-    "rewardOncePerStreamLabel": "Once per stream"
+    "rewardOncePerStreamLabel": "Once per stream",
+    "rewardStreamdeckactionLabel": "Streamdeck action",
+    "rewardStreamdeckactionPlaceholder": "Enter the name or description of the Streamdeck action"
   },
   "banned": {
     "title": "Account banned",

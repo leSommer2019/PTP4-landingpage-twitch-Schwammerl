@@ -1647,14 +1647,7 @@ CREATE TABLE IF NOT EXISTS "public"."rewards" (
     "onceperstream" boolean DEFAULT false,
     "cooldown" integer DEFAULT 0,
     "istts" boolean DEFAULT false,
-    "namekey" "text",
-    "desckey" "text",
-    "nameKey" "text",
-    "descKey" "text",
-    "oncePerStream" boolean,
-    "mediaUrl" "text",
-    "customImageUrl" "text",
-    "showYoutubeVideo" boolean
+    "streamdeckaction" "text"
 );
 
 

@@ -448,6 +448,8 @@
 
     "rewardOncePerStreamLabel": "Nur einmal pro Stream",
     "rewardOncePerStreamHint": "Wenn aktiviert, kann die Belohnung pro Stream nur einmal eingelöst werden",
+    "rewardStreamdeckactionLabel": "Streamdeck Aktion",
+    "rewardStreamdeckactionPlaceholder": "Gebe die ID der StreamDeck Aktion ein",
     "rewardCostPlaceholder": "Kosten eingeben",
     "rewardTypePlaceholder": "Typ eingeben",
     "rewardCooldownPlaceholder": "Cooldown (Sekunden)",

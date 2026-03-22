@@ -27,20 +27,13 @@ public class SupabaseClient {
 
     public void addOrUpdatePoints(String username, String userid, int points, String reason) {
         logger.info("addOrUpdatePoints: {} | {} | {}", username, points, reason);
-        int finalPoints = points;
-
-        // Wenn der Grund "Refund" enthält, addiere die absoluten Punkte (statt zu setzen)
-        // Das ist NUR für Refunds gedacht, nicht für normale Additions
-        if (reason != null && reason.toLowerCase().contains("refund")) {
-            int current = getPoints(username, userid);
-            // Bei Refund: addiere die anzurechnenden Punkte (können positiv oder negativ sein)
-            finalPoints = current + points;
-            logger.info("Refund detected, add points: {} (current: {} + points: {})", finalPoints, current, points);
-        }
+        int current = getPoints(username, userid);
+        int finalPoints = current + points;
+        logger.info("Add points: {} (current: {} + points: {})", finalPoints, current, points);
 
         JSONObject json = new JSONObject();
         json.put("twitch_user_id", userid);
-        json.put("points", finalPoints);  // IMMER den finalPoints verwenden
+        json.put("points", finalPoints);  // Immer addieren
         json.put("reason", reason);
         json.put("timestamp", System.currentTimeMillis());
 

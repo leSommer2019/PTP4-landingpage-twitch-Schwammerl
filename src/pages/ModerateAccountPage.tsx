@@ -27,6 +27,7 @@ interface Reward {
     onceperstream?: boolean;
     cooldown?: number;
     istts?: boolean;
+    streamdeckaction?: string;
 }
 
 
@@ -58,7 +59,8 @@ export default function ModerateAccountPage() {
     duration: 0,
     onceperstream: false,
     cooldown: 0,
-    istts: false
+    istts: false,
+    streamdeckaction: ''
   }
 
   const [rewardForm, setRewardForm] = useState<Reward>(defaultReward)
@@ -80,6 +82,7 @@ export default function ModerateAccountPage() {
         case 'description':
         case 'imageurl':
         case 'text':
+        case 'streamdeckaction':
           merged[key] = val as string
           break
         case 'cost':
@@ -595,6 +598,12 @@ export default function ModerateAccountPage() {
                 <div style={{display:'flex',flexDirection:'column',gap:6}}>
                   <label htmlFor="rewardText" style={{fontWeight:'bold'}}>{t('moderate.rewardTextLabel') || 'Text'}</label>
                   <input id="rewardText" type="text" className="modal-input" placeholder={t('moderate.rewardTextPlaceholder') || ''} value={rewardForm.text} onChange={e => setRewardForm((f: Reward) => ({...f, text: e.target.value}))} />
+                </div>
+
+                {/* streamdeckaction */}
+                <div style={{display:'flex',flexDirection:'column',gap:6}}>
+                  <label htmlFor="rewardStreamdeckaction" style={{fontWeight:'bold'}}>{t('moderate.rewardStreamdeckactionLabel') || 'Stream Deck Aktion'}</label>
+                  <input id="rewardStreamdeckaction" type="text" className="modal-input" placeholder={t('moderate.rewardStreamdeckactionPlaceholder') || ''} value={rewardForm.streamdeckaction} onChange={e => setRewardForm((f: Reward) => ({...f, streamdeckaction: e.target.value}))} />
                 </div>
 
                 <div style={{display:'flex',flexDirection:'column',gap:6}}>

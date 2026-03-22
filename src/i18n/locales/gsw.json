@@ -699,7 +699,9 @@
     "rewardCustomImageUrlLabel": "Custom Image URL",
     "rewardTextLabel": "TTS Text",
     "rewardDurationLabel": "Dauer (Sekunde)",
-    "rewardOncePerStreamLabel": "Nur einisch pro Stream"
+    "rewardOncePerStreamLabel": "Nur einisch pro Stream",
+    "rewardStreamdeckactionLabel": "Streamdeck-Aktion",
+    "rewardStreamdeckactionPlaceholder": "Name oder Beschriibig vo de Streamdeck-Aktion iigä"
   },
   "banned": {
     "title": "Account gsperrt",
