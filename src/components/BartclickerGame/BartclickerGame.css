@@ -25,7 +25,7 @@
     gap: 15px;
     position: sticky;
     top: 56px; /* Platz für Kopfzeile, ggf. anpassen */
-    z-index: 100;
+    z-index: 200;
     background: var(--box-gradient, #181028) !important;
     background-color: #181028 !important;
     /* Optional: Schatten für bessere Sichtbarkeit */
@@ -113,7 +113,7 @@
     .bartclicker-header {
         position: sticky;
         top: 56px;
-        z-index: 100;
+        z-index: 200;
         background: var(--box-gradient, #181028) !important;
         background-color: #181028 !important;
         box-shadow: 0 2px 8px rgba(0,0,0,0.12);
@@ -893,7 +893,7 @@
         justify-content: space-around;
         position: sticky;
         top: 56px;
-        z-index: 100;
+        z-index: 200;
         background: var(--box-gradient, #181028) !important;
         background-color: #181028 !important;
         box-shadow: 0 2px 8px rgba(0,0,0,0.12);
@@ -1090,7 +1090,7 @@
     .bartclicker-header {
         position: sticky;
         top: 56px;
-        z-index: 100;
+        z-index: 200;
         background: var(--box-gradient, #181028) !important;
         background-color: #181028 !important;
         box-shadow: 0 2px 8px rgba(0,0,0,0.12);
