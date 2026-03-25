@@ -27,6 +27,7 @@
     top: 56px; /* Platz für Kopfzeile, ggf. anpassen */
     z-index: 1100;
     background: var(--box-gradient, #181028) !important;
+    background-color: #181028 !important;
     /* Optional: Schatten für bessere Sichtbarkeit */
     box-shadow: 0 2px 8px rgba(0,0,0,0.12);
 }
@@ -114,6 +115,7 @@
         top: 56px;
         z-index: 1100;
         background: var(--box-gradient, #181028) !important;
+        background-color: #181028 !important;
         box-shadow: 0 2px 8px rgba(0,0,0,0.12);
     }
 }
@@ -893,6 +895,7 @@
         top: 56px;
         z-index: 1100;
         background: var(--box-gradient, #181028) !important;
+        background-color: #181028 !important;
         box-shadow: 0 2px 8px rgba(0,0,0,0.12);
     }
 
