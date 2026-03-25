@@ -35,26 +35,50 @@ export default function BartclickerGame({ compact = false }: BartclickerGameProp
     );
   }
   // Custom language-aware unit formatter that provides more compact units
-  // and a predictable short scale (k, Mio, Mrd, Bio / K, M, B, T).
+  // und eine drastisch erweiterte Skala (bis 10^99 und mehr)
   const formatWithUnits = (num: number, maximumFractionDigits = 2): string => {
     const locale = i18n?.language || undefined;
     const isNegative = num < 0;
     const abs = Math.abs(num);
 
-    // Very small numbers: keep integer display
+    // Sehr kleine Zahlen: ganzzahlig anzeigen
     if (abs < 1000) return (isNegative ? '-' : '') + Math.floor(abs).toString();
 
-    // Define unit suffixes per language (index = thousands power)
-    const enUnits = ['', 'K', 'M', 'B', 'T', 'P', 'E'];
-    const deUnits = ['', 'k', 'Mio', 'Mrd', 'Bio', 'Billi', 'Tril'];
+    // Drastisch erweiterte Einheitenlisten
+    const enUnits = [
+      '', 'K', 'M', 'B', 'T', 'Qa', 'Qi', 'Sx', 'Sp', 'Oc', 'No',
+      'Dc', 'Ud', 'Dd', 'Td', 'Qad', 'Qid', 'Sxd', 'Spd', 'Ocd', 'Nod',
+      'Vg', 'Uvg', 'Dvg', 'Tvg', 'Qavg', 'Qivg', 'Sxvg', 'Spvg', 'Ocvg', 'Novg',
+      'Tg', 'Utg', 'Dtg', 'Ttg', 'Qatg', 'Qitg', 'Sxtg', 'Sptg', 'Octg', 'Notg',
+      'Qag', 'Uqag', 'Dqag', 'Tqag', 'Qaqag', 'Qiqag', 'Sxqag', 'Spqag', 'Ocqag', 'Noqag',
+      'H', 'Uh', 'Dh', 'Th', 'Qah', 'Qih', 'Sxh', 'Sph', 'Och', 'Noh',
+      'C', 'Uc', 'Dc', 'Tc', 'Qac', 'Qic', 'Sxc', 'Spc', 'Occ', 'Noc',
+      'Ic', 'Uic', 'Dic', 'Tic', 'Qaic', 'Qiic', 'Sxic', 'Spic', 'Ocic', 'Noic',
+      'L', 'Ul', 'Dl', 'Tl', 'Qal', 'Qil', 'Sxl', 'Spl', 'Ocl', 'Nol',
+      'AL', 'UAL', 'DAL', 'TAL', 'QAL', 'QIAL', 'SXAL', 'SPAL', 'OCAL', 'NOAL',
+      '∞'
+    ];
+    const deUnits = [
+      '', 'k', 'Mio', 'Mrd', 'Bio', 'Billi', 'Tril', 'Quadr', 'Quint', 'Sext', 'Sept', 'Okt', 'Non',
+      'Dezi', 'Undezi', 'Duodezi', 'Tredezi', 'Quattuord', 'Quindezi', 'Sexdezi', 'Septdezi', 'Oktdezi', 'Nondezi',
+      'Vigint', 'Unvigint', 'Duovigint', 'Trevigint', 'Quattuorvigint', 'Quinvigint', 'Sexvigint', 'Septvigint', 'Oktvigint', 'Nonvigint',
+      'Trigint', 'Untrigint', 'Duotrigint', 'Tretrigint', 'Quattuortrigint', 'Quintrigint', 'Sextrigint', 'Septtrigint', 'Okttrigint', 'Nontrigint',
+      'Quadragint', 'Unquadragint', 'Duoquadragint', 'Trequadragint', 'Quattuorquadragint', 'Quinquadragint', 'Sexquadragint', 'Septquadragint', 'Oktquadragint', 'Nonquadragint',
+      'Quinquagint', 'Unquinquagint', 'Duoquinquagint', 'Trequinquagint', 'Quattuorquinquagint', 'Quinquinquagint', 'Sexquinquagint', 'Septquinquagint', 'Oktquinquagint', 'Nonquinquagint',
+      'Sexagint', 'Unsexagint', 'Duosexagint', 'Tresexagint', 'Quattuorsexagint', 'Quinsexagint', 'Sexsexagint', 'Septsexagint', 'Oktsexagint', 'Nonsexagint',
+      'Septuagint', 'Unseptuagint', 'Duoseptuagint', 'Treseptuagint', 'Quattuorseptuagint', 'Quinseptuagint', 'Sexseptuagint', 'Septseptuagint', 'Oktseptuagint', 'Nonseptuagint',
+      'Octogint', 'Unoctogint', 'Duooctogint', 'Treoctogint', 'Quattuoroctogint', 'Quinoctogint', 'Sexoctogint', 'Septoctogint', 'Oktoctogint', 'Nonoctogint',
+      'Nonagint', 'Unnonagint', 'Duononagint', 'Trenonagint', 'Quattuornonagint', 'Quinnonagint', 'Sexnonagint', 'Septnonagint', 'Oktononagint', 'Nonnonagint',
+      '∞'
+    ];
     const units = (i18n?.language || '').startsWith('de') ? deUnits : enUnits;
 
-    // Determine index (thousands groups)
+    // Index berechnen (je 10^3)
     const exp = Math.floor(Math.log10(abs) / 3);
     const index = Math.min(exp, units.length - 1);
     const value = abs / Math.pow(1000, index);
 
-    // Choose fraction precision depending on magnitude to avoid long decimals
+    // Präzision je nach Größe
     let fractionDigits = maximumFractionDigits;
     if (value >= 100) fractionDigits = 0;
     else if (value >= 10) fractionDigits = Math.min(1, maximumFractionDigits);
@@ -64,7 +88,7 @@ export default function BartclickerGame({ compact = false }: BartclickerGameProp
       const unit = units[index];
       return (isNegative ? '-' : '') + (unit ? `${formatted} ${unit}` : formatted);
     } catch {
-      // Fallback: manual formatting
+      // Fallback: manuell
       const fixed = value.toFixed(fractionDigits);
       const unit = units[index];
       return (isNegative ? '-' : '') + (unit ? `${fixed} ${unit}` : fixed);
