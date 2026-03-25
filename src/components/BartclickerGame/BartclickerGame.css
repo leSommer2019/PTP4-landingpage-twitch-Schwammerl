@@ -25,7 +25,7 @@
     gap: 15px;
     position: sticky;
     top: 56px; /* Platz für Kopfzeile, ggf. anpassen */
-    z-index: 1100;
+    z-index: 100;
     background: var(--box-gradient, #181028) !important;
     background-color: #181028 !important;
     /* Optional: Schatten für bessere Sichtbarkeit */
@@ -113,7 +113,7 @@
     .bartclicker-header {
         position: sticky;
         top: 56px;
-        z-index: 1100;
+        z-index: 100;
         background: var(--box-gradient, #181028) !important;
         background-color: #181028 !important;
         box-shadow: 0 2px 8px rgba(0,0,0,0.12);
@@ -893,7 +893,7 @@
         justify-content: space-around;
         position: sticky;
         top: 56px;
-        z-index: 1100;
+        z-index: 100;
         background: var(--box-gradient, #181028) !important;
         background-color: #181028 !important;
         box-shadow: 0 2px 8px rgba(0,0,0,0.12);
@@ -1074,3 +1074,38 @@
     font-weight: bold;
 }
 
+[data-theme="light"] .bartclicker-header {
+    background: linear-gradient(180deg, #fff 90%, #f5f5f7 100%) !important;
+    background-color: #fff !important;
+    border-bottom: 1px solid #e0e0e0;
+    box-shadow: 0 2px 12px 0 rgba(124,77,255,0.06), 0 1.5px 0 #e0e0e0;
+}
+[data-theme="dark"] .bartclicker-header {
+    background: var(--box-gradient, #181028) !important;
+    background-color: #181028 !important;
+    border-bottom: 1px solid #222;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+}
+
+@media (max-width: 480px) {
+    .bartclicker-header {
+        position: sticky;
+        top: 56px;
+        z-index: 100;
+        background: var(--box-gradient, #181028) !important;
+        background-color: #181028 !important;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+    }
+    [data-theme="light"] .bartclicker-header {
+        background: linear-gradient(180deg, #fff 90%, #f5f5f7 100%) !important;
+        background-color: #fff !important;
+        border-bottom: 1px solid #e0e0e0;
+        box-shadow: 0 2px 12px 0 rgba(124,77,255,0.06), 0 1.5px 0 #e0e0e0;
+    }
+    [data-theme="dark"] .bartclicker-header {
+        background: var(--box-gradient, #181028) !important;
+        background-color: #181028 !important;
+        border-bottom: 1px solid #222;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+    }
+}
