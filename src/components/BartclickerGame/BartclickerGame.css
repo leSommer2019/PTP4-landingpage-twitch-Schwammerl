@@ -203,7 +203,7 @@
     display: flex;
     gap: 10px;
     border-bottom: 1px solid var(--box-border);
-    overflow-x: auto;
+    overflow-x: visible;
     padding-bottom: 0;
     background: var(--box-gradient);
     z-index: 101;
@@ -238,9 +238,8 @@
     margin-bottom: 15px;
     border-bottom: 1px solid #444;
     padding-bottom: 10px;
-    overflow-x: auto;
-    scroll-behavior: smooth;
-    -webkit-overflow-scrolling: touch;
+    overflow-x: visible;
+    flex-wrap: wrap;
 }
 
 .shop-subtab {
@@ -279,6 +278,8 @@
 .stats-content,
 .leaderboard-content {
     padding-right: 10px;
+    overflow-y: auto;
+    max-height: 400px;
 }
 
 .shop-content::-webkit-scrollbar,
@@ -873,31 +874,12 @@
     .autobuyer-content,
     .stats-content,
     .leaderboard-content {
-        max-height: 400px;
+        max-height: 60vh;
         overflow-y: auto;
     }
-
-    .booster-grid,
-    .relics-grid {
-        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-    }
-
-    .tabs {
-        position: static;
-    }
-
-    .shop-subtabs {
-        display: flex;
-        gap: 4px;
-        overflow-x: auto;
-        padding-bottom: 8px;
-    }
-
-    .shop-subtab {
-        padding: 8px 12px;
-        font-size: 0.85rem;
-        white-space: nowrap;
-        flex-shrink: 0;
+    .shop-subtabs, .tabs {
+        overflow-x: visible;
+        flex-wrap: wrap;
     }
 }
 
@@ -960,22 +942,16 @@
     }
 
     .tabs {
-        gap: 4px;
-        position: static;
+        overflow-x: visible;
+        flex-wrap: wrap;
     }
-
-    .tab-button {
-        padding: 6px 10px;
-        font-size: 0.8rem;
-    }
-
     .shop-subtabs {
         display: flex;
         gap: 4px;
-        overflow-x: auto;
+        overflow-x: visible;
+        flex-wrap: wrap;
         scroll-behavior: smooth;
         padding: 0 0 8px 0;
-        -webkit-overflow-scrolling: touch;
     }
 
     .shop-subtab {
