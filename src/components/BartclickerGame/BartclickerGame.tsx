@@ -186,20 +186,9 @@ export default function BartclickerGame({ compact = false }: BartclickerGameProp
 
         <div className="stat-box">
           <h3 className="stat-cps">{formatCPS(totalCps)}/s</h3>
-          <p className="stat-label">CPS (gesamt)</p>
-        </div>
-        <div className="stat-box">
-          <h3 className="stat-cps">{formatCPS(cps)}/s</h3>
           <p className="stat-label">{t('bartclicker.stats.perSecond')}</p>
         </div>
-        <div className="stat-box">
-          <h3 className="stat-cps">{autoClickerCps}/s</h3>
-          <p className="stat-label">Auto-Klicker</p>
-        </div>
-        <div className="stat-box">
-          <h3 className="stat-cps">{Math.floor(handCps)}/s</h3>
-          <p className="stat-label">Hand-CPS (live)</p>
-        </div>
+
         <div className="stat-box">
           <h3 className="stat-rebirth">Rebirth: {gameState.rebirth_count}</h3>
           <p className="stat-label">×{gameState.rebirth_multiplier.toFixed(0)}</p>

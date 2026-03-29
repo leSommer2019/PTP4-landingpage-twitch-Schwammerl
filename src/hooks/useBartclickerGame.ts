@@ -198,6 +198,29 @@ export function useBartclickerGame() {
   const [offlineEarnings, setOfflineEarnings] = useState<{ amount: number; seconds: number } | null>(null);
   const [clickBlocked, setClickBlocked] = useState(false);
   const gameLoopRef = useRef<ReturnType<typeof setInterval> | null>(null);
+      // Event-Listener für Auto-Upgrade-Checkboxen (CustomEvent aus der UI)
+      useEffect(() => {
+        function handleToggleAutoUpgradeItem(e: Event) {
+          const detail = (e as CustomEvent).detail;
+          if (!detail || typeof detail.itemId !== 'number' || typeof detail.checked !== 'boolean') return;
+          setGameState(prev => {
+            const items = prev.click_upgrade_buyer_items || [];
+            if (detail.checked) {
+              // Hinzufügen, falls nicht enthalten
+              if (items.includes(detail.itemId)) return prev;
+              return { ...prev, click_upgrade_buyer_items: [...items, detail.itemId] };
+            } else {
+              // Entfernen, falls enthalten
+              if (!items.includes(detail.itemId)) return prev;
+              return { ...prev, click_upgrade_buyer_items: items.filter(id => id !== detail.itemId) };
+            }
+          });
+        }
+        window.addEventListener('toggleAutoUpgradeItem', handleToggleAutoUpgradeItem);
+        return () => {
+          window.removeEventListener('toggleAutoUpgradeItem', handleToggleAutoUpgradeItem);
+        };
+      }, []);
   const abortControllerRef = useRef<AbortController | null>(null);
   const isLoadingRef = useRef(false);
 
