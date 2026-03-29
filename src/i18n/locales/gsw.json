@@ -588,6 +588,7 @@
     "autobuyer": {
       "autoClicker": "🤖 Auto-Klicker",
       "autoClickerDesc": "Choscht: 10 Rebirths",
+      "autoClickerBoostInfo": "Dr Klick-Boost gilt au für dr Auto-Klicker!",
       "autoClickerEnable": "✅ Aktiviere",
       "autoClickerDisable": "❌ Deaktiviere",
       "upgradebuyer": "📈 Auto-Upgrade Chäufer",

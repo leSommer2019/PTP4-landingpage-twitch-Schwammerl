@@ -331,6 +331,7 @@ export default function BartclickerGame({ compact = false }: BartclickerGameProp
             <div className="item-list">
               {clickItems.map((item) => {
                 const isChecked = gameState.click_upgrade_buyer_items?.includes(item.id);
+                const isMobile = typeof window !== 'undefined' && window.innerWidth <= 480;
                 return (
                   <div key={item.id} className="shop-item shop-item-vertical">
                     <div className="item-header item-header-vertical">
@@ -362,14 +363,16 @@ export default function BartclickerGame({ compact = false }: BartclickerGameProp
                       >
                         {formatNumber(item.cost)}
                       </button>
-                      <button
-                        className="max-button"
-                        onClick={() => buyMaxItems(item.id)}
-                        disabled={gameState.energy < item.cost}
-                        title="Max kaufen"
-                      >
-                        Max
-                      </button>
+                      {!(gameState.click_upgrade_buyer_enabled && isMobile) && (
+                        <button
+                          className="max-button"
+                          onClick={() => buyMaxItems(item.id)}
+                          disabled={gameState.energy < item.cost}
+                          title="Max kaufen"
+                        >
+                          Max
+                        </button>
+                      )}
                     </div>
                   </div>
                 );
@@ -455,6 +458,7 @@ export default function BartclickerGame({ compact = false }: BartclickerGameProp
               <div className="autobuyer-card">
                 <h3>{t('bartclicker.autobuyer.autoClicker')}</h3>
                 <p>{t('bartclicker.autobuyer.autoClickerDesc')}</p>
+                <p className="muted-text" style={{ fontSize: '0.9rem' }}>{t('bartclicker.autobuyer.autoClickerBoostInfo')}</p>
                 <p className="muted-text" style={{ fontSize: '0.9rem' }}>{t('bartclicker.autobuyer.youHave', { count: gameState.rebirth_count })}</p>
                 {gameState.rebirth_count >= 10 && (
                   <p className="highlight-warning" style={{ fontSize: '0.8rem' }}>

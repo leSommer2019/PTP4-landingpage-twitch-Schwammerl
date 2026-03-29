@@ -615,6 +615,7 @@
     "autobuyer": {
       "autoClicker": "🤖 Auto-Klicker",
       "autoClickerDesc": "Kostet: 10 Rebirths",
+      "autoClickerBoostInfo": "Der Klick-Boost zählt auch für den Auto-Klicker!",
       "autoClickerEnable": "✅ Aktivieren",
       "autoClickerDisable": "❌ Deaktivieren",
       "upgradebuyer": "📈 Auto-Upgrade Käufer",
