@@ -11,7 +11,7 @@ interface BartclickerGameProps {
 
 export default function BartclickerGame({ compact = false }: BartclickerGameProps) {
   const { t, i18n } = useTranslation();
-  const { gameState, isLoading, cps, clickBlocked, handleClick, buyItem, buyMaxItems, activateBuff, performRebirth, buyAutobuyer, buyUpgradeAutobuyer, unlockRelic, buyOfflineUpgrade, offlineEarnings, dismissOfflineEarnings, handCps, handCpsAvg } =
+  const { gameState, isLoading, cps, clickBlocked, handleClick, buyItem, buyMaxItems, activateBuff, performRebirth, buyAutobuyer, buyUpgradeAutobuyer, unlockRelic, buyOfflineUpgrade, offlineEarnings, dismissOfflineEarnings, handCps, handCpsAvg, clickPower: clickPowerProp } =
     useBartclickerGame();
   const { entries: leaderboardEntries, isLoading: leaderboardLoading } = useBartclickerLeaderboard();
 
@@ -161,8 +161,9 @@ export default function BartclickerGame({ compact = false }: BartclickerGameProp
     }
   };
 
-  const autoClickerCps = gameState.auto_click_buyer_enabled ? 10 : 0;
-  const totalCps = cps + autoClickerCps + handCps;
+  const clickPower = clickPowerProp ?? 1;
+  const autoClickerCps = gameState.auto_click_buyer_enabled ? 10 * clickPower : 0;
+  const totalCps = cps + autoClickerCps + handCps * clickPower;
 
   return (
     <div className={`bartclicker-game ${compact ? 'compact' : ''}`}>
