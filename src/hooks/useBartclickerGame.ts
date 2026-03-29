@@ -47,6 +47,40 @@ function calculateCpsFromData(
   return Math.max(0, totalCps);
 }
 
+// Hilfsfunktion: Preise der passiven Shop-Items anhand aktuellem Rebirth-Stand neu berechnen
+function recalculatePassiveShopItemCosts(shopItems: ShopItem[], rebirthCount: number): ShopItem[] {
+  return shopItems.map((item) => {
+    if (item.type === 'passive') {
+      const baseCost = BASE_SHOP_ITEM_COSTS[item.id] ?? item.cost;
+      return {
+        ...item,
+        cost: Math.floor(baseCost * Math.pow(1.1, rebirthCount)),
+      };
+    }
+    return item;
+  });
+}
+
+// Basispreise für Shop-Items (id -> cost)
+const BASE_SHOP_ITEM_COSTS: { [id: number]: number } = {
+  0: 15,
+  1: 100,
+  2: 500,
+  3: 2500,
+  4: 12000,
+  5: 60000,
+  6: 250000,
+  7: 50,
+  8: 500,
+  9: 5000,
+  10: 50000,
+  11: 12500000,
+  12: 50000000,
+  13: 5000000,
+  14: 20000000,
+  15: 100000000,
+};
+
 // Initial shop items definition
 const INITIAL_SHOP_ITEMS: ShopItem[] = [
   { id: 0, name: 'Bart-Kamm', cost: 15, cps: 0.1, icon: '🪮', type: 'passive', count: 0 },
@@ -746,25 +780,36 @@ export function useBartclickerGame() {
   }, [gameState.rebirth_count, totalShopCount, gameState.offline_earning_upgrades, saveGameState, lastSaveTime]);
 
   // Buy Autobuyer (kostet 10 Rebirths für Auto-Klicker)
+  // Autobuyer kann nur einmal gekauft werden (10 Rebirths). Danach Toggle ohne weitere Kosten.
   const buyAutobuyer = useCallback(() => {
-    if (gameState.rebirth_count < 10) return false;
-
-    setGameState((prev) => {
-      const newRebirthCount = prev.rebirth_count - 10;
-      return {
+    if (!gameState.auto_click_buyer_enabled) {
+      // Erstkauf: Kosten abziehen und aktivieren
+      if (gameState.rebirth_count < 10) return false;
+      setGameState((prev) => {
+        const newRebirthCount = prev.rebirth_count - 10;
+        return {
+          ...prev,
+          rebirth_count: newRebirthCount,
+          rebirth_multiplier: deriveRebirthMultiplier(newRebirthCount),
+          auto_click_buyer_enabled: true,
+          shop_items: recalculatePassiveShopItemCosts(prev.shop_items, newRebirthCount),
+        };
+      });
+      return true;
+    } else {
+      // Bereits gekauft: Nur togglen (ohne Kosten)
+      setGameState((prev) => ({
         ...prev,
-        rebirth_count: newRebirthCount,
-        rebirth_multiplier: deriveRebirthMultiplier(newRebirthCount),
         auto_click_buyer_enabled: !prev.auto_click_buyer_enabled,
-      };
-    });
-
-    return true;
-  }, [gameState.rebirth_count]);
+      }));
+      return true;
+    }
+  }, [gameState.rebirth_count, gameState.auto_click_buyer_enabled]);
 
   // Buy Auto-Upgrade Käufer (kostet 10 Rebirths)
   const buyUpgradeAutobuyer = useCallback(() => {
     if (gameState.rebirth_count < 10) return false;
+
 
     setGameState((prev) => {
       const newRebirthCount = prev.rebirth_count - 10;
@@ -773,6 +818,7 @@ export function useBartclickerGame() {
         rebirth_count: newRebirthCount,
         rebirth_multiplier: deriveRebirthMultiplier(newRebirthCount),
         click_upgrade_buyer_enabled: !prev.click_upgrade_buyer_enabled,
+        shop_items: recalculatePassiveShopItemCosts(prev.shop_items, newRebirthCount),
       };
     });
 
@@ -803,6 +849,7 @@ export function useBartclickerGame() {
     if (gameState.offline_earning_upgrades >= MAX_OFFLINE_UPGRADES) return false;
     if (gameState.rebirth_count < OFFLINE_UPGRADE_REBIRTH_COST) return false;
 
+
     setGameState((prev) => {
       const newRebirthCount = prev.rebirth_count - OFFLINE_UPGRADE_REBIRTH_COST;
       return {
@@ -810,6 +857,7 @@ export function useBartclickerGame() {
         rebirth_count: newRebirthCount,
         rebirth_multiplier: deriveRebirthMultiplier(newRebirthCount),
         offline_earning_upgrades: prev.offline_earning_upgrades + 1,
+        shop_items: recalculatePassiveShopItemCosts(prev.shop_items, newRebirthCount),
       };
     });
 
@@ -866,6 +914,8 @@ export function useBartclickerGame() {
     handCpsTop,
   };
 }
+
+
 
 
 

@@ -418,14 +418,25 @@ export default function BartclickerGame({ compact = false }: BartclickerGameProp
                     Multiplier nach Kauf: ×{formatNumber(Math.pow(2, gameState.rebirth_count - 10))}
                   </p>
                 )}
-                <button
-                  className="buy-button"
-                  onClick={() => buyAutobuyer()}
-                  disabled={gameState.rebirth_count < 10}
-                  style={{ marginTop: '10px' }}
-                >
-                  {gameState.auto_click_buyer_enabled ? t('bartclicker.autobuyer.autoClickerDisable') : t('bartclicker.autobuyer.autoClickerEnable')}
-                </button>
+                {/* Autobuyer-Button: Nach Kauf als Toggle anzeigen, sonst Kauf-Button */}
+                {!gameState.auto_click_buyer_enabled ? (
+                  <button
+                    className="buy-button"
+                    onClick={() => buyAutobuyer()}
+                    disabled={gameState.rebirth_count < 10}
+                    style={{ marginTop: '10px' }}
+                  >
+                    {t('bartclicker.autobuyer.autoClickerEnable')} (10 Rebirths)
+                  </button>
+                ) : (
+                  <button
+                    className="buy-button"
+                    onClick={() => buyAutobuyer()}
+                    style={{ marginTop: '10px', background: gameState.auto_click_buyer_enabled ? '#4caf50' : undefined }}
+                  >
+                    {gameState.auto_click_buyer_enabled ? t('bartclicker.autobuyer.autoClickerDisable') : t('bartclicker.autobuyer.autoClickerEnable')}
+                  </button>
+                )}
               </div>
               <div className="autobuyer-card">
                 <h3>{t('bartclicker.autobuyer.upgradebuyer')}</h3>
