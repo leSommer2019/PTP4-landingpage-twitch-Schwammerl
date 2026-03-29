@@ -1,3 +1,29 @@
+.shop-item-vertical {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+}
+
+.item-header-vertical {
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    display: flex;
+}
+
+.auto-upgrade-row {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    margin-bottom: 4px;
+}
+
+.button-group-vertical {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    align-items: stretch;
+}
 .bartclicker-game {
     display: flex;
     flex-direction: column;

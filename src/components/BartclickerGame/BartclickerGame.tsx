@@ -282,16 +282,17 @@ export default function BartclickerGame({ compact = false }: BartclickerGameProp
               {passiveItems.map((item) => {
                 const isChecked = gameState.click_upgrade_buyer_items?.includes(item.id);
                 return (
-                  <div key={item.id} className="shop-item">
-                    <div className="item-header">
+                  <div key={item.id} className="shop-item shop-item-vertical">
+                    <div className="item-header item-header-vertical">
                       <span className="item-icon">{item.icon}</span>
                       <div className="item-info">
                         <h4>{item.name}</h4>
                         <p className="item-cps">{item.cps?.toFixed(1)}/s</p>
                       </div>
                       <span className="item-count">×{item.count}</span>
-                      {/* Checkbox für Auto-Upgrade-Käufer */}
-                      {gameState.click_upgrade_buyer_enabled && (
+                    </div>
+                    {gameState.click_upgrade_buyer_enabled && (
+                      <div className="auto-upgrade-row">
                         <label className="auto-upgrade-checkbox" title="Automatisch kaufen">
                           <input
                             type="checkbox"
@@ -300,9 +301,9 @@ export default function BartclickerGame({ compact = false }: BartclickerGameProp
                           />
                           <span style={{ fontSize: '0.9em', marginLeft: 2 }}>Auto</span>
                         </label>
-                      )}
-                    </div>
-                    <div className="button-group">
+                      </div>
+                    )}
+                    <div className="button-group button-group-vertical">
                       <button
                         className="buy-button"
                         onClick={() => buyItem(item.id)}
@@ -331,16 +332,17 @@ export default function BartclickerGame({ compact = false }: BartclickerGameProp
               {clickItems.map((item) => {
                 const isChecked = gameState.click_upgrade_buyer_items?.includes(item.id);
                 return (
-                  <div key={item.id} className="shop-item">
-                    <div className="item-header">
+                  <div key={item.id} className="shop-item shop-item-vertical">
+                    <div className="item-header item-header-vertical">
                       <span className="item-icon">{item.icon}</span>
                       <div className="item-info">
                         <h4>{item.name}</h4>
                         <p className="item-power">+{item.clickPower}</p>
                       </div>
                       <span className="item-count">×{item.count}</span>
-                      {/* Checkbox für Auto-Upgrade-Käufer */}
-                      {gameState.click_upgrade_buyer_enabled && (
+                    </div>
+                    {gameState.click_upgrade_buyer_enabled && (
+                      <div className="auto-upgrade-row">
                         <label className="auto-upgrade-checkbox" title="Automatisch kaufen">
                           <input
                             type="checkbox"
@@ -349,9 +351,9 @@ export default function BartclickerGame({ compact = false }: BartclickerGameProp
                           />
                           <span style={{ fontSize: '0.9em', marginLeft: 2 }}>Auto</span>
                         </label>
-                      )}
-                    </div>
-                    <div className="button-group">
+                      </div>
+                    )}
+                    <div className="button-group button-group-vertical">
                       <button
                         className="buy-button"
                         onClick={() => buyItem(item.id)}
