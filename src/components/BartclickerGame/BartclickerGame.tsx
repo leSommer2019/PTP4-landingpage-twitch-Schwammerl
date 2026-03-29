@@ -285,20 +285,23 @@ export default function BartclickerGame({compact = false}: BartclickerGameProps)
                 <button
                     className={`tab-button ${activeTab === 'shop' ? 'active' : ''}`}
                     onClick={() => setActiveTab('shop')}
+                    aria-label={t('bartclicker.tabs.shop')}
                 >
-                    {t('bartclicker.tabs.shop')}
+                    {window.innerWidth <= 600 ? '🛒' : t('bartclicker.tabs.shop')}
                 </button>
                 <button
                     className={`tab-button ${activeTab === 'leaderboard' ? 'active' : ''}`}
                     onClick={() => setActiveTab('leaderboard')}
+                    aria-label={t('bartclicker.tabs.leaderboard')}
                 >
-                    {t('bartclicker.tabs.leaderboard')}
+                    {window.innerWidth <= 600 ? '🏆' : t('bartclicker.tabs.leaderboard')}
                 </button>
                 <button
                     className={`tab-button ${activeTab === 'stats' ? 'active' : ''}`}
                     onClick={() => setActiveTab('stats')}
+                    aria-label={t('bartclicker.tabs.stats')}
                 >
-                    {t('bartclicker.tabs.stats')}
+                    {window.innerWidth <= 600 ? '📊' : t('bartclicker.tabs.stats')}
                 </button>
             </div>
 
@@ -360,15 +363,16 @@ export default function BartclickerGame({compact = false}: BartclickerGameProps)
                                         </div>
                                         {gameState.click_upgrade_buyer_enabled && (
                                             <div className="auto-upgrade-row">
-                                                <label className="auto-upgrade-checkbox"
-                                                       title={t('bartclicker.autoBuyTitle')}>
-                                                    <input
-                                                        type="checkbox"
-                                                        checked={!!isChecked}
-                                                        onChange={() => toggleAutoUpgradeItem(item.id)}
-                                                    />
-                                                    <span style={{fontSize: '0.9em', marginLeft: 2}}>Auto</span>
-                                                </label>
+                                                <button
+                                                    className={`auto-upgrade-btn${isChecked ? ' active' : ''}`}
+                                                    title={t('bartclicker.autoBuyTitle')}
+                                                    onClick={() => toggleAutoUpgradeItem(item.id)}
+                                                    aria-pressed={!!isChecked}
+                                                    type="button"
+                                                    style={{marginLeft: 6}}
+                                                >
+                                                    🤖
+                                                </button>
                                             </div>
                                         )}
                                         <div className="button-group button-group">
@@ -411,15 +415,16 @@ export default function BartclickerGame({compact = false}: BartclickerGameProps)
                                         </div>
                                         {gameState.click_upgrade_buyer_enabled && (
                                             <div className="auto-upgrade-row">
-                                                <label className="auto-upgrade-checkbox"
-                                                       title={t('bartclicker.autoBuyTitle')}>
-                                                    <input
-                                                        type="checkbox"
-                                                        checked={!!isChecked}
-                                                        onChange={() => toggleAutoUpgradeItem(item.id)}
-                                                    />
-                                                    <span style={{fontSize: '0.9em', marginLeft: 2}}>Auto</span>
-                                                </label>
+                                                <button
+                                                    className={`auto-upgrade-btn${isChecked ? ' active' : ''}`}
+                                                    title={t('bartclicker.autoBuyTitle')}
+                                                    onClick={() => toggleAutoUpgradeItem(item.id)}
+                                                    aria-pressed={!!isChecked}
+                                                    type="button"
+                                                    style={{marginLeft: 6}}
+                                                >
+                                                    🤖
+                                                </button>
                                             </div>
                                         )}
                                         <div className="button-group button-group">

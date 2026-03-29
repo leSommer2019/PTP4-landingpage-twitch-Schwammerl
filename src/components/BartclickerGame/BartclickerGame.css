@@ -13,9 +13,8 @@
 
 .auto-upgrade-row {
     display: flex;
-    justify-content: flex-start;
     align-items: center;
-    margin-bottom: 4px;
+    gap: 4px;
 }
 
 .button-group-vertical {
@@ -240,6 +239,11 @@
     padding-bottom: 10px;
     overflow-x: visible;
     flex-wrap: wrap;
+    position: sticky;
+    top: 112px; /* 56px header + 56px tabs, ggf. anpassen */
+    z-index: 150;
+    background: var(--box-gradient, #181028);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
 }
 
 .shop-subtab {
@@ -1000,7 +1004,34 @@
     }
 }
 
-
+@media (max-width: 600px) {
+  .tabs {
+    flex-wrap: wrap;
+    overflow-x: visible;
+    justify-content: space-between;
+    gap: 4px;
+  }
+  .tab-button {
+    font-size: 1.5rem;
+    padding: 8px 0;
+    min-width: 44px;
+    max-width: 60px;
+    text-align: center;
+  }
+  .shop-content,
+  .autobuyer-content,
+  .leaderboard-content {
+    max-height: none !important;
+    height: auto !important;
+    overflow-y: visible !important;
+    padding-bottom: 0;
+  }
+  .shop-subtabs {
+    flex-wrap: wrap;
+    overflow-x: visible;
+    gap: 4px;
+  }
+}
 
 /* Offline Earnings Notification Banner */
 .offline-earnings-banner {
@@ -1232,3 +1263,27 @@
   color: #7c4dff;
 }
 
+.auto-upgrade-btn {
+  display: inline-flex;
+  border: none;
+  background: #eee;
+  color: #333;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  font-size: 1.2em;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, color 0.2s;
+  cursor: pointer;
+  outline: none;
+}
+.auto-upgrade-btn.active {
+  background: #a259e6;
+  color: #fff;
+}
+
+/* Entferne Checkbox-Styles, da nicht mehr benötigt */
+.auto-upgrade-checkbox-desktop {
+  display: none !important;
+}
