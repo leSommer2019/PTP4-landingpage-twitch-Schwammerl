@@ -1536,7 +1536,6 @@ CREATE TABLE IF NOT EXISTS "public"."bartclicker_scores" (
     "offline_earning_upgrades" integer DEFAULT 0,
     "auto_click_buyer_enabled" boolean DEFAULT false,
     "click_upgrade_buyer_enabled" boolean DEFAULT false,
-    "auto_click_buyer_items" "jsonb" DEFAULT '[]'::"jsonb",
     "click_upgrade_buyer_items" "jsonb" DEFAULT '[]'::"jsonb",
     "last_updated" timestamp with time zone DEFAULT "now"(),
     "created_at" timestamp with time zone DEFAULT "now"()

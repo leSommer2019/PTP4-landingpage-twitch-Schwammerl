@@ -74,7 +74,6 @@ export interface BartclickerGameState {
    auto_click_buyer_unlocked: boolean;
    click_upgrade_buyer_enabled: boolean;
    click_upgrade_buyer_unlocked: boolean;
-  auto_click_buyer_items: number[];
   click_upgrade_buyer_items: number[];
   last_updated?: string;
   created_at?: string;

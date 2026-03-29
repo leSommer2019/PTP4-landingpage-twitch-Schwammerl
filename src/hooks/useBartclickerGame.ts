@@ -180,7 +180,6 @@ export function useBartclickerGame() {
     offline_earning_upgrades: 0,
     auto_click_buyer_enabled: false,
     click_upgrade_buyer_enabled: false,
-    auto_click_buyer_items: [],
     click_upgrade_buyer_items: [],
     auto_click_buyer_unlocked: false,
     click_upgrade_buyer_unlocked: false,
@@ -358,7 +357,6 @@ export function useBartclickerGame() {
             offline_earning_upgrades: 0,
             auto_click_buyer_enabled: false,
             click_upgrade_buyer_enabled: false,
-            auto_click_buyer_items: [],
             click_upgrade_buyer_items: [],
             auto_click_buyer_unlocked: false,
             click_upgrade_buyer_unlocked: false,
@@ -379,7 +377,6 @@ export function useBartclickerGame() {
               offline_earning_upgrades: 0,
               auto_click_buyer_enabled: false,
               click_upgrade_buyer_enabled: false,
-              auto_click_buyer_items: [],
               click_upgrade_buyer_items: [],
               auto_click_buyer_unlocked: false,
               click_upgrade_buyer_unlocked: false,
@@ -453,7 +450,6 @@ export function useBartclickerGame() {
             offline_earning_upgrades: data.offline_earning_upgrades || 0,
             auto_click_buyer_enabled: data.auto_click_buyer_enabled || false,
             click_upgrade_buyer_enabled: data.click_upgrade_buyer_enabled || false,
-            auto_click_buyer_items: data.auto_click_buyer_items || [],
             click_upgrade_buyer_items: data.click_upgrade_buyer_items || [],
             auto_click_buyer_unlocked: data.auto_click_buyer_unlocked || false,
             click_upgrade_buyer_unlocked: data.click_upgrade_buyer_unlocked || false,
@@ -517,7 +513,6 @@ export function useBartclickerGame() {
           auto_click_buyer_unlocked: gameState.auto_click_buyer_unlocked,
           click_upgrade_buyer_enabled: gameState.click_upgrade_buyer_enabled,
           click_upgrade_buyer_unlocked: gameState.click_upgrade_buyer_unlocked,
-          auto_click_buyer_items: gameState.auto_click_buyer_items,
           click_upgrade_buyer_items: gameState.click_upgrade_buyer_items,
           last_updated: new Date().toISOString(),
         }, { onConflict: 'user_id' });
@@ -622,30 +617,29 @@ export function useBartclickerGame() {
   useEffect(() => {
     if (!gameState.click_upgrade_buyer_enabled) return;
     const interval = setInterval(() => {
-      // Prüfe alle aktivierten Upgrade-IDs
-      (gameState.click_upgrade_buyer_items || []).forEach((itemId) => {
-        const item = gameState.shop_items.find((i) => i.id === itemId);
-        if (!item) return;
-        if (gameState.energy >= item.cost) {
-          // Kaufe das Item (wie buyItem, aber ohne Button)
-          setGameState((prev) => {
-            const itemToBuy = prev.shop_items.find((i) => i.id === itemId);
-            if (!itemToBuy || prev.energy < itemToBuy.cost) return prev;
-            return {
-              ...prev,
-              energy: prev.energy - itemToBuy.cost,
-              shop_items: prev.shop_items.map((i) =>
+      setGameState((prev) => {
+        // Prüfe alle aktivierten Upgrade-IDs
+        let newState = { ...prev };
+        (prev.click_upgrade_buyer_items || []).forEach((itemId) => {
+          const item = newState.shop_items.find((i) => i.id === itemId);
+          if (!item) return;
+          if (newState.energy >= item.cost) {
+            newState = {
+              ...newState,
+              energy: newState.energy - item.cost,
+              shop_items: newState.shop_items.map((i) =>
                 i.id === itemId
                   ? { ...i, count: i.count + 1, cost: Math.floor(i.cost * 1.15) }
                   : i
               ),
             };
-          });
-        }
+          }
+        });
+        return newState;
       });
     }, 500);
     return () => clearInterval(interval);
-  }, [gameState.click_upgrade_buyer_enabled, gameState.click_upgrade_buyer_items, gameState.energy, gameState.shop_items]);
+  }, [gameState.click_upgrade_buyer_enabled]);
 
   // Buy shop item – item.cost ist bereits der aktuelle Preis (inkl. Rebirth-Skalierung)
   const buyItem = useCallback(
