@@ -60,7 +60,7 @@ export default function BartclickerGame({ compact = false }: BartclickerGameProp
     ];
     const deUnits = [
       '', 'k', 'Mio', 'Mrd', 'Bio', 'Billi', 'Tril', 'Quadr', 'Quint', 'Sext', 'Sept', 'Okt', 'Non',
-      'Dezi', 'Undezi', 'Duodezi', 'Tredezi', 'Quattuord', 'Quindezi', 'Sexdezi', 'Septdezi', 'Oktdezi', 'Nondezi',
+      'Dezi', 'Undezi', 'Duodezi', 'Tredezi', 'Quattuord', 'Quinzezi', 'Sexdezi', 'Septdezi', 'Oktdezi', 'Nondezi',
       'Vigint', 'Unvigint', 'Duovigint', 'Trevigint', 'Quattuorvigint', 'Quinvigint', 'Sexvigint', 'Septvigint', 'Oktvigint', 'Nonvigint',
       'Trigint', 'Untrigint', 'Duotrigint', 'Tretrigint', 'Quattuortrigint', 'Quintrigint', 'Sextrigint', 'Septtrigint', 'Okttrigint', 'Nontrigint',
       'Quadragint', 'Unquadragint', 'Duoquadragint', 'Trequadragint', 'Quattuorquadragint', 'Quinquadragint', 'Sexquadragint', 'Septquadragint', 'Oktquadragint', 'Nonquadragint',
@@ -135,17 +135,17 @@ export default function BartclickerGame({ compact = false }: BartclickerGameProp
 
   // Boosters (Temporary buffs)
   const BOOSTERS = [
-    { id: 0, name: 'Turbo-Boost', icon: '⚡', effect: '2x CPS für 1 Min', baseCost: 1000 },
-    { id: 1, name: 'Klick-Wahnsinn', icon: '💪', effect: '3x Klicks für 45s', baseCost: 1500 },
-    { id: 2, name: 'Glücksbonus', icon: '🍀', effect: '+50% für 30s', baseCost: 2000 },
+    { id: 0, name: t('bartclicker.booster.turboBoost'), icon: '⚡', effect: t('bartclicker.booster.turboEffect'), baseCost: 1000 },
+    { id: 1, name: t('bartclicker.booster.clickMadness'), icon: '💪', effect: t('bartclicker.booster.clickEffect'), baseCost: 1500 },
+    { id: 2, name: t('bartclicker.booster.luckyBonus'), icon: '🍀', effect: t('bartclicker.booster.luckyEffect'), baseCost: 2000 },
   ];
 
   // Relics (Permanent bonuses)
   const RELICS = [
-    { id: 0, name: 'Antiker Kamm', icon: '🏺', effect: '+10% CPS', baseCost: 25000000 },
-    { id: 1, name: 'Magisches Bartöl', icon: '🧪', effect: '+15% Klicks', baseCost: 50000000 },
-    { id: 2, name: 'Goldener Bart', icon: '✨', effect: '+25% alles', baseCost: 100000000 },
-    { id: 3, name: 'Zeitreisendes Bartöl', icon: '⏳', effect: '+50% Offline', baseCost: 200000000 },
+    { id: 0, name: t('bartclicker.relics.ancientComb'), icon: '🏺', effect: t('bartclicker.relics.ancientEffect'), baseCost: 25000000 },
+    { id: 1, name: t('bartclicker.relics.magicalOil'), icon: '🧪', effect: t('bartclicker.relics.oilEffect'), baseCost: 50000000 },
+    { id: 2, name: t('bartclicker.relics.goldenBeard'), icon: '✨', effect: t('bartclicker.relics.goldenEffect'), baseCost: 100000000 },
+    { id: 3, name: t('bartclicker.relics.timeOil'), icon: '⏳', effect: t('bartclicker.relics.timeEffect'), baseCost: 200000000 },
   ];
 
   // Hilfsfunktion zum Toggeln der Auto-Upgrade-Auswahl
@@ -200,7 +200,7 @@ export default function BartclickerGame({ compact = false }: BartclickerGameProp
       <div className="click-area">
         {clickBlocked && (
           <div className="click-blocked-warning">
-            🚫 Zu schnell geklickt! Kurze Pause…
+            {t('bartclicker.clickBlocked')}
           </div>
         )}
         <button
@@ -293,7 +293,7 @@ export default function BartclickerGame({ compact = false }: BartclickerGameProp
                     </div>
                     {gameState.click_upgrade_buyer_enabled && (
                       <div className="auto-upgrade-row">
-                        <label className="auto-upgrade-checkbox" title="Automatisch kaufen">
+                        <label className="auto-upgrade-checkbox" title={t('bartclicker.autoBuyTitle')}>
                           <input
                             type="checkbox"
                             checked={!!isChecked}
@@ -331,7 +331,6 @@ export default function BartclickerGame({ compact = false }: BartclickerGameProp
             <div className="item-list">
               {clickItems.map((item) => {
                 const isChecked = gameState.click_upgrade_buyer_items?.includes(item.id);
-                const isMobile = typeof window !== 'undefined' && window.innerWidth <= 480;
                 return (
                   <div key={item.id} className="shop-item shop-item-vertical">
                     <div className="item-header item-header-vertical">
@@ -344,7 +343,7 @@ export default function BartclickerGame({ compact = false }: BartclickerGameProp
                     </div>
                     {gameState.click_upgrade_buyer_enabled && (
                       <div className="auto-upgrade-row">
-                        <label className="auto-upgrade-checkbox" title="Automatisch kaufen">
+                        <label className="auto-upgrade-checkbox" title={t('bartclicker.autoBuyTitle')}>
                           <input
                             type="checkbox"
                             checked={!!isChecked}
@@ -363,16 +362,14 @@ export default function BartclickerGame({ compact = false }: BartclickerGameProp
                       >
                         {formatNumber(item.cost)}
                       </button>
-                      {!(gameState.click_upgrade_buyer_enabled && isMobile) && (
-                        <button
-                          className="max-button"
-                          onClick={() => buyMaxItems(item.id)}
-                          disabled={gameState.energy < item.cost}
-                          title="Max kaufen"
-                        >
-                          Max
-                        </button>
-                      )}
+                      <button
+                        className="max-button"
+                        onClick={() => buyMaxItems(item.id)}
+                        disabled={gameState.energy < item.cost}
+                        title="Max kaufen"
+                      >
+                        Max
+                      </button>
                     </div>
                   </div>
                 );

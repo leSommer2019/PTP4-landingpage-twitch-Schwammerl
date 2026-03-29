@@ -144,12 +144,6 @@
         background-color: #181028 !important;
         box-shadow: 0 2px 8px rgba(0,0,0,0.12);
     }
-
-    .shop-subtabs {
-        flex-wrap: wrap;
-        overflow-x: visible;
-        -webkit-overflow-scrolling: auto;
-    }
 }
 .click-button:hover:not(:disabled) .beard-svg {
     filter: drop-shadow(0 0 20px rgba(124, 77, 255, 0.6));

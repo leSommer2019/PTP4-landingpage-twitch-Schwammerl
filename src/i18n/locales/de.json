@@ -651,6 +651,13 @@
       "timeHoursMinutes": "{{hours}}h {{minutes}}min",
       "timeMinutes": "{{minutes}}min",
       "youHave": "Du hast: {{count}} Rebirths"
+    },
+    "autoBuyTitle": "Automatisch kaufen",
+    "clickBlocked": "Klicken ist aktuell blockiert!",
+    "buttons": {
+      "max": "Max",
+      "buy": "Kaufen",
+      "unlocked": "Freigeschaltet"
     }
   },
   "onlybart": {

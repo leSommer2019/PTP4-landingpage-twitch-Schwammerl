@@ -624,6 +624,13 @@
       "timeHoursMinutes": "{{hours}}h {{minutes}}min",
       "timeMinutes": "{{minutes}}min",
       "youHave": "Du häsch: {{count}} Rebirths"
+    },
+    "autoBuyTitle": "Automatisch chaufe",
+    "clickBlocked": "Klickä isch aktuell blockiert!",
+    "buttons": {
+      "max": "Max",
+      "buy": "Chaufe",
+      "unlocked": "Freiggschaltet"
     }
   },
   "onlybart": {
