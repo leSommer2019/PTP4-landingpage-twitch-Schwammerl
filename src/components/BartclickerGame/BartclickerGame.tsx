@@ -432,7 +432,11 @@ export default function BartclickerGame({ compact = false }: BartclickerGameProp
                   <button
                     className="buy-button"
                     onClick={() => buyAutobuyer()}
-                    style={{ marginTop: '10px', background: gameState.auto_click_buyer_enabled ? '#4caf50' : undefined, color: gameState.auto_click_buyer_enabled ? 'white' : undefined }}
+                    style={{
+                      marginTop: '10px',
+                      background: gameState.auto_click_buyer_enabled ? '#4caf50' : '#888',
+                      color: 'white'
+                    }}
                   >
                     {gameState.auto_click_buyer_enabled ? t('bartclicker.autobuyer.autoClickerDisable') : t('bartclicker.autobuyer.autoClickerEnable')}
                   </button>
@@ -442,19 +446,34 @@ export default function BartclickerGame({ compact = false }: BartclickerGameProp
                 <h3>{t('bartclicker.autobuyer.upgradebuyer')}</h3>
                 <p>{t('bartclicker.autobuyer.upgradebuyerDesc')}</p>
                 <p className="muted-text" style={{ fontSize: '0.9rem' }}>{t('bartclicker.autobuyer.youHave', { count: gameState.rebirth_count })}</p>
-                {gameState.rebirth_count >= 15 && (
+                {gameState.rebirth_count >= 10 && (
                   <p className="highlight-warning" style={{ fontSize: '0.8rem' }}>
                     Multiplier nach Kauf: ×{formatNumber(Math.pow(2, gameState.rebirth_count - 10))}
                   </p>
                 )}
-                <button
-                  className="buy-button"
-                  onClick={() => buyUpgradeAutobuyer()}
-                  disabled={gameState.rebirth_count < 15}
-                  style={{ marginTop: '10px' }}
-                >
-                  {gameState.click_upgrade_buyer_enabled ? t('bartclicker.autobuyer.autoClickerDisable') : t('bartclicker.autobuyer.autoClickerEnable')}
-                </button>
+                {/* Upgrade-Buyer-Button: Nach Kauf als Toggle anzeigen, sonst Kauf-Button */}
+                {!gameState.click_upgrade_buyer_unlocked ? (
+                  <button
+                    className="buy-button"
+                    onClick={() => buyUpgradeAutobuyer()}
+                    disabled={gameState.rebirth_count < 10}
+                    style={{ marginTop: '10px' }}
+                  >
+                    {t('bartclicker.autobuyer.autoClickerEnable')} (10 Rebirths)
+                  </button>
+                ) : (
+                  <button
+                    className="buy-button"
+                    onClick={() => buyUpgradeAutobuyer()}
+                    style={{
+                      marginTop: '10px',
+                      background: gameState.click_upgrade_buyer_enabled ? '#4caf50' : '#888',
+                      color: 'white'
+                    }}
+                  >
+                    {gameState.click_upgrade_buyer_enabled ? t('bartclicker.autobuyer.autoClickerDisable') : t('bartclicker.autobuyer.autoClickerEnable')}
+                  </button>
+                )}
               </div>
             </div>
           )}
