@@ -1107,3 +1107,126 @@
         box-shadow: 0 2px 8px rgba(0,0,0,0.12);
     }
 }
+
+/* Whitemode Styles für Booster, Relikte, Autobuyer, Offline */
+[data-theme='light'] .booster-card {
+  background: rgba(124, 77, 255, 0.07);
+  border: 1px solid #bdb6e6;
+  color: #2d2150;
+}
+[data-theme='light'] .booster-card:hover {
+  background: rgba(124, 77, 255, 0.13);
+}
+[data-theme='light'] .booster-card.booster-active {
+  background: rgba(76, 175, 80, 0.10);
+  border-color: #7edc8a;
+}
+[data-theme='light'] .booster-card h3 {
+  color: #7c4dff;
+}
+[data-theme='light'] .booster-effect {
+  color: #4a3a7a;
+}
+[data-theme='light'] .booster-risk {
+  color: #e65100;
+}
+[data-theme='light'] .booster-timer {
+  color: #388e3c;
+}
+[data-theme='light'] .active-debuffs-banner .debuff-pill {
+  background: #ffeaea;
+  border: 1px solid #ff8a80;
+  color: #c62828;
+}
+
+[data-theme='light'] .relic-card {
+  background: #f7f6fd;
+  border: 1px solid #bdb6e6;
+  color: #2d2150;
+}
+[data-theme='light'] .relic-card.unlocked {
+  background: #e8f5e9;
+  border-color: #7edc8a;
+}
+[data-theme='light'] .relic-card h3 {
+  color: #7c4dff;
+}
+[data-theme='light'] .relic-effect {
+  color: #4a3a7a;
+}
+[data-theme='light'] .relic-unlocked {
+  background: #d0f8ce;
+  color: #388e3c;
+}
+
+[data-theme='light'] .autobuyer-card {
+  background: #f7f6fd;
+  border: 1px solid #bdb6e6;
+  color: #2d2150;
+}
+[data-theme='light'] .autobuyer-card h3 {
+  color: #7c4dff;
+}
+[data-theme='light'] .autobuyer-card p {
+  color: #4a3a7a;
+}
+
+[data-theme='light'] .offline-earnings-banner {
+  background: #fffbe6;
+  border: 1px solid #ffe082;
+  color: #795548;
+}
+[data-theme='light'] .offline-earnings-dismiss {
+  background: #ffe082;
+  color: #795548;
+}
+[data-theme='light'] .rebirth-section {
+  background: linear-gradient(135deg, #fffde7 0%, #ede7f6 100%);
+  border: 2px solid #ffd700;
+  color: #795548;
+}
+[data-theme='light'] .rebirth-info {
+  color: #7c4dff;
+}
+[data-theme='light'] .rebirth-button {
+  background: linear-gradient(135deg, #ffd700, #fffde7);
+  color: #2d2150;
+}
+[data-theme='light'] .rebirth-button:disabled {
+  background: #eee;
+  color: #bbb;
+}
+
+[data-theme='light'] .shop-content {
+  background: #faf9ff;
+}
+[data-theme='light'] .booster-content-wrapper,
+[data-theme='light'] .relics-grid,
+[data-theme='light'] .autobuyer-content {
+  background: transparent;
+}
+
+/* Optional: Buttons und Inputs für Whitemode anpassen */
+[data-theme='light'] .buy-button {
+  background: #ede7f6;
+  color: #2d2150;
+  border: 1px solid #bdb6e6;
+}
+[data-theme='light'] .buy-button:disabled {
+  background: #f5f5f5;
+  color: #bbb;
+}
+[data-theme='light'] .max-button {
+  background: #e1bee7;
+  color: #2d2150;
+  border: 1px solid #bdb6e6;
+}
+[data-theme='light'] .max-button:disabled {
+  background: #f5f5f5;
+  color: #bbb;
+}
+
+[data-theme='light'] .auto-upgrade-checkbox span {
+  color: #7c4dff;
+}
+

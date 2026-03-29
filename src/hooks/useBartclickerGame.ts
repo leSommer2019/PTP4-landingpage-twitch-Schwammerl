@@ -509,65 +509,67 @@ export function useBartclickerGame() {
     }
   }, [user?.id, gameState]);
 
-  // Handle click – with anti-autoclicker protection
-  const handleClick = useCallback(() => {
+  // Handle click – mit optionalem Auto-Klick-Bypass für Anti-Autoclicker
+  const handleClick = useCallback((isAutoClick = false) => {
     const now = performance.now();
 
-    // Aktive Sperre?
-    if (penaltyUntilRef.current > Date.now()) {
-      return; // Klick wird stillschweigend ignoriert
-    }
-
-    // Timestamp aufnehmen
-    const timestamps = clickTimestampsRef.current;
-    timestamps.push(now);
-
-    // Hand-CPS Tracking
-    handClickCountRef.current++;
-    if (!handClickStartRef.current) handClickStartRef.current = now;
-
-    // Nur die letzten AC_WINDOW Klicks behalten
-    if (timestamps.length > AC_WINDOW) {
-      timestamps.splice(0, timestamps.length - AC_WINDOW);
-    }
-
-    // Mindestens 6 Klicks für eine sinnvolle Analyse
-    if (timestamps.length >= 6) {
-      const windowStart = timestamps[0];
-      const windowEnd = timestamps[timestamps.length - 1];
-      const windowDuration = (windowEnd - windowStart) / 1000; // in Sekunden
-
-      // 1. Rate-Limiting: Zu viele Klicks pro Sekunde?
-      if (windowDuration > 0) {
-        const clicksPerSecond = (timestamps.length - 1) / windowDuration;
-        if (clicksPerSecond > AC_MAX_CPS) {
-          penaltyUntilRef.current = Date.now() + AC_PENALTY_MS;
-          clickTimestampsRef.current = [];
-          setClickBlocked(true);
-          setTimeout(() => setClickBlocked(false), AC_PENALTY_MS);
-          console.warn('Autoclicker erkannt: Klickrate zu hoch (' + clicksPerSecond.toFixed(1) + ' CPS)');
-          return;
-        }
+    if (!isAutoClick) {
+      // Aktive Sperre?
+      if (penaltyUntilRef.current > Date.now()) {
+        return; // Klick wird stillschweigend ignoriert
       }
 
-      // 2. Regelmäßigkeitserkennung: Intervalle zu gleichmäßig?
-      if (timestamps.length >= AC_WINDOW) {
-        const intervals: number[] = [];
-        for (let i = 1; i < timestamps.length; i++) {
-          intervals.push(timestamps[i] - timestamps[i - 1]);
-        }
-        const mean = intervals.reduce((a, b) => a + b, 0) / intervals.length;
-        const variance = intervals.reduce((sum, iv) => sum + Math.pow(iv - mean, 2), 0) / intervals.length;
-        const stdDev = Math.sqrt(variance);
+      // Timestamp aufnehmen
+      const timestamps = clickTimestampsRef.current;
+      timestamps.push(now);
 
-        if (stdDev < AC_MIN_STD_DEV && mean < 200) {
-          // Zu gleichmäßig UND schnell → Autoclicker
-          penaltyUntilRef.current = Date.now() + AC_PENALTY_MS;
-          clickTimestampsRef.current = [];
-          setClickBlocked(true);
-          setTimeout(() => setClickBlocked(false), AC_PENALTY_MS);
-          console.warn('Autoclicker erkannt: Zu gleichmäßige Intervalle (σ=' + stdDev.toFixed(2) + 'ms, μ=' + mean.toFixed(1) + 'ms)');
-          return;
+      // Hand-CPS Tracking
+      handClickCountRef.current++;
+      if (!handClickStartRef.current) handClickStartRef.current = now;
+
+      // Nur die letzten AC_WINDOW Klicks behalten
+      if (timestamps.length > AC_WINDOW) {
+        timestamps.splice(0, timestamps.length - AC_WINDOW);
+      }
+
+      // Mindestens 6 Klicks für eine sinnvolle Analyse
+      if (timestamps.length >= 6) {
+        const windowStart = timestamps[0];
+        const windowEnd = timestamps[timestamps.length - 1];
+        const windowDuration = (windowEnd - windowStart) / 1000; // in Sekunden
+
+        // 1. Rate-Limiting: Zu viele Klicks pro Sekunde?
+        if (windowDuration > 0) {
+          const clicksPerSecond = (timestamps.length - 1) / windowDuration;
+          if (clicksPerSecond > AC_MAX_CPS) {
+            penaltyUntilRef.current = Date.now() + AC_PENALTY_MS;
+            clickTimestampsRef.current = [];
+            setClickBlocked(true);
+            setTimeout(() => setClickBlocked(false), AC_PENALTY_MS);
+            console.warn('Autoclicker erkannt: Klickrate zu hoch (' + clicksPerSecond.toFixed(1) + ' CPS)');
+            return;
+          }
+        }
+
+        // 2. Regelmäßigkeitserkennung: Intervalle zu gleichmäßig?
+        if (timestamps.length >= AC_WINDOW) {
+          const intervals: number[] = [];
+          for (let i = 1; i < timestamps.length; i++) {
+            intervals.push(timestamps[i] - timestamps[i - 1]);
+          }
+          const mean = intervals.reduce((a, b) => a + b, 0) / intervals.length;
+          const variance = intervals.reduce((sum, iv) => sum + Math.pow(iv - mean, 2), 0) / intervals.length;
+          const stdDev = Math.sqrt(variance);
+
+          if (stdDev < AC_MIN_STD_DEV && mean < 200) {
+            // Zu gleichmäßig UND schnell → Autoclicker
+            penaltyUntilRef.current = Date.now() + AC_PENALTY_MS;
+            clickTimestampsRef.current = [];
+            setClickBlocked(true);
+            setTimeout(() => setClickBlocked(false), AC_PENALTY_MS);
+            console.warn('Autoclicker erkannt: Zu gleichmäßige Intervalle (σ=' + stdDev.toFixed(2) + 'ms, μ=' + mean.toFixed(1) + 'ms)');
+            return;
+          }
         }
       }
     }
@@ -580,6 +582,18 @@ export function useBartclickerGame() {
       total_ever: prev.total_ever + power,
     }));
   }, [calculateClickPower]);
+  // Auto-Klicker-Loop: 10 CPS, solange aktiviert
+  useEffect(() => {
+    let interval: ReturnType<typeof setInterval> | null = null;
+    if (gameState.auto_click_buyer_enabled) {
+      interval = setInterval(() => {
+        handleClick(true); // true = Auto-Klick, Anti-Autoclicker-Checks überspringen
+      }, 100); // 10x pro Sekunde
+    }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [gameState.auto_click_buyer_enabled, handleClick]);
 
   // Buy shop item – item.cost ist bereits der aktuelle Preis (inkl. Rebirth-Skalierung)
   const buyItem = useCallback(

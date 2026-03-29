@@ -148,6 +148,19 @@ export default function BartclickerGame({ compact = false }: BartclickerGameProp
     { id: 3, name: 'Zeitreisendes Bartöl', icon: '⏳', effect: '+50% Offline', baseCost: 200000000 },
   ];
 
+  // Hilfsfunktion zum Toggeln der Auto-Upgrade-Auswahl
+  const toggleAutoUpgradeItem = (itemId: number) => {
+    if (!gameState.click_upgrade_buyer_enabled) return;
+    const items = gameState.click_upgrade_buyer_items || [];
+    if (items.includes(itemId)) {
+      // Entfernen
+      window.dispatchEvent(new CustomEvent('toggleAutoUpgradeItem', { detail: { itemId, checked: false } }));
+    } else {
+      // Hinzufügen
+      window.dispatchEvent(new CustomEvent('toggleAutoUpgradeItem', { detail: { itemId, checked: true } }));
+    }
+  };
+
   return (
     <div className={`bartclicker-game ${compact ? 'compact' : ''}`}>
       {/* Offline Earnings Notification */}
@@ -263,6 +276,7 @@ export default function BartclickerGame({ compact = false }: BartclickerGameProp
           {shopTab === 'passive' && (
             <div className="item-list">
               {passiveItems.map((item) => {
+                const isChecked = gameState.click_upgrade_buyer_items?.includes(item.id);
                 return (
                   <div key={item.id} className="shop-item">
                     <div className="item-header">
@@ -272,6 +286,17 @@ export default function BartclickerGame({ compact = false }: BartclickerGameProp
                         <p className="item-cps">{item.cps?.toFixed(1)}/s</p>
                       </div>
                       <span className="item-count">×{item.count}</span>
+                      {/* Checkbox für Auto-Upgrade-Käufer */}
+                      {gameState.click_upgrade_buyer_enabled && (
+                        <label className="auto-upgrade-checkbox" title="Automatisch kaufen">
+                          <input
+                            type="checkbox"
+                            checked={!!isChecked}
+                            onChange={() => toggleAutoUpgradeItem(item.id)}
+                          />
+                          <span style={{ fontSize: '0.9em', marginLeft: 2 }}>Auto</span>
+                        </label>
+                      )}
                     </div>
                     <div className="button-group">
                       <button
@@ -300,6 +325,7 @@ export default function BartclickerGame({ compact = false }: BartclickerGameProp
           {shopTab === 'click' && (
             <div className="item-list">
               {clickItems.map((item) => {
+                const isChecked = gameState.click_upgrade_buyer_items?.includes(item.id);
                 return (
                   <div key={item.id} className="shop-item">
                     <div className="item-header">
@@ -309,6 +335,17 @@ export default function BartclickerGame({ compact = false }: BartclickerGameProp
                         <p className="item-power">+{item.clickPower}</p>
                       </div>
                       <span className="item-count">×{item.count}</span>
+                      {/* Checkbox für Auto-Upgrade-Käufer */}
+                      {gameState.click_upgrade_buyer_enabled && (
+                        <label className="auto-upgrade-checkbox" title="Automatisch kaufen">
+                          <input
+                            type="checkbox"
+                            checked={!!isChecked}
+                            onChange={() => toggleAutoUpgradeItem(item.id)}
+                          />
+                          <span style={{ fontSize: '0.9em', marginLeft: 2 }}>Auto</span>
+                        </label>
+                      )}
                     </div>
                     <div className="button-group">
                       <button
