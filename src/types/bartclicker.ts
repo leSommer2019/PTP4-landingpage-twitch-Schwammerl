@@ -71,6 +71,7 @@ export interface BartclickerGameState {
   relics: Relic[];
   offline_earning_upgrades: number;
   auto_click_buyer_enabled: boolean;
+  auto_click_buyer_unlocked: boolean;
   click_upgrade_buyer_enabled: boolean;
   auto_click_buyer_items: number[];
   click_upgrade_buyer_items: number[];
@@ -93,4 +94,3 @@ export interface OfflineProgress {
   progress: number;
   offlineSeconds: number;
 }
-

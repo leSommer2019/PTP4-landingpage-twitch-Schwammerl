@@ -182,6 +182,7 @@ export function useBartclickerGame() {
     click_upgrade_buyer_enabled: false,
     auto_click_buyer_items: [],
     click_upgrade_buyer_items: [],
+    auto_click_buyer_unlocked: false,
   });
 
   const [cps, setCps] = useState(0);
@@ -335,6 +336,7 @@ export function useBartclickerGame() {
             click_upgrade_buyer_enabled: false,
             auto_click_buyer_items: [],
             click_upgrade_buyer_items: [],
+            auto_click_buyer_unlocked: false,
           };
 
           // Versuche zu speichern, aber setze State IMMER
@@ -354,6 +356,7 @@ export function useBartclickerGame() {
               click_upgrade_buyer_enabled: false,
               auto_click_buyer_items: [],
               click_upgrade_buyer_items: [],
+              auto_click_buyer_unlocked: false,
             }, { onConflict: 'user_id' });
             console.log('Initial game state saved successfully');
           } catch (upsertErr) {
@@ -426,6 +429,7 @@ export function useBartclickerGame() {
             click_upgrade_buyer_enabled: data.click_upgrade_buyer_enabled || false,
             auto_click_buyer_items: data.auto_click_buyer_items || [],
             click_upgrade_buyer_items: data.click_upgrade_buyer_items || [],
+            auto_click_buyer_unlocked: data.auto_click_buyer_unlocked || false,
             last_updated: data.last_updated,
             created_at: data.created_at,
           });
@@ -706,7 +710,9 @@ export function useBartclickerGame() {
         })),
         active_buffs: [],
         active_debuffs: [],
-        // Behalte: relics, auto_click_buyer_enabled, click_upgrade_buyer_enabled, Autobuyer Items
+        // Behalte: relics, auto_click_buyer_enabled, auto_click_buyer_unlocked, click_upgrade_buyer_enabled, Autobuyer Items
+        auto_click_buyer_enabled: prev.auto_click_buyer_enabled,
+        auto_click_buyer_unlocked: prev.auto_click_buyer_unlocked,
       };
     });
   }, []);
@@ -782,8 +788,8 @@ export function useBartclickerGame() {
   // Buy Autobuyer (kostet 10 Rebirths für Auto-Klicker)
   // Autobuyer kann nur einmal gekauft werden (10 Rebirths). Danach Toggle ohne weitere Kosten.
   const buyAutobuyer = useCallback(() => {
-    if (!gameState.auto_click_buyer_enabled) {
-      // Erstkauf: Kosten abziehen und aktivieren
+    if (!gameState.auto_click_buyer_unlocked) {
+      // Erstkauf: Kosten abziehen, unlocken und aktivieren
       if (gameState.rebirth_count < 10) return false;
       setGameState((prev) => {
         const newRebirthCount = prev.rebirth_count - 10;
@@ -792,6 +798,7 @@ export function useBartclickerGame() {
           rebirth_count: newRebirthCount,
           rebirth_multiplier: deriveRebirthMultiplier(newRebirthCount),
           auto_click_buyer_enabled: true,
+          auto_click_buyer_unlocked: true,
           shop_items: recalculatePassiveShopItemCosts(prev.shop_items, newRebirthCount),
         };
       });
@@ -804,7 +811,7 @@ export function useBartclickerGame() {
       }));
       return true;
     }
-  }, [gameState.rebirth_count, gameState.auto_click_buyer_enabled]);
+  }, [gameState.rebirth_count, gameState.auto_click_buyer_unlocked]);
 
   // Buy Auto-Upgrade Käufer (kostet 10 Rebirths)
   const buyUpgradeAutobuyer = useCallback(() => {

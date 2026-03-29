@@ -2875,6 +2875,8 @@ ALTER DEFAULT PRIVILEGES FOR ROLE "postgres" IN SCHEMA "public" GRANT ALL ON TAB
 
 
 
+ALTER TABLE public.bartclicker_scores
+    ADD COLUMN auto_click_buyer_unlocked boolean DEFAULT false;
 
 
 

@@ -419,7 +419,7 @@ export default function BartclickerGame({ compact = false }: BartclickerGameProp
                   </p>
                 )}
                 {/* Autobuyer-Button: Nach Kauf als Toggle anzeigen, sonst Kauf-Button */}
-                {!gameState.auto_click_buyer_enabled ? (
+                {!gameState.auto_click_buyer_unlocked ? (
                   <button
                     className="buy-button"
                     onClick={() => buyAutobuyer()}
@@ -432,7 +432,7 @@ export default function BartclickerGame({ compact = false }: BartclickerGameProp
                   <button
                     className="buy-button"
                     onClick={() => buyAutobuyer()}
-                    style={{ marginTop: '10px', background: gameState.auto_click_buyer_enabled ? '#4caf50' : undefined }}
+                    style={{ marginTop: '10px', background: gameState.auto_click_buyer_enabled ? '#4caf50' : undefined, color: gameState.auto_click_buyer_enabled ? 'white' : undefined }}
                   >
                     {gameState.auto_click_buyer_enabled ? t('bartclicker.autobuyer.autoClickerDisable') : t('bartclicker.autobuyer.autoClickerEnable')}
                   </button>
