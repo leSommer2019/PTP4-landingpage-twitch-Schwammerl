@@ -240,11 +240,6 @@
     padding-bottom: 10px;
     overflow-x: visible;
     flex-wrap: wrap;
-    position: sticky;
-    top: 112px; /* 56px header + 56px tabs, ggf. anpassen */
-    z-index: 150;
-    background: var(--box-gradient, #181028);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
 }
 
 .shop-subtab {
@@ -1005,34 +1000,7 @@
     }
 }
 
-@media (max-width: 600px) {
-  .tabs {
-    flex-wrap: wrap;
-    overflow-x: visible;
-    justify-content: space-between;
-    gap: 4px;
-  }
-  .tab-button {
-    font-size: 1.5rem;
-    padding: 8px 0;
-    min-width: 44px;
-    max-width: 60px;
-    text-align: center;
-  }
-  .shop-content,
-  .autobuyer-content,
-  .leaderboard-content {
-    max-height: none !important;
-    height: auto !important;
-    overflow-y: visible !important;
-    padding-bottom: 0;
-  }
-  .shop-subtabs {
-    flex-wrap: wrap;
-    overflow-x: visible;
-    gap: 4px;
-  }
-}
+
 
 /* Offline Earnings Notification Banner */
 .offline-earnings-banner {
@@ -1144,139 +1112,138 @@
 
 /* Whitemode Styles für Booster, Relikte, Autobuyer, Offline */
 [data-theme='light'] .booster-card {
-  background: rgba(124, 77, 255, 0.07);
-  border: 1px solid #bdb6e6;
-  color: #2d2150;
+    background: rgba(124, 77, 255, 0.07);
+    border: 1px solid #bdb6e6;
+    color: #2d2150;
 }
 [data-theme='light'] .booster-card:hover {
-  background: rgba(124, 77, 255, 0.13);
+    background: rgba(124, 77, 255, 0.13);
 }
 [data-theme='light'] .booster-card.booster-active {
-  background: rgba(76, 175, 80, 0.10);
-  border-color: #7edc8a;
+    background: rgba(76, 175, 80, 0.10);
+    border-color: #7edc8a;
 }
 [data-theme='light'] .booster-card h3 {
-  color: #7c4dff;
+    color: #7c4dff;
 }
 [data-theme='light'] .booster-effect {
-  color: #4a3a7a;
+    color: #4a3a7a;
 }
 [data-theme='light'] .booster-risk {
-  color: #e65100;
+    color: #e65100;
 }
 [data-theme='light'] .booster-timer {
-  color: #388e3c;
+    color: #388e3c;
 }
 [data-theme='light'] .active-debuffs-banner .debuff-pill {
-  background: #ffeaea;
-  border: 1px solid #ff8a80;
-  color: #c62828;
+    background: #ffeaea;
+    border: 1px solid #ff8a80;
+    color: #c62828;
 }
 
 [data-theme='light'] .relic-card {
-  background: #f7f6fd;
-  border: 1px solid #bdb6e6;
-  color: #2d2150;
+    background: #f7f6fd;
+    border: 1px solid #bdb6e6;
+    color: #2d2150;
 }
 [data-theme='light'] .relic-card.unlocked {
-  background: #e8f5e9;
-  border-color: #7edc8a;
+    background: #e8f5e9;
+    border-color: #7edc8a;
 }
 [data-theme='light'] .relic-card h3 {
-  color: #7c4dff;
+    color: #7c4dff;
 }
 [data-theme='light'] .relic-effect {
-  color: #4a3a7a;
+    color: #4a3a7a;
 }
 [data-theme='light'] .relic-unlocked {
-  background: #d0f8ce;
-  color: #388e3c;
+    background: #d0f8ce;
+    color: #388e3c;
 }
 
 [data-theme='light'] .autobuyer-card {
-  background: #f7f6fd;
-  border: 1px solid #bdb6e6;
-  color: #2d2150;
+    background: #f7f6fd;
+    border: 1px solid #bdb6e6;
+    color: #2d2150;
 }
 [data-theme='light'] .autobuyer-card h3 {
-  color: #7c4dff;
+    color: #7c4dff;
 }
 [data-theme='light'] .autobuyer-card p {
-  color: #4a3a7a;
+    color: #4a3a7a;
 }
 
 [data-theme='light'] .offline-earnings-banner {
-  background: #fffbe6;
-  border: 1px solid #ffe082;
-  color: #795548;
+    background: #fffbe6;
+    border: 1px solid #ffe082;
+    color: #795548;
 }
 [data-theme='light'] .offline-earnings-dismiss {
-  background: #ffe082;
-  color: #795548;
+    background: #ffe082;
+    color: #795548;
 }
 [data-theme='light'] .rebirth-section {
-  background: linear-gradient(135deg, #fffde7 0%, #ede7f6 100%);
-  border: 2px solid #ffd700;
-  color: #795548;
+    background: linear-gradient(135deg, #fffde7 0%, #ede7f6 100%);
+    border: 2px solid #ffd700;
+    color: #795548;
 }
 [data-theme='light'] .rebirth-info {
-  color: #7c4dff;
+    color: #7c4dff;
 }
 [data-theme='light'] .rebirth-button {
-  background: linear-gradient(135deg, #ffd700, #fffde7);
-  color: #2d2150;
+    background: linear-gradient(135deg, #ffd700, #fffde7);
+    color: #2d2150;
 }
 [data-theme='light'] .rebirth-button:disabled {
-  background: #eee;
-  color: #bbb;
+    background: #eee;
+    color: #bbb;
 }
 
 [data-theme='light'] .shop-content {
-  background: #faf9ff;
+    background: #faf9ff;
 }
 [data-theme='light'] .booster-content-wrapper,
 [data-theme='light'] .relics-grid,
 [data-theme='light'] .autobuyer-content {
-  background: transparent;
+    background: transparent;
 }
 
 /* Optional: Buttons und Inputs für Whitemode anpassen */
 [data-theme='light'] .buy-button {
-  background: #ede7f6;
-  color: #2d2150;
-  border: 1px solid #bdb6e6;
+    background: #ede7f6;
+    color: #2d2150;
+    border: 1px solid #bdb6e6;
 }
 [data-theme='light'] .buy-button:disabled {
-  background: #f5f5f5;
-  color: #bbb;
+    background: #f5f5f5;
+    color: #bbb;
 }
 [data-theme='light'] .max-button {
-  background: #e1bee7;
-  color: #2d2150;
-  border: 1px solid #bdb6e6;
+    background: #e1bee7;
+    color: #2d2150;
+    border: 1px solid #bdb6e6;
 }
 [data-theme='light'] .max-button:disabled {
-  background: #f5f5f5;
-  color: #bbb;
+    background: #f5f5f5;
+    color: #bbb;
 }
 
 .auto-upgrade-btn {
-  display: inline-flex;
-  border: none;
-  background: #eee;
-  color: #333;
-  border-radius: 50%;
-  width: 32px;
-  height: 32px;
-  font-size: 1.2em;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.2s, color 0.2s;
-  cursor: pointer;
-  outline: none;
+    display: inline-flex;
+    border: none;
+    background: #eee;
+    color: #333;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    font-size: 1.2em;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s, color 0.2s;
+    cursor: pointer;
+    outline: none;
 }
 .auto-upgrade-btn.active {
-  background: #a259e6;
-  color: #fff;
+    background: #a259e6;
+    color: #fff;
 }
-
