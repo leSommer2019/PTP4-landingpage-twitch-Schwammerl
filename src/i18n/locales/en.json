@@ -7,7 +7,7 @@
     "system": "System"
   },
   "hero": {
-    "subtitle": "FullHD – Gaming, Streams & Clips"
+    "subtitle": "Gaming, Streams & Clips"
   },
   "mobileToggle": {
     "live": "Live",
@@ -67,7 +67,7 @@
       "desc": "Main channel"
     },
     "onlybart": {
-      "title": "OnlyBart",
+      "title": "Only<s>Bart</s>Flaum",
       "desc": "Exklusive content"
     },
     "discord": {
@@ -170,14 +170,14 @@
     "retentionText": "Votes are automatically deleted after the poll round ends (maximum 10 days). Your Twitch ID may remain stored in pseudonymized form for statistical purposes.",
     "legalBasisTitle": "Legal Basis",
     "legalBasisText": "Art. 6(1)(f) GDPR (Legitimate interest in a manipulation-free poll).",
-    "onlyBartTitle": "OnlyBart (exclusive content)",
-    "onlyBartIntro": "OnlyBart is an exclusive area for subscribers, VIPs, and moderators. Access is granted after logging in with your Twitch account. Your Twitch ID, display name, and, if applicable, profile picture are stored. Posts, comments, and likes are linked to your account.",
+    "onlyBartTitle": "Only<s>Bart</s>Flaum (exclusive content)",
+    "onlyBartIntro": "Only<s>Bart</s>Flaum is an exclusive area for subscribers, VIPs, and moderators. Access is granted after logging in with your Twitch account. Your Twitch ID, display name, and, if applicable, profile picture are stored. Posts, comments, and likes are linked to your account.",
     "onlyBartPurposeTitle": "Purpose",
     "onlyBartPurposeText": "Provision of exclusive content, community interaction, and protection against abuse.",
     "onlyBartRetentionTitle": "Retention Period",
     "onlyBartRetentionText": "Posts, comments, and likes remain stored until deleted by the user or moderation.",
-    "bartclickerTitle": "Bartclicker (Game)",
-    "bartclickerIntro": "When playing Bartclicker, your game progress (beard hairs, upgrades, rebirths, etc.) is stored together with your Twitch ID. Your display name is shown on the leaderboard.",
+    "bartclickerTitle": "<s>Bart</s>Flaumclicker (Game)",
+    "bartclickerIntro": "When playing <s>Bart</s>Flaumclicker, your game progress (beard hairs, upgrades, rebirths, etc.) is stored together with your Twitch ID. Your display name is shown on the leaderboard.",
     "bartclickerPurposeTitle": "Purpose",
     "bartclickerPurposeText": "Storage of game progress, display of leaderboards and game statistics.",
     "bartclickerRetentionTitle": "Retention Period",

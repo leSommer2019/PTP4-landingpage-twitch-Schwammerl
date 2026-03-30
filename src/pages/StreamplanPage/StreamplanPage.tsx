@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useRef } from 'react'
-import { useTranslation } from 'react-i18next'
+import { useTranslation, Trans } from 'react-i18next'
 import siteConfig from '../../config/siteConfig'
 import SubPage from '../../components/SubPage/SubPage'
 import ICAL from 'ical.js'
@@ -187,7 +187,7 @@ export default function StreamplanPage() {
             >
               <button onClick={() => setShowIcalHint(false)} style={{ position: 'absolute', top: 8, right: 8, background: 'none', border: 'none', fontSize: 22, cursor: 'pointer' }} aria-label="Close">×</button>
               <h2 style={{ marginTop: 0 }}>{t('streamplanPage.icalHint.title')}</h2>
-              <p>{t('streamplanPage.icalHint.desc')}</p>
+              <p><Trans i18nKey="streamplanPage.icalHint.desc" /></p>
               <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 8 }}>
                 <input
                   ref={icsInputRef}
@@ -220,7 +220,7 @@ export default function StreamplanPage() {
           </div>
         )}
       </div>
-      <p>{t('streamplanPage.intro')}</p>
+      <p><Trans i18nKey="streamplanPage.intro" /></p>
 
       {/* Filter UI */}
       <div className="streamplan-filters">

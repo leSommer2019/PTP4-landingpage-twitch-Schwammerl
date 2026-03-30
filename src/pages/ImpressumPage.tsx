@@ -1,6 +1,6 @@
 import siteConfig from '../config/siteConfig'
 import SubPage from '../components/SubPage/SubPage'
-import {useTranslation} from "react-i18next";
+import {useTranslation, Trans} from "react-i18next";
 
 export default function ImpressumPage() {
   const { t } = useTranslation()
@@ -16,7 +16,7 @@ export default function ImpressumPage() {
         {impressum.city}
       </p>
       <p>
-        {t('impressumPage.contact')}:{' '}
+        <Trans i18nKey="impressumPage.contact" />:{' '}
         <a href={`mailto:${impressum.email}?subject=Anfrage%20Impressum`}>
           {impressum.email}
         </a>
@@ -24,4 +24,3 @@ export default function ImpressumPage() {
     </SubPage>
   )
 }
-

@@ -1,4 +1,4 @@
-import { useTranslation } from 'react-i18next'
+import { useTranslation, Trans } from 'react-i18next'
 import siteConfig from '../config/siteConfig'
 import SubPage from '../components/SubPage/SubPage'
 
@@ -18,58 +18,58 @@ export default function DatenschutzPage() {
         {impressum.city}
       </p>
       <p>
-        {t('datenschutzPage.contact')}:{' '}
+        <Trans i18nKey="datenschutzPage.contact" />:{' '}
         <a href={`mailto:${impressum.email}?subject=Anfrage%20Datenschutz`}>
           {impressum.email}
         </a>
       </p>
 
       <h2>{t('datenschutzPage.votingTitle')}</h2>
-      <p>{t('datenschutzPage.votingIntro')}</p>
+      <p><Trans i18nKey="datenschutzPage.votingIntro" /></p>
 
       <h3>{t('datenschutzPage.processingTitle')}</h3>
-      <p>{t('datenschutzPage.processingText')}</p>
+      <p><Trans i18nKey="datenschutzPage.processingText" /></p>
 
       <h3>{t('datenschutzPage.purposeTitle')}</h3>
-      <p>{t('datenschutzPage.purposeText')}</p>
+      <p><Trans i18nKey="datenschutzPage.purposeText" /></p>
 
       <h3>{t('datenschutzPage.retentionTitle')}</h3>
-      <p>{t('datenschutzPage.retentionText')}</p>
+      <p><Trans i18nKey="datenschutzPage.retentionText" /></p>
 
       <h3>{t('datenschutzPage.legalBasisTitle')}</h3>
-      <p>{t('datenschutzPage.legalBasisText')}</p>
+      <p><Trans i18nKey="datenschutzPage.legalBasisText" /></p>
 
       <h2>{t('datenschutzPage.onlyBartTitle')}</h2>
-      <p>{t('datenschutzPage.onlyBartIntro')}</p>
+      <p><Trans i18nKey="datenschutzPage.onlyBartIntro" /></p>
       <h3>{t('datenschutzPage.onlyBartPurposeTitle')}</h3>
-      <p>{t('datenschutzPage.onlyBartPurposeText')}</p>
+      <p><Trans i18nKey="datenschutzPage.onlyBartPurposeText" /></p>
       <h3>{t('datenschutzPage.onlyBartRetentionTitle')}</h3>
-      <p>{t('datenschutzPage.onlyBartRetentionText')}</p>
+      <p><Trans i18nKey="datenschutzPage.onlyBartRetentionText" /></p>
 
       <h2>{t('datenschutzPage.bartclickerTitle')}</h2>
-      <p>{t('datenschutzPage.bartclickerIntro')}</p>
+      <p><Trans i18nKey="datenschutzPage.bartclickerIntro" /></p>
       <h3>{t('datenschutzPage.bartclickerPurposeTitle')}</h3>
-      <p>{t('datenschutzPage.bartclickerPurposeText')}</p>
+      <p><Trans i18nKey="datenschutzPage.bartclickerPurposeText" /></p>
       <h3>{t('datenschutzPage.bartclickerRetentionTitle')}</h3>
-      <p>{t('datenschutzPage.bartclickerRetentionText')}</p>
+      <p><Trans i18nKey="datenschutzPage.bartclickerRetentionText" /></p>
 
       <h2>{t('datenschutzPage.analyticsTitle')}</h2>
-      <p>{t('datenschutzPage.analyticsIntro')}</p>
+      <p><Trans i18nKey="datenschutzPage.analyticsIntro" /></p>
 
       <h3>{t('datenschutzPage.analyticsProcessingTitle')}</h3>
-      <p>{t('datenschutzPage.analyticsProcessingText')}</p>
+      <p><Trans i18nKey="datenschutzPage.analyticsProcessingText" /></p>
 
       <h3>{t('datenschutzPage.analyticsPurposeTitle')}</h3>
-      <p>{t('datenschutzPage.analyticsPurposeText')}</p>
+      <p><Trans i18nKey="datenschutzPage.analyticsPurposeText" /></p>
 
       <h3>{t('datenschutzPage.analyticsLegalTitle')}</h3>
-      <p>{t('datenschutzPage.analyticsLegalText')}</p>
+      <p><Trans i18nKey="datenschutzPage.analyticsLegalText" /></p>
 
       <h3>{t('datenschutzPage.revokeTitle')}</h3>
-      <p>{t('datenschutzPage.revokeText')}</p>
+      <p><Trans i18nKey="datenschutzPage.revokeText" /></p>
 
       <h2>{t('datenschutzPage.rightsTitle')}</h2>
-      <p>{t('datenschutzPage.rightsText')}</p>
+      <p><Trans i18nKey="datenschutzPage.rightsText" /></p>
     </SubPage>
   )
 }

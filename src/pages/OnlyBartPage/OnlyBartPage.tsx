@@ -582,7 +582,7 @@ export function OnlyBartPage() {
                     <div className="access-denied">
                         <FaLock className="denied-icon"/>
                         <h2>{t('auth.loginRequired', 'Login Required')}</h2>
-                        <p>{t('onlybart.notLoggedIn', 'Log in with Twitch to check if you have access to OnlyBart.')}</p>
+                        <p>{t('onlybart.notLoggedIn', 'Log in with Twitch to check if you have access to Only<s>Bart</s>Flaum.')}</p>
                         <button className="btn btn-twitch mt-4" onClick={signInWithTwitch}>
                             <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
                                 <path
@@ -599,7 +599,7 @@ export function OnlyBartPage() {
                 <div className="access-denied">
                     <FaLock className="denied-icon"/>
                     <h2>{t('onlybart.accessDenied.title', 'Access Restricted')}</h2>
-                    <p>{t('onlybart.accessDenied.message', 'Only Subscribers, VIPs, and Mods have access to OnlyBart.')}</p>
+                    <p>{t('onlybart.accessDenied.message', 'Only Subscribers, VIPs, and Mods have access to Only<s>Bart</s>Flaum.')}</p>
                     <p className="text-gray-500 mt-4 text-sm">
                         {t('onlybart.accessDenied.subHint', 'If you are a subscriber, please ensure you are logged in with the correct account.')}
                     </p>

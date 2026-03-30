@@ -7,7 +7,7 @@
     "system": "System"
   },
   "hero": {
-    "subtitle": "FullHD – Gaming, Streams & Clips"
+    "subtitle": "Gaming, Streams & Clips"
   },
   "mobileToggle": {
     "live": "Live",
@@ -67,7 +67,7 @@
       "desc": "Hauptkanal"
     },
     "onlybart": {
-      "title": "OnlyBart",
+      "title": "Only<s>Bart</s>Flaum",
       "desc": "Exklusive Inhalte"
     },
     "discord": {
@@ -170,14 +170,14 @@
     "retentionText": "Die Stimmabgaben werden nach Abschluss der Abstimmungsrunde (maximal 10 Tage) automatisch gelöscht. Ihre Twitch-ID bleibt ggf. für Statistikzwecke pseudonymisiert gespeichert.",
     "legalBasisTitle": "Rechtsgrundlage",
     "legalBasisText": "Art. 6 Abs. 1 lit. f DSGVO (Berechtigtes Interesse an einer manipulationsfreien Abstimmung).",
-    "onlyBartTitle": "OnlyBart (exklusive Inhalte)",
-    "onlyBartIntro": "OnlyBart ist ein exklusiver Bereich für Abonnenten, VIPs und Moderatoren. Der Zugriff erfolgt nach Login mit Ihrem Twitch-Account. Es werden Ihre Twitch-ID, Ihr Anzeigename und ggf. Ihr Profilbild gespeichert. Beiträge, Kommentare und Likes werden Ihrem Account zugeordnet.",
+    "onlyBartTitle": "Only<s>Bart</s>Flaum (exklusive Inhalte)",
+    "onlyBartIntro": "Only<s>Bart</s>Flaum ist ein exklusiver Bereich für Abonnenten, VIPs und Moderatoren. Der Zugriff erfolgt nach Login mit Ihrem Twitch-Account. Es werden Ihre Twitch-ID, Ihr Anzeigename und ggf. Ihr Profilbild gespeichert. Beiträge, Kommentare und Likes werden Ihrem Account zugeordnet.",
     "onlyBartPurposeTitle": "Zweck",
     "onlyBartPurposeText": "Bereitstellung exklusiver Inhalte, Community-Interaktion und Schutz vor Missbrauch.",
     "onlyBartRetentionTitle": "Speicherdauer",
     "onlyBartRetentionText": "Beiträge, Kommentare und Likes bleiben gespeichert, bis sie vom Nutzer oder durch Moderation gelöscht werden.",
-    "bartclickerTitle": "Bartclicker (Spiel)",
-    "bartclickerIntro": "Beim Spielen von Bartclicker wird Ihr Spielfortschritt (Barthaare, Upgrades, Rebirths etc.) zusammen mit Ihrer Twitch-ID gespeichert. Für das Leaderboard wird Ihr Anzeigename angezeigt.",
+    "bartclickerTitle": "<s>Bart</s>Flaumclicker (Spiel)",
+    "bartclickerIntro": "Beim Spielen von <s>Bart</s>Flaumclicker wird Ihr Spielfortschritt (Barthaare, Upgrades, Rebirths etc.) zusammen mit Ihrer Twitch-ID gespeichert. Für das Leaderboard wird Ihr Anzeigename angezeigt.",
     "bartclickerPurposeTitle": "Zweck",
     "bartclickerPurposeText": "Speicherung des Spielfortschritts, Anzeige von Bestenlisten und Spielstatistiken.",
     "bartclickerRetentionTitle": "Speicherdauer",
@@ -680,10 +680,10 @@
     "confirmDeleteComment": "Diesen Kommentar wirklich löschen?",
     "accessDenied": {
       "title": "Zugriff beschränkt",
-      "message": "Nur Subscriber, VIPs und Moderatoren haben Zugriff auf OnlyBart.",
+      "message": "Nur Subscriber, VIPs und Moderatoren haben Zugriff auf Only<s>Bart</s>Flaum.",
       "subHint": "Bist du ein Subscriber? Bitte stelle sicher, dass du mit dem richtigen Account eingeloggt bist."
     },
-    "notLoggedIn": "Melde dich mit Twitch an, um zu prüfen, ob du Zugriff auf OnlyBart hast.",
+    "notLoggedIn": "Melde dich mit Twitch an, um zu prüfen, ob du Zugriff auf Only<s>Bart</s>Flaum hast.",
     "noPosts": "Noch keine Beiträge vorhanden. Sei der Erste, der etwas Tolles sieht!",
     "comment": {
       "placeholder": "Schreibe einen Kommentar...",

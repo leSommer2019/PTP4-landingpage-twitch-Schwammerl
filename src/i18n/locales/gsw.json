@@ -7,7 +7,7 @@
     "system": "System"
   },
   "hero": {
-    "subtitle": "FullHD – Gaming, Streams & Clips"
+    "subtitle": "Gaming, Streams & Clips"
   },
   "mobileToggle": {
     "live": "Live",
@@ -67,7 +67,7 @@
       "desc": "Hauptkanal"
     },
     "onlybart": {
-      "title": "OnlyBart",
+      "title": "Only<s>Bart</s>Flaum",
       "desc": "Exklusive Inhalt"
     },
     "discord": {
@@ -171,14 +171,14 @@
     "retentionText": "D'Stimme werde nach Abschluss vo de Abstimmigzrundi (maximal 10 Täg) automatisch glöscht. Dini Twitch-ID bliibt ggf. für Statistikzweck pseudonymisiert gspeichert.",
     "legalBasisTitle": "Rechtsgrundlag",
     "legalBasisText": "Art. 6 Abs. 1 lit. f DSGVO (Berechtigts Interesse a ere manipulationsfriie Abstimmig).",
-    "onlyBartTitle": "OnlyBart (exklusive Inhalt)",
-    "onlyBartIntro": "OnlyBart isch e exklusiver Bereich für Abonnente, VIPs und Moderatore. D'Zuegriff git's nach em Login mit dim Twitch-Account. Dini Twitch-ID, din Aazeigname und ggf. dis Profilbild werde gspeichert. Beiträg, Kommentar und Likes werde dim Account zuegordnet.",
+    "onlyBartTitle": "Only<s>Bart</s>Flaum (exklusive Inhalt)",
+    "onlyBartIntro": "Only<s>Bart</s>Flaum isch e exklusiver Bereich für Abonnente, VIPs und Moderatore. D'Zuegriff git's nach em Login mit dim Twitch-Account. Dini Twitch-ID, din Aazeigname und ggf. dis Profilbild werde gspeichert. Beiträg, Kommentar und Likes werde dim Account zuegordnet.",
     "onlyBartPurposeTitle": "Zweck",
     "onlyBartPurposeText": "Bereitstellig vo exklusive Inhalt, Community-Interaktion und Schutz vor Missbrauch.",
     "onlyBartRetentionTitle": "Speicherdauer",
     "onlyBartRetentionText": "Beiträg, Kommentar und Likes bliibe gspeichert, bis sie vom Nutzer oder dur Moderation glöscht werde.",
-    "bartclickerTitle": "Bartclicker (Spill)",
-    "bartclickerIntro": "Bim Spill Bartclicker wird din Spiilfortschritt (Barthaare, Upgrades, Rebirths etc.) zäme mit dinere Twitch-ID gspeichert. Für s'Leaderboard wird din Aazeigname aazeigt.",
+    "bartclickerTitle": "<s>Bart</s>Flaumclicker (Spill)",
+    "bartclickerIntro": "Bim Spill <s>Bart</s>Flaumclicker wird din Spiilfortschritt (Barthaare, Upgrades, Rebirths etc.) zäme mit dinere Twitch-ID gspeichert. Für s'Leaderboard wird din Aazeigname aazeigt.",
     "bartclickerPurposeTitle": "Zweck",
     "bartclickerPurposeText": "Speicherig vom Spiilfortschritt, Aazeig vo Rangliste und Spiilstatistike.",
     "bartclickerRetentionTitle": "Speicherdauer",
